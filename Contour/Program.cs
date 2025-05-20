@@ -1,9 +1,17 @@
-﻿namespace Contour;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
-class Program
+namespace Tss
 {
-    static void Main(string[] args)
+    class Program
     {
-        Console.WriteLine("Hello, World!");
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Application started.");
+            // Simulate the main logic from main.cpp
+            // Example: Start a service or handle events
+            Sys.Log("Main application logic executed.");
+        }
     }
-}
+} 
