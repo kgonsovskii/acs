@@ -1,0 +1,8 @@
+object formeeditcomp: Tformeeditcomp
+  Left = 454
+  Height = 266
+  Top = 202
+  Width = 1086
+  Caption = 'formeeditcomp'
+  LCLVersion = '2.2.2.0'
+end

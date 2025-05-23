@@ -1,0 +1,147 @@
+object formtmzvst: Tformtmzvst
+  Left = 516
+  Height = 596
+  Top = 52
+  Width = 806
+  Caption = 'formtmzvst'
+  ClientHeight = 596
+  ClientWidth = 806
+  Color = clSkyBlue
+  OnCreate = FormCreate
+  LCLVersion = '2.2.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 806
+    Align = alTop
+    Caption = ' '
+    ClientHeight = 50
+    ClientWidth = 806
+    TabOrder = 0
+    object rxtmz1: TRxTimeEdit
+      Left = 160
+      Height = 36
+      Top = 8
+      Width = 109
+      ShowSecond = True
+      Color = clSkyBlue
+      Font.Height = -24
+      Font.Name = 'Terminus'
+      Font.Style = [fsBold]
+      MaxLength = 8
+      ParentFont = False
+      TabOrder = 0
+    end
+    object rxtmz2: TRxTimeEdit
+      Left = 304
+      Height = 36
+      Top = 8
+      Width = 109
+      ShowSecond = True
+      Color = clSkyBlue
+      Font.Height = -24
+      Font.Name = 'Terminus'
+      Font.Style = [fsBold]
+      MaxLength = 8
+      ParentFont = False
+      TabOrder = 1
+    end
+    object cbzapret: TCheckBox
+      Left = 513
+      Height = 21
+      Top = 13
+      Width = 96
+      Caption = 'ЗАПРЕТ   '
+      Font.Height = -16
+      Font.Name = 'Terminus'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+    end
+  end
+  object tmzvst: TLazVirtualStringTree
+    Left = 0
+    Height = 546
+    Top = 50
+    Width = 806
+    Align = alClient
+    Color = 3947580
+    CustomCheckImages = Form1.LargeImages
+    DefaultNodeHeight = 33
+    DefaultText = 'Node'
+    Font.Color = clWhite
+    Font.Height = -24
+    Font.Name = 'Terminus'
+    Header.AutoSizeIndex = 0
+    Header.Columns = <    
+      item
+        Position = 0
+        Width = 300
+      end    
+      item
+        Position = 1
+        Width = 200
+      end    
+      item
+        Position = 2
+        Width = 500
+      end>
+    Header.Images = Form1.LargeImages
+    Header.PopupMenu = tmzpopnil
+    Images = Form1.LargeImages
+    ParentFont = False
+    PopupMenu = tmzpopnil
+    TabOrder = 1
+    OnBeforeCellPaint = tmzvstBeforeCellPaint
+    OnChange = tmzvstChange
+    OnChecking = tmzvstChecking
+    OnGetText = tmzvstGetText
+    OnPaintText = tmzvstPaintText
+    OnGetImageIndex = tmzvstGetImageIndex
+    OnGetImageIndexEx = tmzvstGetImageIndexEx
+  end
+  object tmzpopnil: TPopupMenu
+    Left = 177
+    Top = 138
+    object MenuItem6: TMenuItem
+      Caption = 'Освежить'
+      OnClick = MenuItem6Click
+    end
+    object MenuItem1: TMenuItem
+      Caption = 'Новоя зона'
+      OnClick = MenuItem1Click
+      object MenuItem3: TMenuItem
+        Caption = '"ВСГЕГДА"'
+        OnClick = MenuItem3Click
+      end
+      object MenuItem4: TMenuItem
+        Caption = '"НИКОГДА"'
+        OnClick = MenuItem4Click
+      end
+      object MenuItem5: TMenuItem
+        Caption = 'произволная'
+        OnClick = MenuItem5Click
+      end
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'MenuItem2'
+    end
+  end
+  object pop2: TPopupMenu
+    Left = 317
+    Top = 131
+    object MenuItem7: TMenuItem
+      Caption = 'обновить интервал'
+      OnClick = MenuItem7Click
+    end
+    object MenuItem8: TMenuItem
+      Caption = 'добавить интервал'
+      OnClick = MenuItem8Click
+    end
+    object MenuItem9: TMenuItem
+      Caption = 'удалить интервал'
+      OnClick = MenuItem9Click
+    end
+  end
+end

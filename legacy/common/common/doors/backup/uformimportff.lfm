@@ -1,0 +1,26 @@
+object formimportff: Tformimportff
+  Left = 928
+  Height = 348
+  Top = 292
+  Width = 568
+  Caption = 'formimportff'
+  ClientHeight = 348
+  ClientWidth = 568
+  OnCreate = FormCreate
+  LCLVersion = '2.2.2.0'
+  object CheckBoxThemed1: TCheckBoxThemed
+    Left = 64
+    Height = 57
+    Top = 32
+    Width = 236
+    Caption = 'FIREBIRD'
+    Color = clSkyBlue
+    Font.Color = clBlack
+    Font.Height = -53
+    Font.Name = 'Terminus'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+    TabOrder = 0
+  end
+end

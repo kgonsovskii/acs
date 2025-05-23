@@ -1,0 +1,645 @@
+object xformedit: Txformedit
+  Left = 410
+  Height = 512
+  Top = 146
+  Width = 832
+  Caption = 'xformedit'
+  ClientHeight = 512
+  ClientWidth = 832
+  OnCreate = FormCreate
+  LCLVersion = '2.2.2.0'
+  object pg1: TPageControl
+    Left = 0
+    Height = 512
+    Top = 0
+    Width = 832
+    ActivePage = TabSheet5
+    Align = alClient
+    TabIndex = 0
+    TabOrder = 0
+    object TabSheet5: TTabSheet
+      Caption = 'компьютер'
+      ClientHeight = 482
+      ClientWidth = 822
+      object cmb_comp_: TPanel
+        Left = 0
+        Height = 482
+        Top = 0
+        Width = 822
+        Align = alClient
+        BevelInner = bvRaised
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = ' '
+        ClientHeight = 480
+        ClientWidth = 820
+        Color = clSilver
+        Font.CharSet = RUSSIAN_CHARSET
+        Font.Pitch = fpVariable
+        Font.Quality = fqDraft
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 0
+        object cb_comp_actual: TCheckBox
+          Left = 72
+          Height = 21
+          Top = 8
+          Width = 117
+          Caption = 'актуальность'
+          Font.CharSet = RUSSIAN_CHARSET
+          Font.Color = clBlack
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+        end
+        object le_comp_name: TLabeledEdit
+          Left = 72
+          Height = 33
+          Top = 88
+          Width = 152
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 128
+          EditLabel.Caption = '    имя компьютера'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          TabOrder = 1
+          Text = '??????????????'
+        end
+        object le_comp_url: TLabeledEdit
+          Left = 72
+          Height = 33
+          Top = 128
+          Width = 152
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 35
+          EditLabel.Caption = '   URL'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          TabOrder = 2
+          Text = '???????????'
+        end
+        object bb_comp_cancel: TBitBtn
+          Left = 16
+          Height = 45
+          Top = 360
+          Width = 113
+          DefaultCaption = True
+          Kind = bkClose
+          ModalResult = 11
+          TabOrder = 3
+        end
+        object bb_comp_ok: TBitBtn
+          Left = 520
+          Height = 45
+          Top = 360
+          Width = 113
+          DefaultCaption = True
+          Kind = bkOK
+          ModalResult = 1
+          TabOrder = 4
+        end
+        object cmb_comp_pctyp: TComboBox
+          Left = 80
+          Height = 30
+          Top = 48
+          Width = 150
+          Color = clAqua
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            'pc'
+            'rbc'
+          )
+          ReadOnly = True
+          TabOrder = 5
+          Text = 'pc'
+        end
+        object Label2: TLabel
+          Left = 248
+          Height = 18
+          Top = 48
+          Width = 115
+          Caption = ' тип компьютера'
+          ParentColor = False
+        end
+        object le_comp_tscd: TLabeledEdit
+          Left = 68
+          Height = 33
+          Top = 168
+          Width = 200
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 81
+          EditLabel.Caption = '   timestamp'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          ReadOnly = True
+          TabOrder = 6
+          Text = '??????????????'
+        end
+      end
+    end
+    object TabSheet1: TTabSheet
+      Caption = 'канал'
+      ClientHeight = 482
+      ClientWidth = 822
+      object Panel4: TPanel
+        Left = 0
+        Height = 482
+        Top = 0
+        Width = 822
+        Align = alClient
+        BevelInner = bvRaised
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = ' '
+        ClientHeight = 480
+        ClientWidth = 820
+        Color = clSilver
+        Font.CharSet = RUSSIAN_CHARSET
+        Font.Color = clBlack
+        Font.Pitch = fpVariable
+        Font.Quality = fqDraft
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 0
+        object cb_ch_actual: TCheckBox
+          Left = 72
+          Height = 21
+          Top = 8
+          Width = 117
+          Caption = 'актуальность'
+          Font.CharSet = RUSSIAN_CHARSET
+          Font.Color = clBlack
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+        end
+        object le_ch_ch: TLabeledEdit
+          Left = 68
+          Height = 33
+          Top = 88
+          Width = 152
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 104
+          EditLabel.Caption = '    адрес канала'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          TabOrder = 1
+          Text = '??????????????'
+        end
+        object bb_ch_cancel: TBitBtn
+          Left = 16
+          Height = 45
+          Top = 360
+          Width = 113
+          DefaultCaption = True
+          Kind = bkClose
+          ModalResult = 11
+          TabOrder = 2
+        end
+        object bb_ch_ok: TBitBtn
+          Left = 520
+          Height = 45
+          Top = 360
+          Width = 113
+          DefaultCaption = True
+          Kind = bkOK
+          ModalResult = 1
+          TabOrder = 3
+        end
+        object cmb_ch_chtype: TComboBox
+          Left = 64
+          Height = 30
+          Top = 48
+          Width = 150
+          Color = clAqua
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '209'
+            '210'
+          )
+          ReadOnly = True
+          TabOrder = 4
+          Text = '209'
+        end
+        object Label1: TLabel
+          Left = 248
+          Height = 18
+          Top = 48
+          Width = 79
+          Caption = ' тип канала'
+          ParentColor = False
+        end
+        object le_ch_tscd: TLabeledEdit
+          Left = 68
+          Height = 33
+          Top = 168
+          Width = 200
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 81
+          EditLabel.Caption = '   timestamp'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          ReadOnly = True
+          TabOrder = 5
+          Text = '??????????????'
+        end
+        object le_ch_lobs: TLabeledEdit
+          Left = 68
+          Height = 33
+          Top = 128
+          Width = 72
+          Alignment = taCenter
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 162
+          EditLabel.Caption = '    интервал обсервации'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          TabOrder = 6
+          Text = '0'
+        end
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'контроллер'
+      ClientHeight = 482
+      ClientWidth = 822
+      object Panel5: TPanel
+        Left = 0
+        Height = 482
+        Top = 0
+        Width = 822
+        Align = alClient
+        BevelInner = bvRaised
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = ' '
+        ClientHeight = 480
+        ClientWidth = 820
+        Color = clSilver
+        Font.CharSet = RUSSIAN_CHARSET
+        Font.Color = clBlack
+        Font.Pitch = fpVariable
+        Font.Quality = fqDraft
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 0
+        object cb_ac_actual: TCheckBox
+          Left = 72
+          Height = 21
+          Top = 8
+          Width = 110
+          Caption = 'актуальность'
+          Font.CharSet = RUSSIAN_CHARSET
+          Font.Color = clBlack
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+        end
+        object le_ac_ac: TLabeledEdit
+          Left = 72
+          Height = 33
+          Top = 88
+          Width = 96
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 143
+          EditLabel.Caption = '    адрес контроллера'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          TabOrder = 1
+          Text = '??????????????'
+        end
+        object bb_ac_cancel: TBitBtn
+          Left = 16
+          Height = 45
+          Top = 360
+          Width = 113
+          DefaultCaption = True
+          Kind = bkClose
+          ModalResult = 11
+          TabOrder = 2
+        end
+        object bb_ac_ok: TBitBtn
+          Left = 520
+          Height = 45
+          Top = 360
+          Width = 113
+          Default = True
+          DefaultCaption = True
+          Kind = bkOK
+          ModalResult = 1
+          TabOrder = 3
+        end
+        object cmb_ac_actype: TComboBox
+          Left = 64
+          Height = 30
+          Top = 48
+          Width = 150
+          Color = clAqua
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '209'
+            '210'
+          )
+          ReadOnly = True
+          TabOrder = 4
+          Text = '209'
+        end
+        object lb_ac_actype: TLabel
+          Left = 248
+          Height = 18
+          Top = 48
+          Width = 79
+          Caption = ' тип канала'
+          ParentColor = False
+        end
+        object le_ac_tscd: TLabeledEdit
+          Left = 16
+          Height = 33
+          Top = 192
+          Width = 200
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 81
+          EditLabel.Caption = '   timestamp'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          ReadOnly = True
+          TabOrder = 5
+          Text = '??????????????'
+        end
+        object le_ac_cp: TLabeledEdit
+          Left = 96
+          Height = 33
+          Top = 128
+          Width = 72
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 106
+          EditLabel.Caption = '    кол-во портов'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          TabOrder = 6
+          Text = '?'
+        end
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'порт'
+      ClientHeight = 482
+      ClientWidth = 822
+      object cmb_comp_1: TPanel
+        Left = 0
+        Height = 482
+        Top = 0
+        Width = 822
+        Align = alClient
+        BevelInner = bvRaised
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = ' '
+        ClientHeight = 480
+        ClientWidth = 820
+        Color = clSilver
+        Font.CharSet = RUSSIAN_CHARSET
+        Font.Pitch = fpVariable
+        Font.Quality = fqDraft
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 0
+        object cb_port_actual: TCheckBox
+          Left = 72
+          Height = 21
+          Top = 8
+          Width = 110
+          Caption = 'актуальность'
+          Font.CharSet = RUSSIAN_CHARSET
+          Font.Color = clBlack
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+        end
+        object le_port_nump: TLabeledEdit
+          Left = 72
+          Height = 33
+          Top = 40
+          Width = 56
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 98
+          EditLabel.Caption = '    номер порта'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          TabOrder = 1
+          Text = '??????????????'
+        end
+        object le_port_tmr: TLabeledEdit
+          Left = 68
+          Height = 33
+          Top = 72
+          Width = 56
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 87
+          EditLabel.Caption = '   время реле'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          TabOrder = 2
+          Text = '???????????'
+        end
+        object bb_comp_cancel1: TBitBtn
+          Left = 16
+          Height = 45
+          Top = 360
+          Width = 113
+          DefaultCaption = True
+          Kind = bkClose
+          ModalResult = 11
+          TabOrder = 3
+        end
+        object bb_port_ok: TBitBtn
+          Left = 520
+          Height = 45
+          Top = 360
+          Width = 113
+          DefaultCaption = True
+          Kind = bkOK
+          ModalResult = 1
+          TabOrder = 4
+        end
+        object le_port_tscd: TLabeledEdit
+          Left = 68
+          Height = 33
+          Top = 160
+          Width = 168
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 81
+          EditLabel.Caption = '   timestamp'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          ReadOnly = True
+          TabOrder = 5
+          Text = '??????????????'
+        end
+        object le_port_nmr: TLabeledEdit
+          Left = 72
+          Height = 33
+          Top = 104
+          Width = 52
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 126
+          EditLabel.Caption = '   номер маршрута'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          TabOrder = 6
+          Text = '???????????'
+        end
+      end
+    end
+    object TabSheet4: TTabSheet
+      AutoSize = True
+      Caption = 'сенсор'
+      ClientHeight = 482
+      ClientWidth = 822
+      object cmb_comp_2: TPanel
+        Left = 0
+        Height = 482
+        Top = 0
+        Width = 822
+        Align = alClient
+        BevelInner = bvRaised
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = ' '
+        ClientHeight = 480
+        ClientWidth = 820
+        Color = clSilver
+        Font.CharSet = RUSSIAN_CHARSET
+        Font.Pitch = fpVariable
+        Font.Quality = fqDraft
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 0
+        object cb_sens_ignore: TCheckBox
+          Left = 72
+          Height = 21
+          Top = 8
+          Width = 120
+          Caption = '  игнорировать'
+          Font.CharSet = RUSSIAN_CHARSET
+          Font.Color = clBlack
+          Font.Pitch = fpVariable
+          Font.Quality = fqDraft
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+        end
+        object le_sens_name: TLabeledEdit
+          Left = 72
+          Height = 33
+          Top = 40
+          Width = 56
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 40
+          EditLabel.Caption = '    имя'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          ReadOnly = True
+          TabOrder = 1
+          Text = '??????????????'
+        end
+        object le_sens_code: TLabeledEdit
+          Left = 68
+          Height = 33
+          Top = 72
+          Width = 56
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 92
+          EditLabel.Caption = '   код сенсора'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          ReadOnly = True
+          TabOrder = 2
+          Text = '???????????'
+        end
+        object bb_comp_cancel2: TBitBtn
+          Left = 16
+          Height = 45
+          Top = 360
+          Width = 113
+          DefaultCaption = True
+          Kind = bkClose
+          ModalResult = 11
+          TabOrder = 3
+        end
+        object bb_sens_ok: TBitBtn
+          Left = 520
+          Height = 45
+          Top = 360
+          Width = 113
+          DefaultCaption = True
+          Kind = bkOK
+          ModalResult = 1
+          TabOrder = 4
+        end
+        object le_sens_tscd: TLabeledEdit
+          Left = 68
+          Height = 33
+          Top = 160
+          Width = 168
+          AutoSize = False
+          Color = clSilver
+          EditLabel.Height = 18
+          EditLabel.Width = 81
+          EditLabel.Caption = '   timestamp'
+          EditLabel.ParentColor = False
+          LabelPosition = lpRight
+          ReadOnly = True
+          TabOrder = 5
+          Text = '??????????????'
+        end
+      end
+    end
+  end
+end

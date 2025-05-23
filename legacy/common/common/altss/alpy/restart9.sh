@@ -1,0 +1,1 @@
+sudo kill 4995 ; python3 maldrv9y.py -psdcomp astraorel -ch 192.168.0.96 -start poll  &

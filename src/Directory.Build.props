@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <CS8803>false</CS8803>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="DisableConvertToPrimaryConstructor" />
+    <EditorConfigFiles Include="disable-rules.editorconfig" />
+  </ItemGroup>
+</Project>

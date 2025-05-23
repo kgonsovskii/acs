@@ -1,0 +1,387 @@
+object formvst2: Tformvst2
+  Left = 20
+  Height = 339
+  Top = 30
+  Width = 316
+  BorderStyle = bsSingle
+  Caption = 'formvst2'
+  ClientHeight = 339
+  ClientWidth = 316
+  Color = clGray
+  OnCreate = FormCreate
+  LCLVersion = '2.2.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 80
+    Top = 0
+    Width = 316
+    Align = alTop
+    BevelInner = bvLowered
+    BevelOuter = bvLowered
+    BevelWidth = 3
+    Caption = ' '
+    ClientHeight = 80
+    ClientWidth = 316
+    TabOrder = 0
+    object ecomp: TEdit
+      Left = 56
+      Height = 29
+      Top = 24
+      Width = 240
+      BorderStyle = bsNone
+      Color = clBlack
+      Font.Color = clLime
+      Font.Height = -21
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 0
+      Text = 'компьютер'
+    end
+    object ech: TEdit
+      Left = 320
+      Height = 29
+      Top = 24
+      Width = 208
+      BorderStyle = bsNone
+      Color = clBlack
+      Font.Color = clLime
+      Font.Height = -21
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 1
+      Text = 'канал'
+    end
+    object BitBtn1: TBitBtn
+      Left = 592
+      Height = 45
+      Top = 16
+      Width = 149
+      Caption = 'Подтвердить'
+      Color = clSkyBlue
+      Default = True
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Kind = bkOK
+      ModalResult = 1
+      OnClick = BitBtn1Click
+      ParentFont = False
+      TabOrder = 2
+    end
+  end
+  object keyp1: TPanel
+    Left = 0
+    Height = 56
+    Top = 80
+    Width = 316
+    Align = alTop
+    Caption = ' '
+    ClientHeight = 56
+    ClientWidth = 316
+    Font.Height = -21
+    Font.Name = 'Tahoma'
+    ParentFont = False
+    TabOrder = 1
+    object ed_actual: TEdit
+      Left = 13
+      Height = 27
+      Top = 15
+      Width = 195
+      BorderStyle = bsNone
+      Color = clGray
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 0
+      Text = 'Актуальность'
+    end
+    object cbx_actual: TCheckBox
+      Left = 704
+      Height = 23
+      Top = 19
+      Width = 81
+      Caption = 'да / нет'
+      Font.Color = clWhite
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object keyp7: TPanel
+    Left = 0
+    Height = 56
+    Top = 136
+    Width = 316
+    Align = alTop
+    Caption = '  '
+    ClientHeight = 56
+    ClientWidth = 316
+    TabOrder = 2
+    object ed_tmr3: TEdit
+      Left = 13
+      Height = 27
+      Top = 15
+      Width = 195
+      BorderStyle = bsNone
+      Color = clGray
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 0
+      Text = 'адрес контроллера'
+    end
+    object eac: TEdit
+      Left = 704
+      Height = 33
+      Top = 16
+      Width = 56
+      Alignment = taCenter
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Height = -24
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      Text = '000'
+    end
+  end
+  object keyp4: TPanel
+    Left = 0
+    Height = 56
+    Top = 339
+    Width = 316
+    Align = alTop
+    Caption = '  '
+    ClientHeight = 56
+    ClientWidth = 316
+    TabOrder = 3
+    object ed_rdrtype: TEdit
+      Left = -8
+      Height = 27
+      Top = 128
+      Width = 195
+      BorderStyle = bsNone
+      Color = clGray
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 0
+      Text = 'Тип  контроллера'
+    end
+    object cmb_ctyp: TComboBox
+      Left = 664
+      Height = 40
+      Top = 8
+      Width = 136
+      Color = clSilver
+      Font.Height = -21
+      Font.Name = 'Sans'
+      ItemHeight = 0
+      ItemIndex = 0
+      Items.Strings = (
+        '209'
+        '210'
+      )
+      ParentFont = False
+      TabOrder = 1
+      Text = '209'
+    end
+    object ed_tmr5: TEdit
+      Left = 13
+      Height = 27
+      Top = 15
+      Width = 195
+      BorderStyle = bsNone
+      Color = clGray
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 2
+      Text = 'тип контроллера'
+    end
+  end
+  object keyp8: TPanel
+    Left = 0
+    Height = 96
+    Top = 248
+    Width = 316
+    Align = alTop
+    Caption = ' '
+    ClientHeight = 96
+    ClientWidth = 316
+    TabOrder = 4
+    object elimitinfoerr: TEdit
+      Left = 704
+      Height = 33
+      Top = 16
+      Width = 96
+      Alignment = taCenter
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Height = -24
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      Text = '20'
+    end
+    object Memo1: TMemo
+      Left = 24
+      Height = 74
+      Top = 8
+      Width = 510
+      BorderStyle = bsNone
+      Color = clBlack
+      Font.Color = clLime
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      Lines.Strings = (
+        'количество подряд ошибок и фиксация в базе данных'
+      )
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object keyp9: TPanel
+    Left = 0
+    Height = 96
+    Top = 339
+    Width = 316
+    Align = alTop
+    Caption = ' '
+    ClientHeight = 96
+    ClientWidth = 316
+    TabOrder = 5
+    object elimitcrasherr: TEdit
+      Left = 704
+      Height = 33
+      Top = 16
+      Width = 96
+      Alignment = taCenter
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Height = -24
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      Text = '100'
+    end
+    object Memo2: TMemo
+      Left = 24
+      Height = 74
+      Top = 8
+      Width = 518
+      BorderStyle = bsNone
+      Color = clBlack
+      Font.Color = clLime
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Lines.Strings = (
+        'перевод контроллера в автономнвй  режим и перевод в список ожидания проверки работоспособности'
+        'по количеству подряд ошибок связи'
+        ''
+        ''
+      )
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+  object keyp10: TPanel
+    Left = 0
+    Height = 56
+    Top = 192
+    Width = 316
+    Align = alTop
+    Caption = '  '
+    ClientHeight = 56
+    ClientWidth = 316
+    TabOrder = 6
+    object ed_tmr4: TEdit
+      Left = 13
+      Height = 27
+      Top = 15
+      Width = 195
+      BorderStyle = bsNone
+      Color = clGray
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 0
+      Text = 'кол-во портов'
+    end
+    object ecp: TEdit
+      Left = 704
+      Height = 33
+      Top = 16
+      Width = 56
+      Alignment = taCenter
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Height = -24
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      Text = '2'
+    end
+  end
+  object keyp11: TPanel
+    Left = 0
+    Height = 80
+    Top = 339
+    Width = 316
+    Align = alTop
+    Caption = ' '
+    ClientHeight = 80
+    ClientWidth = 316
+    TabOrder = 7
+    object erepitpoll: TEdit
+      Left = 704
+      Height = 33
+      Top = 16
+      Width = 96
+      Alignment = taCenter
+      BorderStyle = bsNone
+      Color = clSilver
+      Font.Height = -24
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      Text = '30'
+    end
+    object Memo3: TMemo
+      Left = 8
+      Height = 56
+      Top = 8
+      Width = 422
+      BorderStyle = bsNone
+      Color = clBlack
+      Font.Color = clLime
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Lines.Strings = (
+        'интервал  проверки работоспособности в секундах '
+      )
+      ParentFont = False
+      TabOrder = 1
+    end
+  end
+end

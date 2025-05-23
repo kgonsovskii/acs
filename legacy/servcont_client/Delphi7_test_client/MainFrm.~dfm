@@ -1,0 +1,1520 @@
+object frmMain: TfrmMain
+  Left = 178
+  Top = 139
+  Width = 883
+  Height = 649
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  Menu = MainMenu1
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 867
+    Height = 309
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 0
+    object GroupBox4: TGroupBox
+      Left = 8
+      Top = 4
+      Width = 169
+      Height = 133
+      Caption = 'RPC'
+      TabOrder = 0
+      object Label1: TLabel
+        Left = 8
+        Top = 20
+        Width = 25
+        Height = 13
+        Caption = 'Host:'
+      end
+      object Label2: TLabel
+        Left = 8
+        Top = 104
+        Width = 34
+        Height = 13
+        Caption = 'Ready:'
+      end
+      object cbxRpcHost: TComboBox
+        Left = 40
+        Top = 16
+        Width = 121
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 0
+      end
+      object Button4: TButton
+        Left = 88
+        Top = 56
+        Width = 75
+        Height = 25
+        Action = actRpcClose
+        TabOrder = 1
+      end
+      object Button3: TButton
+        Left = 8
+        Top = 56
+        Width = 75
+        Height = 25
+        Action = actRpcOpen
+        TabOrder = 2
+      end
+      object sttReady: TStaticText
+        Left = 48
+        Top = 104
+        Width = 29
+        Height = 17
+        Caption = 'False'
+        TabOrder = 3
+      end
+    end
+    object GroupBox2: TGroupBox
+      Left = 324
+      Top = 4
+      Width = 305
+      Height = 177
+      Caption = 'Channel'
+      TabOrder = 1
+      object Label14: TLabel
+        Left = 8
+        Top = 104
+        Width = 88
+        Height = 13
+        Caption = 'Response timeout:'
+      end
+      object Label15: TLabel
+        Left = 160
+        Top = 104
+        Width = 28
+        Height = 13
+        Caption = 'msec.'
+      end
+      object Label11: TLabel
+        Left = 8
+        Top = 128
+        Width = 63
+        Height = 13
+        Caption = 'Alive timeout:'
+      end
+      object Label17: TLabel
+        Left = 160
+        Top = 128
+        Width = 20
+        Height = 13
+        Caption = 'sec.'
+      end
+      object Label18: TLabel
+        Left = 8
+        Top = 152
+        Width = 66
+        Height = 13
+        Caption = 'Dead timeout:'
+      end
+      object Label19: TLabel
+        Left = 160
+        Top = 152
+        Width = 20
+        Height = 13
+        Caption = 'sec.'
+      end
+      object pgcChannel: TPageControl
+        Left = 8
+        Top = 16
+        Width = 177
+        Height = 73
+        ActivePage = tbsSerial
+        TabOrder = 0
+        TabPosition = tpBottom
+        object tbsSerial: TTabSheet
+          Caption = 'Serial'
+          object Label5: TLabel
+            Left = 0
+            Top = 4
+            Width = 22
+            Height = 13
+            Caption = 'Port:'
+          end
+          object Label6: TLabel
+            Left = 0
+            Top = 28
+            Width = 34
+            Height = 13
+            Caption = 'Speed:'
+          end
+          object cbxChannelSerialPort: TComboBox
+            Left = 48
+            Top = 0
+            Width = 121
+            Height = 21
+            ItemHeight = 13
+            TabOrder = 0
+          end
+          object cbxChannelSerialSpeed: TComboBox
+            Left = 48
+            Top = 24
+            Width = 121
+            Height = 21
+            ItemHeight = 13
+            TabOrder = 1
+          end
+        end
+        object tbsIp: TTabSheet
+          Caption = 'IP'
+          ImageIndex = 1
+          object Label7: TLabel
+            Left = 0
+            Top = 8
+            Width = 25
+            Height = 13
+            Caption = 'Host:'
+          end
+          object Label8: TLabel
+            Left = 0
+            Top = 32
+            Width = 22
+            Height = 13
+            Caption = 'Port:'
+          end
+          object cbxChannelIPHost: TComboBox
+            Left = 48
+            Top = 0
+            Width = 121
+            Height = 21
+            ItemHeight = 13
+            TabOrder = 0
+          end
+          object cbxChannelIPPort: TComboBox
+            Left = 48
+            Top = 24
+            Width = 121
+            Height = 21
+            ItemHeight = 13
+            TabOrder = 1
+          end
+        end
+        object tbsRs422: TTabSheet
+          Caption = 'RS422'
+          ImageIndex = 2
+          object Label21: TLabel
+            Left = 0
+            Top = 4
+            Width = 34
+            Height = 13
+            Caption = 'Speed:'
+          end
+          object cbxChannelRS422Speed: TComboBox
+            Left = 48
+            Top = 0
+            Width = 121
+            Height = 21
+            ItemHeight = 13
+            TabOrder = 0
+          end
+        end
+      end
+      object Add: TButton
+        Left = 192
+        Top = 12
+        Width = 105
+        Height = 25
+        Action = actServcontAddChannel
+        TabOrder = 1
+      end
+      object Button2: TButton
+        Left = 192
+        Top = 40
+        Width = 105
+        Height = 25
+        Action = actServcontRemoveChannel
+        TabOrder = 2
+      end
+      object Button5: TButton
+        Left = 192
+        Top = 72
+        Width = 105
+        Height = 25
+        Action = actServcontActivateChannel
+        TabOrder = 3
+      end
+      object Button6: TButton
+        Left = 192
+        Top = 100
+        Width = 105
+        Height = 25
+        Action = actServcontDeactivateChannel
+        TabOrder = 4
+      end
+      object cbxChannelResponseTimeout: TComboBox
+        Left = 100
+        Top = 100
+        Width = 57
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 5
+        Text = '200'
+      end
+      object cbxChannelAliveTimeout: TComboBox
+        Left = 100
+        Top = 124
+        Width = 57
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 6
+        Text = '10'
+      end
+      object cbxChannelDeadTimeout: TComboBox
+        Left = 100
+        Top = 148
+        Width = 57
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 7
+        Text = '600'
+      end
+      object Button13: TButton
+        Left = 192
+        Top = 132
+        Width = 105
+        Height = 25
+        Action = actServcontFindControllers
+        TabOrder = 8
+      end
+    end
+    object GroupBox3: TGroupBox
+      Left = 636
+      Top = 4
+      Width = 233
+      Height = 133
+      Caption = 'Controller'
+      TabOrder = 2
+      object Label10: TLabel
+        Left = 8
+        Top = 20
+        Width = 25
+        Height = 13
+        Caption = 'Addr:'
+      end
+      object cbxControllerAddr: TComboBox
+        Left = 40
+        Top = 16
+        Width = 121
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 0
+      end
+      object Button1: TButton
+        Left = 8
+        Top = 68
+        Width = 105
+        Height = 25
+        Action = actServcontAddController
+        TabOrder = 1
+      end
+      object Button8: TButton
+        Left = 8
+        Top = 96
+        Width = 105
+        Height = 25
+        Action = actServcontRemoveController
+        TabOrder = 2
+      end
+      object Button9: TButton
+        Left = 152
+        Top = 68
+        Width = 75
+        Height = 25
+        Action = actControllerPollOn
+        TabOrder = 3
+      end
+      object Button10: TButton
+        Left = 152
+        Top = 96
+        Width = 75
+        Height = 25
+        Action = actControllerPollOff
+        TabOrder = 4
+      end
+      object cbxControllerAuto: TCheckBox
+        Left = 8
+        Top = 44
+        Width = 73
+        Height = 17
+        Caption = 'Autonomic'
+        TabOrder = 5
+      end
+      object cbxControllerReliable: TCheckBox
+        Left = 88
+        Top = 44
+        Width = 65
+        Height = 17
+        Caption = 'Reliable'
+        TabOrder = 6
+      end
+    end
+    object GroupBox1: TGroupBox
+      Left = 288
+      Top = 188
+      Width = 265
+      Height = 109
+      Caption = 'Relay'
+      TabOrder = 3
+      object Label3: TLabel
+        Left = 8
+        Top = 20
+        Width = 22
+        Height = 13
+        Caption = 'Port:'
+      end
+      object Label4: TLabel
+        Left = 8
+        Top = 44
+        Width = 38
+        Height = 13
+        Caption = 'Interval:'
+      end
+      object Button7: TButton
+        Left = 184
+        Top = 16
+        Width = 75
+        Height = 25
+        Action = actControllerRelayOn
+        TabOrder = 0
+      end
+      object Button14: TButton
+        Left = 184
+        Top = 48
+        Width = 75
+        Height = 25
+        Action = actControllerRelayOff
+        TabOrder = 1
+      end
+      object cbxRelayPort: TComboBox
+        Left = 56
+        Top = 16
+        Width = 121
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 2
+      end
+      object cbxRelayInterval: TComboBox
+        Left = 56
+        Top = 40
+        Width = 121
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 3
+      end
+      object chbSuppressDoorEvent: TCheckBox
+        Left = 56
+        Top = 64
+        Width = 121
+        Height = 17
+        Caption = 'SuppressDoorEvent'
+        TabOrder = 4
+      end
+      object chbRelayOnAnyKey: TCheckBox
+        Left = 56
+        Top = 88
+        Width = 129
+        Height = 17
+        Caption = 'RelayOn on any key'
+        TabOrder = 5
+      end
+    end
+    object GroupBox6: TGroupBox
+      Left = 8
+      Top = 140
+      Width = 273
+      Height = 157
+      Caption = 'Key'
+      TabOrder = 4
+      object Label9: TLabel
+        Left = 8
+        Top = 20
+        Width = 30
+        Height = 13
+        Caption = 'Value:'
+      end
+      object Label12: TLabel
+        Left = 8
+        Top = 42
+        Width = 27
+        Height = 13
+        Caption = 'Ports:'
+      end
+      object Label13: TLabel
+        Left = 8
+        Top = 64
+        Width = 40
+        Height = 13
+        Caption = 'PersCat:'
+      end
+      object cbxKeyValue: TComboBox
+        Left = 56
+        Top = 16
+        Width = 125
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 0
+      end
+      object Button16: TButton
+        Left = 192
+        Top = 96
+        Width = 75
+        Height = 25
+        Action = actControllerWriteKey
+        TabOrder = 1
+      end
+      object Button17: TButton
+        Left = 192
+        Top = 40
+        Width = 75
+        Height = 25
+        Action = actControllerEraseKey
+        TabOrder = 2
+      end
+      object Button18: TButton
+        Left = 192
+        Top = 12
+        Width = 75
+        Height = 25
+        Action = actControllerKeyExist
+        TabOrder = 3
+      end
+      object Button12: TButton
+        Left = 192
+        Top = 68
+        Width = 75
+        Height = 25
+        Action = actControllerEraseAllKeys
+        TabOrder = 4
+      end
+      object chbKeyPort1: TCheckBox
+        Left = 56
+        Top = 40
+        Width = 17
+        Height = 17
+        TabOrder = 5
+      end
+      object chbKeyPort2: TCheckBox
+        Left = 72
+        Top = 40
+        Width = 17
+        Height = 17
+        TabOrder = 6
+      end
+      object chbKeyPort3: TCheckBox
+        Left = 88
+        Top = 40
+        Width = 17
+        Height = 17
+        TabOrder = 7
+      end
+      object chbKeyPort4: TCheckBox
+        Left = 104
+        Top = 40
+        Width = 17
+        Height = 17
+        TabOrder = 8
+      end
+      object chbKeyPort5: TCheckBox
+        Left = 120
+        Top = 40
+        Width = 17
+        Height = 17
+        TabOrder = 9
+      end
+      object chbKeyPort6: TCheckBox
+        Left = 136
+        Top = 40
+        Width = 17
+        Height = 17
+        TabOrder = 10
+      end
+      object chbKeyPort7: TCheckBox
+        Left = 152
+        Top = 40
+        Width = 17
+        Height = 17
+        TabOrder = 11
+      end
+      object chbKeyPort8: TCheckBox
+        Left = 168
+        Top = 40
+        Width = 17
+        Height = 17
+        TabOrder = 12
+      end
+      object chbKeySuppressDoorEvent: TCheckBox
+        Left = 56
+        Top = 88
+        Width = 113
+        Height = 17
+        Caption = 'SuppressDoorEvent'
+        TabOrder = 13
+      end
+      object cbxKeyPersCat: TComboBox
+        Left = 56
+        Top = 60
+        Width = 125
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 14
+      end
+      object Button19: TButton
+        Left = 192
+        Top = 124
+        Width = 75
+        Height = 25
+        Action = actControllerReadAllKeys
+        TabOrder = 15
+      end
+    end
+    object GroupBox5: TGroupBox
+      Left = 184
+      Top = 4
+      Width = 133
+      Height = 133
+      Caption = 'MainClient'
+      TabOrder = 5
+      object Label20: TLabel
+        Left = 8
+        Top = 48
+        Width = 56
+        Height = 13
+        Caption = 'QueueLimit:'
+      end
+      object Button11: TButton
+        Left = 50
+        Top = 100
+        Width = 75
+        Height = 25
+        Action = actServcontMainClient
+        Caption = 'Exec'
+        TabOrder = 0
+      end
+      object chbLogControllerEvents: TCheckBox
+        Left = 12
+        Top = 20
+        Width = 117
+        Height = 17
+        Caption = 'LogControllerEvents'
+        TabOrder = 1
+      end
+      object cbxQueueLimit: TComboBox
+        Left = 8
+        Top = 64
+        Width = 117
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 2
+      end
+    end
+  end
+  object pgcEvents: TPageControl
+    Left = 0
+    Top = 309
+    Width = 867
+    Height = 248
+    ActivePage = tbsChannelState
+    Align = alClient
+    TabOrder = 1
+    OnChange = pgcEventsChange
+    object tbsKey: TTabSheet
+      Caption = 'Key'
+      ImageIndex = 1
+      object sgdKey: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 859
+        Height = 220
+        Align = alClient
+        ColCount = 15
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsBtn: TTabSheet
+      Caption = 'Button'
+      ImageIndex = 1
+      object sgdButton: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 1024
+        Height = 313
+        Align = alClient
+        ColCount = 9
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsDoorOpen: TTabSheet
+      Caption = 'DoorOpen'
+      ImageIndex = 2
+      object sgdDoorOpen: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 1024
+        Height = 313
+        Align = alClient
+        ColCount = 8
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsDoorClose: TTabSheet
+      Caption = 'DoorClose'
+      ImageIndex = 3
+      object sgdDoorClose: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 729
+        Height = 207
+        Align = alClient
+        ColCount = 8
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsCase: TTabSheet
+      Caption = 'Case'
+      ImageIndex = 4
+      object sgdCase: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 1024
+        Height = 313
+        Align = alClient
+        ColCount = 7
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbs220V: TTabSheet
+      Caption = '220V'
+      ImageIndex = 5
+      object sgd220V: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 1024
+        Height = 313
+        Align = alClient
+        ColCount = 7
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsTimer: TTabSheet
+      Caption = 'Timer'
+      ImageIndex = 6
+      object sgdTimer: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 1024
+        Height = 313
+        Align = alClient
+        ColCount = 7
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsAutoTimeout: TTabSheet
+      Caption = 'AutoTimeout'
+      ImageIndex = 7
+      object sgdAutoTimeout: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 1024
+        Height = 313
+        Align = alClient
+        ColCount = 7
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsRestart: TTabSheet
+      Caption = 'Restart'
+      ImageIndex = 8
+      object sgdRestart: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 1024
+        Height = 313
+        Align = alClient
+        ColCount = 7
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsStart: TTabSheet
+      Caption = 'Start'
+      ImageIndex = 9
+      object sgdStart: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 730
+        Height = 240
+        Align = alClient
+        ColCount = 7
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsSensor: TTabSheet
+      Caption = 'Sensor'
+      ImageIndex = 10
+      object sgdSensor: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 730
+        Height = 240
+        Align = alClient
+        ColCount = 8
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsChannelError: TTabSheet
+      Caption = 'ChannelError'
+      ImageIndex = 11
+      object sgdChannelError: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 730
+        Height = 188
+        Align = alClient
+        ColCount = 4
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsControllerError: TTabSheet
+      Caption = 'ControllerError'
+      ImageIndex = 12
+      object sgdControllerError: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 859
+        Height = 220
+        Align = alClient
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsChannelState: TTabSheet
+      Caption = 'ChannelState'
+      ImageIndex = 13
+      object sgdChannelState: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 859
+        Height = 220
+        Align = alClient
+        ColCount = 3
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsChannelPollSpeed: TTabSheet
+      Caption = 'ChannelPollSpeed'
+      ImageIndex = 14
+      object sgdChannelPollSpeed: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 867
+        Height = 233
+        Align = alClient
+        ColCount = 3
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsControllerState: TTabSheet
+      Caption = 'ControllerState'
+      ImageIndex = 15
+      object sgdControllerState: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 867
+        Height = 225
+        Align = alClient
+        ColCount = 4
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsChannelsChanged: TTabSheet
+      Caption = 'ChannelsChanged'
+      ImageIndex = 16
+      object sgdChannelsChanged: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 867
+        Height = 225
+        Align = alClient
+        ColCount = 1
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsControllersChanged: TTabSheet
+      Caption = 'ControllersChanged'
+      ImageIndex = 17
+      object sgdControllersChanged: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 859
+        Height = 220
+        Align = alClient
+        ColCount = 2
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsClientsChanged: TTabSheet
+      Caption = 'ClientsChanged'
+      ImageIndex = 18
+      object sgdClientsChanged: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 859
+        Height = 220
+        Align = alClient
+        ColCount = 1
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object tbsQueueFull: TTabSheet
+      Caption = 'QueueFull'
+      ImageIndex = 19
+      object sgdQueueFull: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 859
+        Height = 220
+        Align = alClient
+        ColCount = 1
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+    object TabSheet1: TTabSheet
+      Caption = 'WriteAllKeysAsync'
+      ImageIndex = 20
+      object sgdWriteAllKeysAsync: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 859
+        Height = 220
+        Align = alClient
+        ColCount = 4
+        DefaultRowHeight = 19
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goThumbTracking]
+        TabOrder = 0
+      end
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Top = 557
+    Width = 867
+    Height = 33
+    Align = alBottom
+    BevelOuter = bvNone
+    BorderStyle = bsSingle
+    FullRepaint = False
+    ParentBackground = True
+    TabOrder = 2
+    object Label16: TLabel
+      Left = 176
+      Top = 12
+      Width = 27
+      Height = 13
+      Caption = 'Total:'
+    end
+    object btnClear: TButton
+      Left = 4
+      Top = 2
+      Width = 75
+      Height = 25
+      Caption = 'Clear'
+      TabOrder = 0
+      OnClick = btnClearClick
+    end
+    object Button25: TButton
+      Left = 84
+      Top = 2
+      Width = 75
+      Height = 25
+      Caption = 'Clear All'
+      TabOrder = 1
+      OnClick = Button25Click
+    end
+    object sttRecCnt: TStaticText
+      Left = 208
+      Top = 12
+      Width = 10
+      Height = 17
+      BevelInner = bvNone
+      Caption = '0'
+      TabOrder = 2
+    end
+  end
+  object ActionList1: TActionList
+    OnUpdate = ActionList1Update
+    Left = 72
+    Top = 16
+    object actRpcOpen: TAction
+      Category = 'Rpc'
+      Caption = 'Open'
+      OnExecute = actRpcOpenExecute
+    end
+    object actRpcClose: TAction
+      Category = 'Rpc'
+      Caption = 'Close'
+      OnExecute = actRpcCloseExecute
+    end
+    object actServcontAddChannel: TAction
+      Category = 'Servcont'
+      Caption = 'AddChannel'
+      OnExecute = actServcontAddChannelExecute
+    end
+    object actServcontRemoveChannel: TAction
+      Category = 'Servcont'
+      Caption = 'RemoveChannel'
+      OnExecute = actServcontRemoveChannelExecute
+    end
+    object actServcontActivateChannel: TAction
+      Category = 'Servcont'
+      Caption = 'ActivateChannel'
+      OnExecute = actServcontActivateChannelExecute
+    end
+    object actServcontDeactivateChannel: TAction
+      Category = 'Servcont'
+      Caption = 'DeactivateChannel'
+      OnExecute = actServcontDeactivateChannelExecute
+    end
+    object actServcontAddController: TAction
+      Category = 'Servcont'
+      Caption = 'AddController'
+      OnExecute = actServcontAddControllerExecute
+    end
+    object actServcontRemoveController: TAction
+      Category = 'Servcont'
+      Caption = 'RemoveController'
+      OnExecute = actServcontRemoveControllerExecute
+    end
+    object actControllerRelayOn: TAction
+      Category = 'Controller'
+      Caption = 'RelayOn'
+      OnExecute = actControllerRelayOnExecute
+    end
+    object actControllerRelayOff: TAction
+      Category = 'Controller'
+      Caption = 'RelayOff'
+      OnExecute = actControllerRelayOffExecute
+    end
+    object actControllerPollOn: TAction
+      Category = 'Controller'
+      Caption = 'PollOn'
+      OnExecute = actControllerPollOnExecute
+    end
+    object actControllerPollOff: TAction
+      Category = 'Controller'
+      Caption = 'PollOff'
+      OnExecute = actControllerPollOffExecute
+    end
+    object actControllerTimerOn: TAction
+      Category = 'Controller'
+      Caption = 'TimerOn'
+      OnExecute = actControllerTimerOnExecute
+    end
+    object actServcontFindControllers: TAction
+      Category = 'Servcont'
+      Caption = 'FindControllers'
+      OnExecute = actServcontFindControllersExecute
+    end
+    object actControllerTimerOff: TAction
+      Category = 'Controller'
+      Caption = 'TimerOff'
+      OnExecute = actControllerTimerOffExecute
+    end
+    object actControllerWriteKey: TAction
+      Category = 'Controller'
+      Caption = 'WriteKey'
+      OnExecute = actControllerWriteKeyExecute
+    end
+    object actControllerEraseKey: TAction
+      Category = 'Controller'
+      Caption = 'EraseKey'
+      OnExecute = actControllerEraseKeyExecute
+    end
+    object actControllerKeyExist: TAction
+      Category = 'Controller'
+      Caption = 'KeyExist'
+      OnExecute = actControllerKeyExistExecute
+    end
+    object actControllerEraseAllKeys: TAction
+      Category = 'Controller'
+      Caption = 'EraseAllKeys'
+      OnExecute = actControllerEraseAllKeysExecute
+    end
+    object actControllerProgId: TAction
+      Category = 'Controller'
+      Caption = 'ProgId'
+      OnExecute = actControllerProgIdExecute
+    end
+    object actControllerProgVer: TAction
+      Category = 'Controller'
+      Caption = 'ProgVer'
+      OnExecute = actControllerProgVerExecute
+    end
+    object actControllerSerNum: TAction
+      Category = 'Controller'
+      Caption = 'SerNum'
+      OnExecute = actControllerSerNumExecute
+    end
+    object actControllerReadClock: TAction
+      Category = 'Controller'
+      Caption = 'ReadClock'
+      OnExecute = actControllerReadClockExecute
+    end
+    object actControllerWriteClockDate: TAction
+      Category = 'Controller'
+      Caption = 'WriteClockDate'
+      OnExecute = actControllerWriteClockDateExecute
+    end
+    object actControllerWriteClockTime: TAction
+      Category = 'Controller'
+      Caption = 'WriteClockTime'
+      OnExecute = actControllerWriteClockTimeExecute
+    end
+    object actControllerReadAllKeys: TAction
+      Category = 'Controller'
+      Caption = 'ReadAllKeys'
+      OnExecute = actControllerReadAllKeysExecute
+    end
+    object actControllerTimetableEdit: TAction
+      Category = 'Controller'
+      Caption = 'EditTimetable'
+      OnExecute = actControllerTimetableEditExecute
+    end
+    object actControllerTimetableErase: TAction
+      Category = 'Controller'
+      Caption = 'EraseTimetable'
+      OnExecute = actControllerTimetableEraseExecute
+    end
+    object actControllerRestartProg: TAction
+      Category = 'Controller'
+      Caption = 'RestartProg'
+      OnExecute = actControllerRestartProgExecute
+    end
+    object actControllerEraseAllEvents: TAction
+      Category = 'Controller'
+      Caption = 'EraseAllEvents'
+      OnExecute = actControllerEraseAllEventsExecute
+    end
+    object actControllerEventsInfo: TAction
+      Category = 'Controller'
+      Caption = 'EventsInfo'
+      OnExecute = actControllerEventsInfoExecute
+    end
+    object actControllerKeysInfo: TAction
+      Category = 'Controller'
+      Caption = 'KeysInfo'
+      OnExecute = actControllerKeysInfoExecute
+    end
+    object actControllerPortsInfo: TAction
+      Category = 'Controller'
+      Caption = 'PortsInfo'
+      OnExecute = actControllerPortsInfoExecute
+    end
+    object actControllerGenerateTimerEvents: TAction
+      Category = 'Controller'
+      Caption = 'GenerateTimerEvents'
+      OnExecute = actControllerGenerateTimerEventsExecute
+    end
+    object actControllerEditKeypad: TAction
+      Category = 'Controller'
+      Caption = 'EditKeypad'
+      OnExecute = actControllerEditKeypadExecute
+    end
+    object actServcontChannelList: TAction
+      Category = 'Servcont'
+      Caption = 'ChannelList'
+      OnExecute = actServcontChannelListExecute
+    end
+    object actServcontControllerList: TAction
+      Category = 'Servcont'
+      Caption = 'ControllerList'
+      OnExecute = actServcontControllerListExecute
+    end
+    object actServcontSwitchToAuto: TAction
+      Category = 'Servcont'
+      Caption = 'Switch to Autonomic mode'
+      OnExecute = actServcontSwitchToAutoExecute
+    end
+    object actControllerGenerateKeyBase: TAction
+      Category = 'Controller'
+      Caption = 'GenerateKeyBase'
+      OnExecute = actControllerGenerateKeyBaseExecute
+    end
+    object ControllerGenerateKeyBaseAsync: TAction
+      Category = 'Controller'
+      Caption = 'GenerateKeyBaseAsync'
+      OnExecute = ControllerGenerateKeyBaseAsyncExecute
+    end
+    object actControllerReadAllChips: TAction
+      Category = 'Controller'
+      Caption = 'Read All'
+      OnExecute = actControllerReadAllChipsExecute
+    end
+    object actControllerWriteAllChips: TAction
+      Category = 'Controller'
+      Caption = 'Write All'
+      OnExecute = actControllerWriteAllChipsExecute
+    end
+    object actControllerActivateChip: TAction
+      Category = 'Controller'
+      Caption = 'Activate'
+      OnExecute = actControllerActivateChipExecute
+    end
+    object actControllerDeactivateChip: TAction
+      Category = 'Controller'
+      Caption = 'Deactivate'
+      OnExecute = actControllerDeactivateChipExecute
+    end
+    object actControllerEraseAllChips: TAction
+      Category = 'Controller'
+      Caption = 'Erase All'
+      OnExecute = actControllerEraseAllChipsExecute
+    end
+    object actServcontMainClient: TAction
+      Category = 'Servcont'
+      Caption = 'MainClient'
+      OnExecute = actServcontMainClientExecute
+    end
+    object actServcontCoEvtLogSend: TAction
+      Category = 'Servcont'
+      Caption = 'CoEvtLogSend'
+      OnExecute = actServcontCoEvtLogSendExecute
+    end
+    object actServcontCoEvtLogClear: TAction
+      Category = 'Servcont'
+      Caption = 'CoEvtLogClear'
+      OnExecute = actServcontCoEvtLogClearExecute
+    end
+    object actServcontClientList: TAction
+      Category = 'Servcont'
+      Caption = 'ClientList'
+      OnExecute = actServcontClientListExecute
+    end
+    object actServcontSetHostClock: TAction
+      Category = 'Servcont'
+      Caption = 'SetHostClock'
+      OnExecute = actServcontSetHostClockExecute
+    end
+    object actControllerReadSetup: TAction
+      Category = 'Controller'
+      Caption = 'Read Setup'
+      OnExecute = actControllerReadSetupExecute
+    end
+    object actControllerWriteSetup: TAction
+      Category = 'Controller'
+      Caption = 'Write Setup'
+      OnExecute = actControllerWriteSetupExecute
+    end
+    object actControllerChipInfo: TAction
+      Category = 'Controller'
+      Caption = 'ChipInfo'
+      OnExecute = actControllerChipInfoExecute
+    end
+  end
+  object MainMenu1: TMainMenu
+    Left = 104
+    Top = 16
+    object Application1: TMenuItem
+      Caption = 'Application'
+      object Exit1: TMenuItem
+        Caption = 'Exit'
+        OnClick = Exit1Click
+      end
+    end
+    object RPC1: TMenuItem
+      Caption = 'RPC'
+      object Open1: TMenuItem
+        Action = actRpcOpen
+      end
+      object Close1: TMenuItem
+        Action = actRpcClose
+      end
+    end
+    object Servcont1: TMenuItem
+      Caption = 'Servcont'
+      object Add1: TMenuItem
+        Action = actServcontAddChannel
+      end
+      object Remove1: TMenuItem
+        Action = actServcontRemoveChannel
+      end
+      object Activate1: TMenuItem
+        Action = actServcontActivateChannel
+      end
+      object Deactivate1: TMenuItem
+        Action = actServcontDeactivateChannel
+      end
+      object N12: TMenuItem
+        Caption = '-'
+      end
+      object MainClient1: TMenuItem
+        Action = actServcontMainClient
+      end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object Add2: TMenuItem
+        Action = actServcontAddController
+      end
+      object Remove2: TMenuItem
+        Action = actServcontRemoveController
+      end
+      object N2: TMenuItem
+        Caption = '-'
+      end
+      object SwitchtoAutonomicmode1: TMenuItem
+        Action = actServcontSwitchToAuto
+      end
+      object N9: TMenuItem
+        Caption = '-'
+      end
+      object ChannelList1: TMenuItem
+        Action = actServcontChannelList
+      end
+      object ControllerList1: TMenuItem
+        Action = actServcontControllerList
+      end
+      object ClientList1: TMenuItem
+        Action = actServcontClientList
+      end
+      object N13: TMenuItem
+        Caption = '-'
+      end
+      object CoEvtLogSend1: TMenuItem
+        Action = actServcontCoEvtLogSend
+      end
+      object CoEvtLogClear1: TMenuItem
+        Action = actServcontCoEvtLogClear
+      end
+      object N14: TMenuItem
+        Caption = '-'
+      end
+      object SetHostClock1: TMenuItem
+        Action = actServcontSetHostClock
+      end
+    end
+    object Controller1: TMenuItem
+      Caption = 'Controller'
+      object On1: TMenuItem
+        Action = actControllerRelayOn
+      end
+      object Off1: TMenuItem
+        Action = actControllerRelayOff
+      end
+      object N3: TMenuItem
+        Caption = '-'
+      end
+      object Poll1: TMenuItem
+        Action = actControllerPollOn
+      end
+      object Stoppolling1: TMenuItem
+        Action = actControllerPollOff
+      end
+      object N4: TMenuItem
+        Caption = '-'
+      end
+      object On2: TMenuItem
+        Action = actControllerTimerOn
+      end
+      object Off2: TMenuItem
+        Action = actControllerTimerOff
+      end
+      object GenerateTimerEvents2: TMenuItem
+        Action = actControllerGenerateTimerEvents
+      end
+      object N5: TMenuItem
+        Caption = '-'
+      end
+      object Write1: TMenuItem
+        Action = actControllerWriteKey
+      end
+      object KeyErase1: TMenuItem
+        Action = actControllerEraseKey
+      end
+      object KeyExist1: TMenuItem
+        Action = actControllerKeyExist
+      end
+      object GenerateKeyBase1: TMenuItem
+        Action = actControllerGenerateKeyBase
+      end
+      object ControllerGenerateKeyBaseAsync1: TMenuItem
+        Action = ControllerGenerateKeyBaseAsync
+      end
+      object ReadAll1: TMenuItem
+        Action = actControllerReadAllKeys
+      end
+      object KeyEraseAll1: TMenuItem
+        Action = actControllerEraseAllKeys
+      end
+      object KeysInfo2: TMenuItem
+        Action = actControllerKeysInfo
+      end
+      object N6: TMenuItem
+        Caption = '-'
+      end
+      object Chips1: TMenuItem
+        Caption = 'Chips'
+        OnClick = Chips1Click
+      end
+      object actControllerChipInfo1: TMenuItem
+        Action = actControllerChipInfo
+      end
+      object N11: TMenuItem
+        Caption = '-'
+      end
+      object Edit1: TMenuItem
+        Action = actControllerTimetableEdit
+      end
+      object imetableErase1: TMenuItem
+        Action = actControllerTimetableErase
+      end
+      object N7: TMenuItem
+        Caption = '-'
+      end
+      object ReadClock2: TMenuItem
+        Action = actControllerReadClock
+      end
+      object WriteClockDate2: TMenuItem
+        Action = actControllerWriteClockDate
+      end
+      object WriteClockTime2: TMenuItem
+        Action = actControllerWriteClockTime
+      end
+      object N8: TMenuItem
+        Caption = '-'
+      end
+      object EraseAllEvents2: TMenuItem
+        Action = actControllerEraseAllEvents
+      end
+      object EventsInfo2: TMenuItem
+        Action = actControllerEventsInfo
+      end
+      object N10: TMenuItem
+        Caption = '-'
+      end
+      object ProgId2: TMenuItem
+        Action = actControllerProgId
+      end
+      object ProgVer2: TMenuItem
+        Action = actControllerProgVer
+      end
+      object SerNum2: TMenuItem
+        Action = actControllerSerNum
+      end
+      object RestartProg2: TMenuItem
+        Action = actControllerRestartProg
+      end
+      object PortsInfo2: TMenuItem
+        Action = actControllerPortsInfo
+      end
+      object EditKeypad2: TMenuItem
+        Action = actControllerEditKeypad
+      end
+      object N15: TMenuItem
+        Caption = '-'
+      end
+      object ReadSetup1: TMenuItem
+        Action = actControllerReadSetup
+      end
+      object WriteSetup1: TMenuItem
+        Action = actControllerWriteSetup
+      end
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 86
+    Top = 52
+  end
+end

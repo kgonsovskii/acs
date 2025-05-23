@@ -1,0 +1,166 @@
+object persdata: Tpersdata
+  OnCreate = DataModuleCreate
+  OldCreateOrder = False
+  Height = 300
+  HorizontalOffset = 192
+  VerticalOffset = 118
+  Width = 340
+  object mdk: TMemDataset
+    Active = True
+    FieldDefs = <    
+      item
+        Name = 'myid'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'bppers'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'kluch'
+        DataType = ftString
+        Size = 16
+      end    
+      item
+        Name = 'code'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'keypad'
+        DataType = ftString
+        Size = 6
+      end    
+      item
+        Name = 'actual'
+        DataType = ftBoolean
+      end    
+      item
+        Name = 'zapret'
+        DataType = ftBoolean
+      end    
+      item
+        Name = 'start'
+        DataType = ftString
+        Size = 25
+      end    
+      item
+        Name = 'stop'
+        DataType = ftString
+        Size = 25
+      end    
+      item
+        Name = 'cause'
+        DataType = ftString
+      end    
+      item
+        Name = 'labelcode'
+        DataType = ftString
+        Size = 12
+      end    
+      item
+        Name = 'tmzname'
+        DataType = ftString
+        Size = 50
+      end>
+    BeforeDelete = mdkBeforeDelete
+    Left = 47
+    Top = 44
+  end
+  object dsk: TDataSource
+    DataSet = mdk
+    OnDataChange = dskDataChange
+    Left = 99
+    Top = 54
+  end
+  object cd1: TCalendarDialog
+    Title = 'Дата  START'
+    Date = 45158
+    OnChange = cd1Change
+    OKCaption = '&ОК'
+    CancelCaption = 'Отмена'
+    Left = 192
+    Top = 56
+  end
+  object cd2: TCalendarDialog
+    Title = 'датф STOP'
+    Date = 45138
+    OnChange = cd2Change
+    OKCaption = '&ОК'
+    CancelCaption = 'Отмена'
+    Left = 224
+    Top = 152
+  end
+  object mdtmz: TMemDataset
+    Active = True
+    FieldDefs = <    
+      item
+        Name = 'myid'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'name'
+        DataType = ftString
+        Size = 40
+      end    
+      item
+        Name = 't1'
+        DataType = ftString
+        Size = 10
+      end    
+      item
+        Name = 't2'
+        DataType = ftString
+        Size = 10
+      end    
+      item
+        Name = 'bidname'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'zapret'
+        DataType = ftBoolean
+      end>
+    Left = 8
+    Top = 168
+  end
+  object dstmz: TDataSource
+    DataSet = mdtmz
+    Left = 48
+    Top = 168
+  end
+  object dsnametmz: TDataSource
+    AutoEdit = False
+    DataSet = mdnamrtmz
+    OnDataChange = dsnametmzDataChange
+    Left = 8
+    Top = 112
+  end
+  object mdnamrtmz: TMemDataset
+    Active = True
+    FieldDefs = <    
+      item
+        Name = 'myid'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'name'
+        DataType = ftString
+        Size = 40
+      end    
+      item
+        Name = 'dayow'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'day'
+        DataType = ftString
+        Size = 25
+      end    
+      item
+        Name = 'zapret'
+        DataType = ftBoolean
+      end>
+    Left = 56
+    Top = 112
+  end
+end

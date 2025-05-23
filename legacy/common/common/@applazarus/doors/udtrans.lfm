@@ -1,0 +1,70 @@
+object dmmqt: Tdmmqt
+  OnCreate = DataModuleCreate
+  OldCreateOrder = False
+  Height = 244
+  HorizontalOffset = 1365
+  VerticalOffset = 813
+  Width = 510
+  PPI = 115
+  object pls: Tplaysound
+    About.Description.Strings = (
+      'Plays WAVE sounds in Windows or Linux'
+    )
+    About.Title = 'About About About About About About About About About About About About About About About About About About About About About About PlaySound'
+    About.Height = 400
+    About.Width = 400
+    About.Font.Color = clNavy
+    About.Font.Height = -13
+    About.BackGroundColor = clCream
+    About.Version = '0.0.7'
+    About.Authorname = 'Gordon Bamber'
+    About.Organisation = 'Public Domain'
+    About.AuthorEmail = 'minesadorada@charcodelvalle.com'
+    About.ComponentName = 'PlaySound'
+    About.LicenseType = abModifiedGPL
+    PlayCommand = 'aplay -q'
+    Left = 155
+    Top = 50
+  end
+  object pe8: TProcessUTF8
+    Active = False
+    ApplicationName = 'htop'
+    CommandLine = 'htop'
+    Executable = 'htop'
+    ConsoleTitle = 'htop'
+    Options = []
+    Priority = ppNormal
+    StartupOptions = []
+    ShowWindow = swoNone
+    WindowColumns = 0
+    WindowHeight = 0
+    WindowLeft = 0
+    WindowRows = 0
+    WindowTop = 0
+    WindowWidth = 0
+    FillAttribute = 0
+    Left = 272
+    Top = 62
+  end
+  object pe: TProcess
+    Active = False
+    ApplicationName = 'htop'
+    CommandLine = 'htop'
+    Executable = 'htop'
+    ConsoleTitle = 'HTOP'
+    CurrentDirectory = '/home/astra/common'
+    Options = []
+    Priority = ppNormal
+    StartupOptions = [suoUseShowWindow]
+    ShowWindow = swoNone
+    WindowColumns = 0
+    WindowHeight = 0
+    WindowLeft = 0
+    WindowRows = 0
+    WindowTop = 0
+    WindowWidth = 0
+    FillAttribute = 0
+    Left = 75
+    Top = 105
+  end
+end

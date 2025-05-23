@@ -1,0 +1,182 @@
+object formpersids: Tformpersids
+  Left = 350
+  Height = 182
+  Top = 267
+  Width = 1042
+  Caption = 'formpersids'
+  ClientHeight = 182
+  ClientWidth = 1042
+  LCLVersion = '2.2.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 1042
+    Align = alTop
+    Caption = 'таблица ключей '
+    ClientHeight = 50
+    ClientWidth = 1042
+    Color = clSilver
+    Font.Height = -16
+    Font.Name = 'Serif'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+    TabOrder = 0
+    object DBNavigator1: TDBNavigator
+      Left = 152
+      Height = 33
+      Top = 8
+      Width = 241
+      BevelOuter = bvNone
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.EnlargeVertical = crsScaleChilds
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 100
+      ClientHeight = 33
+      ClientWidth = 241
+      Options = []
+      TabOrder = 0
+    end
+  end
+  object DBGrid1: TDBGrid
+    Left = 0
+    Height = 112
+    Top = 50
+    Width = 1042
+    Align = alClient
+    Color = clSilver
+    Columns = <    
+      item
+        ReadOnly = True
+        Title.Alignment = taCenter
+        Title.Caption = 'myid'
+        Width = 80
+        FieldName = 'myid'
+      end    
+      item
+        ReadOnly = True
+        Title.Alignment = taCenter
+        Title.Caption = 'bppers'
+        Width = 120
+        FieldName = 'bppers'
+      end    
+      item
+        Title.Alignment = taCenter
+        Title.Caption = 'kluch'
+        Width = 170
+        FieldName = 'kluch'
+      end    
+      item
+        Title.Alignment = taCenter
+        Title.Caption = 'code'
+        Width = 100
+        FieldName = 'code'
+      end    
+      item
+        Title.Alignment = taCenter
+        Title.Caption = 'keypad'
+        FieldName = 'keypad'
+      end    
+      item
+        Title.Alignment = taCenter
+        Title.Caption = 'start'
+        Width = 160
+        FieldName = 'start'
+      end    
+      item
+        Font.Height = -16
+        Font.Name = 'Serif'
+        Font.Style = [fsBold]
+        Title.Alignment = taCenter
+        Title.Caption = 'stop'
+        Width = 160
+        FieldName = 'stop'
+      end    
+      item
+        Color = clWindow
+        Title.Alignment = taCenter
+        Title.Caption = 'zapret'
+        Width = 40
+        FieldName = 'zapret'
+      end>
+    DataSource = ds
+    Font.Height = -16
+    Font.Name = 'Serif'
+    ParentFont = False
+    TabOrder = 1
+  end
+  object StatusBar3: TStatusBar
+    Left = 0
+    Height = 20
+    Top = 162
+    Width = 1042
+    Color = clSilver
+    Font.Name = 'Sb2'
+    Panels = <    
+      item
+        Text = '11111'
+        Width = 50
+      end    
+      item
+        Text = '2222'
+        Width = 50
+      end    
+      item
+        Text = '33333'
+        Width = 50
+      end>
+    ParentColor = False
+    ParentFont = False
+    SimplePanel = False
+  end
+  object ds: TDataSource
+    DataSet = mdk
+    Left = 16
+    Top = 8
+  end
+  object mdk: TMemDataset
+    Active = True
+    FieldDefs = <    
+      item
+        Name = 'myid'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'bppers'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'kluch'
+        DataType = ftString
+        Size = 16
+      end    
+      item
+        Name = 'code'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'keypad'
+        DataType = ftString
+        Size = 6
+      end    
+      item
+        Name = 'start'
+        DataType = ftString
+        Size = 20
+      end    
+      item
+        Name = 'stop'
+        DataType = ftString
+        Size = 20
+      end    
+      item
+        Name = 'zapret'
+        DataType = ftBoolean
+      end>
+    Left = 88
+    Top = 8
+  end
+end

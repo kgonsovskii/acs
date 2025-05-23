@@ -1,0 +1,132 @@
+object formwwcomp: Tformwwcomp
+  Left = 282
+  Height = 140
+  Top = 293
+  Width = 1186
+  Caption = 'formwwcomp'
+  ClientHeight = 140
+  ClientWidth = 1186
+  Color = clSilver
+  OnCreate = FormCreate
+  LCLVersion = '2.2.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 96
+    Top = 0
+    Width = 1186
+    Align = alTop
+    Caption = 'Panel1'
+    ClientHeight = 96
+    ClientWidth = 1186
+    TabOrder = 0
+    object dbg: TDBGrid
+      Left = 1
+      Height = 94
+      Top = 1
+      Width = 1184
+      Align = alClient
+      AlternateColor = clYellow
+      Color = clGray
+      Columns = <      
+        item
+          Title.Caption = 'актуально'
+          FieldName = 'actual'
+        end      
+        item
+          Title.Caption = 'имя компа'
+          FieldName = 'name'
+        end      
+        item
+          Title.Caption = 'адрес'
+          FieldName = 'url'
+        end      
+        item
+          Title.Caption = 'состояние'
+          FieldName = 'state'
+        end      
+        item
+          PickList.Strings = (
+            'pc'
+            'rbc'
+          )
+          Title.Caption = 'тип компа'
+          FieldName = 'pctyp'
+        end      
+        item
+          Title.Caption = 'местоположение'
+          FieldName = 'legenda'
+        end>
+      DataSource = ds
+      FixedColor = clSilver
+      FixedHotColor = clLime
+      Font.Height = -19
+      Font.Name = 'Sans'
+      ParentFont = False
+      TabOrder = 0
+    end
+  end
+  object bb_comp_cancel: TBitBtn
+    Left = 8
+    Height = 30
+    Top = 104
+    Width = 272
+    DefaultCaption = True
+    Kind = bkClose
+    ModalResult = 11
+    OnClick = bb_comp_cancelClick
+    TabOrder = 1
+  end
+  object bb_comp_ok: TBitBtn
+    Left = 808
+    Height = 30
+    Top = 104
+    Width = 368
+    DefaultCaption = True
+    Kind = bkOK
+    ModalResult = 1
+    OnClick = bb_comp_okClick
+    TabOrder = 2
+  end
+  object md: TMemDataset
+    Active = True
+    FieldDefs = <    
+      item
+        Name = 'actual'
+        DataType = ftBoolean
+      end    
+      item
+        Name = 'name'
+        DataType = ftString
+        Size = 20
+      end    
+      item
+        Name = 'url'
+        DataType = ftString
+        Size = 20
+      end    
+      item
+        Name = 'state'
+        DataType = ftString
+        Size = 1
+      end    
+      item
+        Name = 'pctyp'
+        DataType = ftString
+        Size = 5
+      end    
+      item
+        Name = 'legenda'
+        DataType = ftString
+        Size = 100
+      end>
+    BeforeInsert = mdBeforeInsert
+    AfterInsert = mdAfterInsert
+    Left = 95
+    Top = 32
+  end
+  object ds: TDataSource
+    DataSet = md
+    Left = 149
+    Top = 36
+  end
+end

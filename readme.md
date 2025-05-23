@@ -1,1 +1,1 @@
-SevenSeals2:NG
+SevenSeals.Tss

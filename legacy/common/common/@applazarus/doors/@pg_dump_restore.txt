@@ -1,0 +1,5 @@
+#
+pg_dump --dbname=postgresql://postgres:Tss2252531@127.0.0.1:5432/postgres -Fc > /home/astra/work/postgres/vvg/test2.dump
+
+#
+pg_restore --dbname=postgresql://postgres:Tss2252531@127.0.0.1:5432/postgres -c -Fc /home/astra/work/postgres/vvg/test2.dump

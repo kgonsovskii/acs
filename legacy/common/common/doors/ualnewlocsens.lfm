@@ -1,0 +1,201 @@
+object formalnewlocsens: Tformalnewlocsens
+  Left = 726
+  Height = 344
+  Top = 245
+  Width = 516
+  BorderStyle = bsDialog
+  Caption = 'formalnewlocsens'
+  ClientHeight = 344
+  ClientWidth = 516
+  Color = clMedGray
+  OnCreate = FormCreate
+  LCLVersion = '2.2.2.0'
+  object cbioflag: TCheckBox
+    Left = 8
+    Height = 21
+    Top = 168
+    Width = 164
+    Caption = '    ВХОД-ВЫХОД'
+    Font.Height = -19
+    Font.Name = 'Terminus'
+    Font.Style = [fsBold]
+    OnChange = cbioflagChange
+    ParentFont = False
+    TabOrder = 0
+  end
+  object cmbsens: TComboBox
+    Left = 8
+    Height = 30
+    Top = 92
+    Width = 144
+    Color = clSilver
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = 'Terminus'
+    Font.Style = [fsBold]
+    ItemHeight = 0
+    Items.Strings = (
+      'key'
+      'open'
+      'close'
+      'rte'
+    )
+    OnChange = cmbsensChange
+    OnClick = cmbsensClick
+    ParentFont = False
+    TabOrder = 1
+  end
+  object btnok: TButton
+    Left = 8
+    Height = 25
+    Top = 200
+    Width = 75
+    Caption = 'btnok'
+    OnClick = btnokClick
+    TabOrder = 2
+  end
+  object Label1: TLabel
+    Left = 160
+    Height = 18
+    Top = 104
+    Width = 180
+    Caption = 'выбор типа сенсора'
+    Font.Height = -19
+    Font.Name = 'Terminus'
+    Font.Style = [fsBold]
+    ParentColor = False
+    ParentFont = False
+  end
+  object lesens: TLabeledEdit
+    Left = 8
+    Height = 30
+    Top = 136
+    Width = 152
+    Color = clSilver
+    EditLabel.Height = 22
+    EditLabel.Width = 69
+    EditLabel.Caption = '    Sensor'
+    EditLabel.ParentColor = False
+    EditLabel.ParentFont = False
+    EditLabel.Font.Height = -16
+    EditLabel.Font.Name = 'Sans'
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = 'Terminus'
+    Font.Style = [fsBold]
+    LabelPosition = lpRight
+    ParentFont = False
+    ReadOnly = True
+    TabOrder = 3
+    Text = '  '
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 88
+    Top = 0
+    Width = 516
+    Align = alTop
+    BevelInner = bvRaised
+    BevelWidth = 3
+    Caption = ' '
+    ClientHeight = 88
+    ClientWidth = 516
+    TabOrder = 4
+    OnClick = Panel2Click
+    object leloc: TLabeledEdit
+      Left = 8
+      Height = 22
+      Top = 32
+      Width = 280
+      BorderStyle = bsNone
+      Color = clSilver
+      EditLabel.Height = 26
+      EditLabel.Width = 280
+      EditLabel.Caption = 'локация'
+      EditLabel.ParentColor = False
+      EditLabel.ParentFont = False
+      EditLabel.Font.Height = -19
+      EditLabel.Font.Name = 'Sans'
+      Font.Color = clBlack
+      Font.Height = -19
+      Font.Name = 'Terminus'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 0
+      Text = 'leloc'
+    end
+    object lefckp: TLabeledEdit
+      Left = 296
+      Height = 22
+      Top = 32
+      Width = 168
+      BorderStyle = bsNone
+      Color = clSilver
+      EditLabel.Height = 22
+      EditLabel.Width = 168
+      EditLabel.Caption = 'ГДЕ'
+      EditLabel.ParentColor = False
+      EditLabel.ParentFont = False
+      EditLabel.Font.Height = -16
+      EditLabel.Font.Name = 'Sans'
+      Font.Color = clBlack
+      Font.Height = -19
+      Font.Name = 'Terminus'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 1
+      Text = '  '
+    end
+    object lenx: TLabeledEdit
+      Left = 472
+      Height = 22
+      Top = 32
+      Width = 40
+      BorderStyle = bsNone
+      Color = clSilver
+      EditLabel.Height = 22
+      EditLabel.Width = 40
+      EditLabel.Caption = 'Nx'
+      EditLabel.ParentColor = False
+      EditLabel.ParentFont = False
+      EditLabel.Font.Height = -16
+      EditLabel.Font.Name = 'Sans'
+      Font.Color = clBlack
+      Font.Height = -19
+      Font.Name = 'Terminus'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 2
+      Text = '  '
+    end
+    object Panel1: TPanel
+      Left = 24
+      Height = 46
+      Top = 320
+      Width = 50
+      Caption = 'Panel1'
+      ClientHeight = 46
+      ClientWidth = 50
+      TabOrder = 3
+      Visible = False
+      OnClick = Panel1Click
+      object cbfckp: TCheckBox
+        Left = 32
+        Height = 21
+        Top = 40
+        Width = 154
+        Caption = '    Проходная'
+        Font.Color = clBlack
+        Font.Height = -19
+        Font.Name = 'Terminus'
+        Font.Style = [fsBold]
+        OnChange = cbfckpChange
+        ParentFont = False
+        TabOrder = 0
+      end
+    end
+  end
+end

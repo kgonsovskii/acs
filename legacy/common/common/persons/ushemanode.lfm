@@ -1,0 +1,96 @@
+object formshemanode: Tformshemanode
+  Left = 0
+  Height = 212
+  Top = 205
+  Width = 566
+  Caption = 'formshemanode'
+  ClientHeight = 212
+  ClientWidth = 566
+  Color = clSilver
+  OnCreate = FormCreate
+  OnShow = FormShow
+  LCLVersion = '2.2.2.0'
+  Scaled = False
+  object Cb1: TCheckBox
+    Left = 16
+    Height = 21
+    Top = 112
+    Width = 152
+    Caption = 'наличие checkbox'
+    Font.Height = -16
+    Font.Name = 'Serif'
+    Font.Style = [fsBold]
+    OnChange = Cb1Change
+    ParentFont = False
+    TabOrder = 1
+  end
+  object Button1: TButton
+    Left = 456
+    Height = 41
+    Top = 144
+    Width = 88
+    Caption = 'Да'
+    OnClick = Button1Click
+    TabOrder = 2
+  end
+  object Cbinsert: TCheckBox
+    Left = 16
+    Height = 21
+    Top = 144
+    Width = 208
+    Caption = 'вставить в этот уровень  '
+    Font.Height = -16
+    Font.Name = 'Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 3
+  end
+  object cbdatatree: TCheckBox
+    Left = 16
+    Height = 21
+    Top = 168
+    Width = 243
+    Caption = 'узел подразделения с людьми  '
+    Font.Height = -16
+    Font.Name = 'Serif'
+    Font.Style = [fsBold]
+    OnChange = cbdatatreeChange
+    ParentFont = False
+    TabOrder = 4
+  end
+  object lename: TLabeledEdit
+    Left = 8
+    Height = 36
+    Top = 24
+    Width = 536
+    Color = clSkyBlue
+    EditLabel.Height = 17
+    EditLabel.Width = 536
+    EditLabel.Caption = 'Название узла в схеме'
+    EditLabel.ParentColor = False
+    EditLabel.ParentFont = False
+    EditLabel.Font.Color = clBlack
+    EditLabel.Font.Height = -16
+    EditLabel.Font.Name = 'Serif'
+    EditLabel.Font.Style = [fsBold]
+    Font.Color = clBlack
+    Font.Height = -21
+    Font.Name = 'Serif'
+    ParentFont = False
+    TabOrder = 0
+    TabStop = False
+  end
+  object cbmain: TCheckBox
+    Left = 16
+    Height = 21
+    Top = 80
+    Width = 250
+    Caption = 'главный узел (владелец СКУД)'
+    Font.Height = -16
+    Font.Name = 'Serif'
+    Font.Style = [fsBold]
+    OnChange = Cb1Change
+    ParentFont = False
+    TabOrder = 5
+  end
+end

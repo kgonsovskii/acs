@@ -1,0 +1,179 @@
+object formwwch: Tformwwch
+  Left = 61
+  Height = 140
+  Top = 163
+  Width = 277
+  BorderStyle = bsSingle
+  Caption = 'formwwch'
+  ClientHeight = 140
+  ClientWidth = 277
+  OnCreate = FormCreate
+  LCLVersion = '2.2.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 96
+    Top = 0
+    Width = 277
+    Align = alTop
+    Caption = 'Panel1'
+    ClientHeight = 96
+    ClientWidth = 277
+    TabOrder = 0
+    object dbg: TDBGrid
+      Left = 1
+      Height = 94
+      Top = 1
+      Width = 275
+      Align = alClient
+      AlternateColor = clYellow
+      Color = clGray
+      Columns = <      
+        item
+          Title.Caption = 'актуально'
+          FieldName = 'actual'
+        end      
+        item
+          Title.Caption = 'подсистема'
+          Width = 150
+          FieldName = 'app'
+        end      
+        item
+          Title.Caption = 'адрес канала'
+          Width = 200
+          FieldName = 'ch'
+        end      
+        item
+          PickList.Strings = (
+            '209'
+            '210'
+          )
+          Title.Caption = 'тип канала'
+          Width = 150
+          FieldName = 'chtype'
+        end      
+        item
+          Title.Caption = 'интервал опроса'
+          Width = 0
+          Visible = False
+          FieldName = 'lobs'
+        end>
+      DataSource = ds
+      FixedColor = clSilver
+      FixedHotColor = clLime
+      Font.Height = -19
+      Font.Name = 'Sans'
+      ParentFont = False
+      TabOrder = 0
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 144
+    Top = -4
+    Width = 277
+    Align = alBottom
+    Caption = 'Panel2'
+    ClientHeight = 144
+    ClientWidth = 277
+    Color = clBlack
+    ParentColor = False
+    TabOrder = 1
+    object lsm: TListBox
+      Left = 1
+      Height = 142
+      Top = 1
+      Width = 275
+      Align = alClient
+      Color = clBlack
+      Font.Height = -19
+      Font.Name = 'Sans'
+      ItemHeight = 0
+      ParentFont = False
+      PopupMenu = poplsm
+      TabOrder = 0
+      TopIndex = -1
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Height = 1
+    Top = 96
+    Width = 277
+    Align = alClient
+    Caption = ' '
+    ClientHeight = 1
+    ClientWidth = 277
+    Color = clGray
+    ParentColor = False
+    TabOrder = 2
+    object bb_comp_cancel: TBitBtn
+      Left = 32
+      Height = 30
+      Top = 8
+      Width = 120
+      DefaultCaption = True
+      Kind = bkClose
+      ModalResult = 11
+      OnClick = bb_comp_cancelClick
+      TabOrder = 0
+    end
+    object bb_comp_ok: TBitBtn
+      Left = 400
+      Height = 30
+      Top = 8
+      Width = 128
+      DefaultCaption = True
+      Kind = bkOK
+      ModalResult = 1
+      OnClick = bb_comp_okClick
+      TabOrder = 1
+    end
+  end
+  object md: TMemDataset
+    Active = True
+    FieldDefs = <    
+      item
+        Name = 'actual'
+        DataType = ftBoolean
+      end    
+      item
+        Name = 'app'
+        DataType = ftString
+        Size = 20
+      end    
+      item
+        Name = 'ch'
+        DataType = ftString
+        Size = 20
+      end    
+      item
+        Name = 'drv'
+        DataType = ftString
+        Size = 20
+      end    
+      item
+        Name = 'chtype'
+        DataType = ftString
+        Size = 5
+      end    
+      item
+        Name = 'lobs'
+        DataType = ftInteger
+      end>
+    Left = 123
+    Top = 60
+  end
+  object ds: TDataSource
+    DataSet = md
+    Left = 177
+    Top = 64
+  end
+  object poplsm: TPopupMenu
+    Left = 439
+    Top = 212
+    object MenuItem1: TMenuItem
+      Caption = 'clear'
+      OnClick = MenuItem1Click
+    end
+  end
+end

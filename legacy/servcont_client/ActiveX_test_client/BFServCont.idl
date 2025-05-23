@@ -1,0 +1,665 @@
+[
+  uuid(EC1EEF3B-2A90-47A8-936A-ED69BEA01769),
+  version(1.0),
+  helpstring("BFServCont Library"),
+  control
+
+]
+library BFServCont
+{
+
+  importlib("stdole2.tlb");
+
+  typedef [uuid(2A4BA2D3-A6EE-4E83-B0F7-CEDC195A150A)]
+  enum TTSSServCont_ControllerState{
+      csNone = 0,
+      csStateless = 1,
+      csAutonomicPolling = 2,
+      csComplex = 3
+  } TTSSServCont_ControllerState;
+
+
+  //Read Write
+  [ uuid(C71A1305-72F1-4DD8-A53E-CFBDBA3A1818), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerKeyValue: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall B([in] long Index, [out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall B([in] long Index, [in] byte Value );
+
+    [propget]
+    HRESULT _stdcall Count([out, retval] long * Value );
+  };
+
+  //Read Write
+  [ uuid(FC10B468-94DA-4427-8D8E-547E13FEE55A), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerPorts : IDispatch
+  {
+    [propget]
+    HRESULT _stdcall P([in] long Index, [out, retval] VARIANT_BOOL * Value );
+    [propput]
+    HRESULT _stdcall P([in] long Index, [in] VARIANT_BOOL Value );
+
+    [propget]
+    HRESULT _stdcall Count([out, retval] long * Value );
+  };
+
+  //Read Write
+  [ uuid(109BC80F-15F4-41E2-B816-7212F16FE8D0), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerKey: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Value([out, retval] ITSSServCont_ControllerKeyValue** Value );
+    [propput]
+    HRESULT _stdcall Value([in] ITSSServCont_ControllerKeyValue* Value );
+    [propget]
+    HRESULT _stdcall Ports([out, retval] ITSSServCont_ControllerPorts** Value );
+    [propput]
+    HRESULT _stdcall Ports([in] ITSSServCont_ControllerPorts* Value );
+    [propget]
+    HRESULT _stdcall PersCat([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall PersCat([in] byte Value );
+
+
+    [propget]
+    HRESULT _stdcall SuppressDoorEvent([out, retval] VARIANT_BOOL * Value );
+    [propput]
+    HRESULT _stdcall SuppressDoorEvent([in] VARIANT_BOOL Value );
+    [propget]
+    HRESULT _stdcall OpenEvenComplex([out, retval] VARIANT_BOOL * Value );
+    [propput]
+    HRESULT _stdcall OpenEvenComplex([in] VARIANT_BOOL Value );
+    [propget]
+    HRESULT _stdcall IsSilent([out, retval] VARIANT_BOOL * Value );
+    [propput]
+    HRESULT _stdcall IsSilent([in] VARIANT_BOOL Value );
+  };
+
+  //Read Write
+  [ uuid(B9D99E34-35F6-475E-8BB1-23D2724D52DF), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerChip: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Value([out, retval] ITSSServCont_ControllerKeyValue ** Value );
+    [propput]
+    HRESULT _stdcall Value([in] ITSSServCont_ControllerKeyValue * Value );
+
+    [propget]
+    HRESULT _stdcall Active([out, retval] VARIANT_BOOL * Value );
+    [propput]
+    HRESULT _stdcall Active([in] VARIANT_BOOL Value );
+    [propget]
+    HRESULT _stdcall OpenEvenComplex([out, retval] VARIANT_BOOL * Value );
+    [propput]
+    HRESULT _stdcall OpenEvenComplex([in] VARIANT_BOOL Value );
+
+
+    [propget]
+    HRESULT _stdcall CheckCount([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall CheckCount([in] byte Value );
+    [propget]
+    HRESULT _stdcall Port([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall Port([in] byte Value );
+  };
+
+  //Read Only
+  [ uuid(BF34024A-F9F5-45E0-973F-94AA101CCF64), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerKeyAttr: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Ports([out, retval] ITSSServCont_ControllerPorts ** Value );
+    [propget]
+    HRESULT _stdcall PersCat([out, retval] byte * Value );
+    [propget]
+    HRESULT _stdcall SuppressDoorEvent([out, retval] VARIANT_BOOL * Value );
+    [propget]
+    HRESULT _stdcall OpenEvenComplex([out, retval] VARIANT_BOOL * Value );
+    [propget]
+    HRESULT _stdcall IsSilent([out, retval] VARIANT_BOOL * Value );
+  };
+
+  //Read Write
+  [ uuid(5A4099DA-3E9D-42AE-A605-C6A73346AFDB), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerTimetableSpecialDay: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Year([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall Year([in] byte Value );
+    [propget]
+    HRESULT _stdcall Month([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall Month([in] byte Value );
+    [propget]
+    HRESULT _stdcall Day([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall Day([in] byte Value );
+    [propget]
+    HRESULT _stdcall DayType([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall DayType([in] byte Value );
+  };
+
+  //Read Write
+  [ uuid(E32C040A-8100-4394-8CFE-C94331EB35EB), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerTimetableItem: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall DayType([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall DayType([in] byte Value );
+    [propget]
+    HRESULT _stdcall StartHour([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall StartHour([in] byte Value );
+    [propget]
+    HRESULT _stdcall StartMinute([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall StartMinute([in] byte Value );
+    [propget]
+    HRESULT _stdcall FihishHour([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall FihishHour([in] byte Value );
+    [propget]
+    HRESULT _stdcall FihishMinute([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall FihishMinute([in] byte Value );
+    [propget]
+    HRESULT _stdcall PersCat([out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall PersCat([in] byte Value );
+  };
+
+  //Read Write
+  [ uuid(DD1A08AA-20F7-4D36-BCD5-E8A3F6839041), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_KeypadItems: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall KeyCount([in] long Index, [out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall KeyCount([in] long Index, [in] byte Value );
+    [propget]
+    HRESULT _stdcall Timeout([in] long Index, [out, retval] byte * Value );
+    [propput]
+    HRESULT _stdcall Timeout([in] long Index, [in] byte Value );
+
+    [propget]
+    HRESULT _stdcall Count([out, retval] long * Value );
+  };
+
+  //ReadOnly
+  [ uuid(C53058D6-5F20-4C4E-8A78-1DA53F39999F), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ServcontDateTime: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Year([out, retval] byte * Value );
+    [propget]
+    HRESULT _stdcall Month([out, retval] byte * Value );
+    [propget]
+    HRESULT _stdcall Day([out, retval] byte * Value );
+    [propget]
+    HRESULT _stdcall Hour([out, retval] byte * Value );
+    [propget]
+    HRESULT _stdcall Minute([out, retval] byte * Value );
+    [propget]
+    HRESULT _stdcall Second([out, retval] byte * Value );
+
+
+    [propput]
+    HRESULT _stdcall Year([in] byte Value );
+    [propput]
+    HRESULT _stdcall Month([in] byte Value );
+    [propput]
+    HRESULT _stdcall Day([in] byte Value );
+    [propput]
+    HRESULT _stdcall Hour([in] byte Value );
+    [propput]
+    HRESULT _stdcall Minute([in] byte Value );
+    [propput]
+    HRESULT _stdcall Second([in] byte Value );
+
+  };
+
+  //ReadOnly
+  [ uuid(4521B977-B1AD-428D-8839-FB282BF7CEA7), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerEvent: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Timestamp2([out, retval] ITSSServCont_ServcontDateTime ** Value );
+    [propget]
+    HRESULT _stdcall Addr([out, retval] byte * Value );
+    [propget]
+    HRESULT _stdcall No([out, retval] long * Value );
+    [propget]
+    HRESULT _stdcall IsAuto([out, retval] VARIANT_BOOL * Value );
+    [propget]
+    HRESULT _stdcall Timestamp1([out, retval] ITSSServCont_ServcontDateTime ** Value );
+    [propget]
+    HRESULT _stdcall IsLast([out, retval] VARIANT_BOOL * Value );
+  };
+
+  //ReadOnly
+  [ uuid(28DE6AAA-D0A0-4BAB-A50A-F86A79F628F1), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerPortEvent: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall ControllerEvent([out, retval] ITSSServCont_ControllerEvent ** Value );
+    [propget]
+    HRESULT _stdcall Port([out, retval] byte * Value );
+  };
+
+  //ReadOnly
+  [ uuid(C9F72189-57D6-4269-AB72-E44D187DEA2B), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerPortRelayEvent: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall ControllerPortEvent([out, retval] ITSSServCont_ControllerPortEvent ** Value );
+    [propget]
+    HRESULT _stdcall IsOpen([out, retval] VARIANT_BOOL * Value );
+  };
+
+  //ReadOnly
+  [ uuid(22BCA0A5-9F33-484B-AE2D-D845BC14F100), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerKeyEvent: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall ControllerPortRelayEvent([out, retval] ITSSServCont_ControllerPortRelayEvent ** Value );
+    [propget]
+    HRESULT _stdcall Key([out, retval] ITSSServCont_ControllerKeyValue ** Value );
+
+
+    [propget]
+    HRESULT _stdcall IsTimeRestrict([out, retval] VARIANT_BOOL * Value );
+    [propget]
+    HRESULT _stdcall IsTimeRestrictDone([out, retval] VARIANT_BOOL * Value );
+    [propget]
+    HRESULT _stdcall IsAccessGranted([out, retval] VARIANT_BOOL * Value );
+    [propget]
+    HRESULT _stdcall IsKeyFound([out, retval] VARIANT_BOOL * Value );
+    [propget]
+    HRESULT _stdcall IsKeySearchDone([out, retval] VARIANT_BOOL * Value );
+  };
+
+
+  [ uuid(FBB17F4F-6362-4B98-AC33-267750EB86FB), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ControllerStaticSensorEvent: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall ControllerEvent([out, retval] ITSSServCont_ControllerEvent ** Value );
+    [propget]
+    HRESULT _stdcall Value([out, retval] byte * Value );
+  };
+
+  //ReadOnly
+  [ uuid(5C995F8D-624E-4A08-88E1-8CFEEF044F3F), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ServcontChannel: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall IsActive([out, retval] VARIANT_BOOL * Value );
+    [propget]
+    HRESULT _stdcall IsReady([out, retval] VARIANT_BOOL * Value );
+    [propget]
+    HRESULT _stdcall IsIP([out, retval] VARIANT_BOOL * Value );
+
+    [propget]
+    HRESULT _stdcall PortOrHost([out, retval] BSTR * Value );
+
+    [propget]
+    HRESULT _stdcall SpeedOrPort([out, retval] long * Value );
+    [propget]
+    HRESULT _stdcall ResponseTimeout([out, retval] long * Value );
+    [propget]
+    HRESULT _stdcall AliveTimeout([out, retval] long * Value );
+    [propget]
+    HRESULT _stdcall DeadTimeout([out, retval] long * Value );
+    [propget]
+    HRESULT _stdcall PollSpeed([out, retval] long * Value );
+  };
+
+  //ReadOnly
+  [ uuid(8D2F12CF-336B-4C4C-A83A-AC07C4FC4295), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ServcontController: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Addr([out, retval] byte * Value );
+    [propget]
+    HRESULT _stdcall State([out, retval] byte * Value );
+  };
+
+  //ReadOnly
+  [ uuid(B0EF3B3F-198C-427B-966C-942BD77487C8), version(1.0), dual, oleautomation ]
+   interface ITSSServCont_ServcontClient: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Id([out, retval] GUID * Value );
+
+    [propget]
+    HRESULT _stdcall Addr([out, retval] long * Value );
+    [propget]
+    HRESULT _stdcall Port([out, retval] long * Value );
+  };
+
+  //LDynamic Arrays
+  [
+    uuid(4D220FC3-3266-4177-A18E-3A9B295A42E0),
+    version(1.0),
+    helpstring("Dispatch interface for TTSSServContKeyList"),
+    dual,
+    oleautomation
+  ]
+   interface ITSSServCont_KeyList: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Count([out, retval] long * Value );
+    [propput]
+    HRESULT _stdcall Count([in] long Value );
+    [propget]
+    HRESULT _stdcall Items([in] long Index, [out, retval] ITSSServCont_ControllerKey ** Value );
+    [propput]
+    HRESULT _stdcall Items([in] long Index, [in] ITSSServCont_ControllerKey * Value );
+  }
+
+  [
+    uuid(DFA6FC73-A3D3-4275-8A1A-917B6EDCC629),
+    version(1.0),
+    helpstring("Dispatch interface for TTSSServContTimetableSpecialDayList"),
+    dual,
+    oleautomation
+  ]
+   interface ITSSServCont_TimetableSpecialDayList: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Count([out, retval] long * Value );
+    [propput]
+    HRESULT _stdcall Count([in] long Value );
+
+
+    [propget]
+    HRESULT _stdcall Items([in] long Index, [out, retval] ITSSServCont_ControllerTimetableSpecialDay ** Value );
+    [propput]
+    HRESULT _stdcall Items([in] long Index, [in] ITSSServCont_ControllerTimetableSpecialDay* Value );
+  }
+
+  [
+    uuid(FB63CC4D-4B7E-49B2-90DC-9F060A8B1CDC),
+    version(1.0),
+    helpstring("Dispatch interface for TTSSServContTimetableItemList"),
+    dual,
+    oleautomation
+  ]
+   interface ITSSServCont_TimetableItemList: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Count([out, retval] long * Value );
+    [propput]
+    HRESULT _stdcall Count([in] long Value );
+
+
+    [propget]
+    HRESULT _stdcall Items([in] long Index, [out, retval] ITSSServCont_ControllerTimetableItem ** Value );
+    [propput]
+    HRESULT _stdcall Items([in] long Index, [in] ITSSServCont_ControllerTimetableItem * Value );
+  }
+
+  [
+    uuid(4E716EF1-2DD3-49CF-98C7-C3F6D52EEFEB),
+    version(1.0),
+    helpstring("Dispatch interface for TTSSServContChannelList"),
+    dual,
+    oleautomation
+  ]
+   interface ITSSServCont_ChannelList: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Count([out, retval] long * Value );
+    [propget]
+    HRESULT _stdcall Items([in] long Index, [out, retval] ITSSServCont_ServcontChannel ** Value );
+  }
+
+  [
+    uuid(29E0BA81-8517-49DD-892E-7E57FC962D76),
+    version(1.0),
+    helpstring("Dispatch interface for TTSSServContControllerList"),
+    dual,
+    oleautomation
+  ]
+   interface ITSSServCont_ControllerList: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Count([out, retval] long * Value );
+    [propget]
+    HRESULT _stdcall Items([in] long Index, [out, retval] ITSSServCont_ServcontController ** Value );
+  }
+
+  [
+    uuid(915DA62E-A425-4945-A54E-7662226896FE),
+    version(1.0),
+    helpstring("Dispatch interface for TTSSServContClientList"),
+    dual,
+    oleautomation
+  ]
+   interface ITSSServCont_ClientList: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Count([out, retval] long * Value );
+    [propget]
+    HRESULT _stdcall Items([in] long Index, [out, retval] ITSSServCont_ServcontClient ** Value );
+  }
+
+  [
+    uuid(E0933D72-57E7-44A5-A052-48BC7DD3A745),
+    version(1.0),
+    helpstring("Dispatch interface for TTSSServContControllerChipList"),
+    dual,
+    oleautomation
+  ]
+   interface ITSSServCont_ControllerChipList: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Count([out, retval] long * Value );
+    [propput]
+    HRESULT _stdcall Count([in] long Value );
+
+    [propget]
+    HRESULT _stdcall Items([in] long Index, [out, retval] ITSSServCont_ControllerChip ** Value );
+    [propput]
+    HRESULT _stdcall Items([in] long Index, [in] ITSSServCont_ControllerChip * Value );
+  }
+
+  ////////////////////// Main Interface
+  [
+    uuid(A8781959-05F0-48B7-A7C6-96AFC048FE33),
+    version(1.0),
+    helpstring("Dispatch interface for TSSServCont"),
+    dual,
+    oleautomation
+  ]
+   interface ITSSServCont: IDispatch
+  {
+    [propget]
+    HRESULT _stdcall Active([out, retval] VARIANT_BOOL * Value );
+    [propput]
+    HRESULT _stdcall Active([in] VARIANT_BOOL Value );
+    [propget]
+    HRESULT _stdcall Ready([out, retval] VARIANT_BOOL * Value );
+    [propget]
+    HRESULT _stdcall Host([out, retval] BSTR * Value );
+    [propput]
+    HRESULT _stdcall Host([in] BSTR Value );
+    [propget]
+    HRESULT _stdcall Port([out, retval] long * Value );
+    [propput]
+    HRESULT _stdcall Port([in] long Value );
+
+    HRESULT _stdcall srvAddIPChannel([in] BSTR Host, [in] long Port, [in] long ResponseTimeout, [in] long AliveTimeout, [in] long DeadTimeout, [out, retval] BSTR * Value );
+    HRESULT _stdcall srvAddChannel([in] BSTR Port, [in] long Speed, [in] long ResponseTimeout, [in] long AliveTimeout, [in] long DeadTimeout, [out, retval] BSTR * Value );
+	HRESULT _stdcall srvAddDvRs422Channel([in] long Speed, [in] long ResponseTimeout, [in] long AliveTimeout, [in] long DeadTimeout, [out, retval] BSTR * Value );
+    HRESULT _stdcall srvRemoveChannel([in] BSTR ChannelId );
+    HRESULT _stdcall srvActivateChannel([in] BSTR ChannelId );
+    HRESULT _stdcall srvDeactivateChannel([in] BSTR ChannelId );
+    HRESULT _stdcall srvAddController([in] long ControllerAddr, [in] BSTR ChannelId );
+    HRESULT _stdcall srvRemoveController([in] long ControllerAddr, [in] BSTR ChannelId );
+    HRESULT _stdcall srvChannelList([out] ITSSServCont_ChannelList ** Data );
+    HRESULT _stdcall srvControllerList([in] BSTR ChannelId, [out] ITSSServCont_ControllerList ** Data );
+    HRESULT _stdcall srvClientList([out] ITSSServCont_ClientList ** Data );
+    HRESULT _stdcall srvSwitchToAuto( void );
+    HRESULT _stdcall srvMainClient([in] VARIANT_BOOL LogControllerEvents, [in] long qLimit);
+    HRESULT _stdcall srvCoEvtLogSend([in] ITSSServCont_ServcontDateTime BeginInterval,
+                                     [in] ITSSServCont_ServcontDateTime EndInterval,
+                                     [in] long Limit, [in] long Offset,
+                                     [out] long * Count );
+    HRESULT _stdcall srvCoEvtLogClear( void );
+    HRESULT _stdcall srvSetHostClock([in] ITSSServCont_ServcontDateTime Value );
+
+    HRESULT _stdcall cntRelayOn([in] BSTR ChannelId, [in] long ControllerAddr, [in] long Port, [in] VARIANT_BOOL SuppressDoorEvent, [in] long Interval );
+    HRESULT _stdcall cntRelayOff([in] BSTR ChannelId, [in] long ControllerAddr, [in] long Port, [in] VARIANT_BOOL SuppressDoorEvent );
+    HRESULT _stdcall cntPollOn([in] BSTR ChannelId, [in] long ControllerAddr, [in] VARIANT_BOOL IsAuto, [in] VARIANT_BOOL IsReliable );
+    HRESULT _stdcall cntPollOff([in] BSTR ChannelId, [in] long ControllerAddr, [in] VARIANT_BOOL ForceAuto);
+    HRESULT _stdcall cntTimerOff([in] BSTR ChannelId, [in] long ControllerAddr );
+    HRESULT _stdcall cntTimerOn([in] BSTR ChannelId, [in] long ControllerAddr, [in] long Interval );
+    HRESULT _stdcall cntWriteKey([in] BSTR ChannelId, [in] long ControllerAddr, [in] ITSSServCont_ControllerKey * Key);            //v
+    HRESULT _stdcall cntEraseKey([in] BSTR ChannelId, [in] long ControllerAddr, [in] ITSSServCont_ControllerKeyValue * KeyValue );
+    HRESULT _stdcall cntKeyExist([in] BSTR ChannelId, [in] long ControllerAddr, [in] ITSSServCont_ControllerKeyValue * KeyValue, [out] VARIANT_BOOL * IsExist, [out] ITSSServCont_ControllerKeyAttr ** KeyAttr);            //v
+    HRESULT _stdcall cntEraseAllKeys([in] BSTR ChannelId, [in] long ControllerAddr );
+    HRESULT _stdcall cntProgId([in] BSTR ChannelId, [in] long ControllerAddr, [out] long * ID );
+    HRESULT _stdcall cntProgVer([in] BSTR ChannelId, [in] long ControllerAddr, [out] BSTR * Ver );
+    HRESULT _stdcall cntSerNum([in] BSTR ChannelId, [in] long ControllerAddr, [out] long * SerNum );
+    HRESULT _stdcall cntReadClock([in] BSTR ChannelId, [in] long ControllerAddr, [out] ITSSServCont_ServcontDateTime ** Clock);           //v
+    HRESULT _stdcall cntWriteClockDate([in] BSTR ChannelId, [in] long ControllerAddr, [in] double Date );
+    HRESULT _stdcall cntWriteClockTime([in] BSTR ChannelId, [in] long ControllerAddr, [in] double Time );
+    HRESULT _stdcall cntReadAllKeys([in] BSTR ChannelId, [in] long ControllerAddr, [out] ITSSServCont_KeyList ** KeyList);         //v
+    HRESULT _stdcall cntReadTimetable([in] BSTR ChannelId, [in] long ControllerAddr, [out] ITSSServCont_TimetableSpecialDayList ** SpecialDayList, [out] ITSSServCont_TimetableItemList ** TimetableItemList);
+    HRESULT _stdcall cntWriteTimetable([in] BSTR ChannelId, [in] long ControllerAddr, [in] ITSSServCont_TimetableSpecialDayList * SpecialDayList, [in] ITSSServCont_TimetableItemList * TimetableItemList);
+    HRESULT _stdcall cntTimetableErase([in] BSTR ChannelId, [in] long ControllerAddr );
+    HRESULT _stdcall cntRestartProg([in] BSTR ChannelId, [in] long ControllerAddr );
+    HRESULT _stdcall cntEraseAllEvents([in] BSTR ChannelId, [in] long ControllerAddr );
+    HRESULT _stdcall cntEventsInfo([in] BSTR ChannelId, [in] long ControllerAddr, [out] long * Capacity, [out] long * Count );
+    HRESULT _stdcall cntKeysInfo([in] BSTR ChannelId, [in] long ControllerAddr, [out] long * Capacity, [out] long * Count );
+    HRESULT _stdcall cntPortsInfo([in] BSTR ChannelId, [in] long ControllerAddr, [out] ITSSServCont_ControllerPorts ** Ports);           //v
+    HRESULT _stdcall cntGenerateTimerEvents([in] BSTR ChannelId, [in] long ControllerAddr, [in] long Count );
+    HRESULT _stdcall cntReadKeypad([in] BSTR ChannelId, [in] long ControllerAddr, [out] ITSSServCont_KeypadItems ** KeypadItems);          //v
+    HRESULT _stdcall cntWriteKeypad([in] BSTR ChannelId, [in] long ControllerAddr, [in] ITSSServCont_KeypadItems * KeypadItems);          //v
+    HRESULT _stdcall cntGenerateKeyBase([in] BSTR ChannelId, [in] long ControllerAddr );
+    HRESULT _stdcall cntWriteAllKey([in] BSTR ChannelId, [in] long ControllerAddr, [in] ITSSServCont_KeyList * KeyList);
+    HRESULT _stdcall cntReadAllChips([in] BSTR ChannelId, [in] long ControllerAddr, [out] ITSSServCont_ControllerPorts ** Ports, [out] ITSSServCont_ControllerChipList ** ChipsList);        //v
+    HRESULT _stdcall cntWriteAllChips([in] BSTR ChannelId, [in] long ControllerAddr, [in] ITSSServCont_ControllerPorts * Ports, [in] ITSSServCont_ControllerChipList * ChipsList);       //v
+    HRESULT _stdcall cntActivateChip([in] BSTR ChannelId, [in] long ControllerAddr, [in] ITSSServCont_ControllerKeyValue * Chip);        //v
+    HRESULT _stdcall cntDeactivateChip([in] BSTR ChannelId, [in] long ControllerAddr, [in] ITSSServCont_ControllerKeyValue * Chip);      //v
+    HRESULT _stdcall cntEraseAllChips([in] BSTR ChannelId, [in] long ControllerAddr );
+  };
+
+  [
+    uuid(E9168480-8ABA-4016-9B21-A1C423C2E18A),
+    version(1.0),
+    helpstring("Events interface for TSSServCont")
+  ]
+   dispinterface ITSSServContEvents
+  {
+    properties:
+    methods:
+    [ id(0x000000CF) ] HRESULT OnCont220VEvent([in] BSTR ChannelId, [in] ITSSServCont_ControllerEvent * Event);
+    [ id(0x000000D0) ] HRESULT OnContCaseEvent([in] BSTR ChannelId, [in] ITSSServCont_ControllerEvent * Event);
+    [ id(0x000000D1) ] HRESULT OnContTimerEvent([in] BSTR ChannelId, [in] ITSSServCont_ControllerEvent * Event);
+    [ id(0x000000D2) ] HRESULT OnContStartEvent([in] BSTR ChannelId, [in] ITSSServCont_ControllerEvent * Event);
+    [ id(0x000000D3) ] HRESULT OnContRestartEvent([in] BSTR ChannelId, [in] ITSSServCont_ControllerEvent * Event);
+    [ id(0x000000D4) ] HRESULT OnContAutoTimeoutEvent([in] BSTR ChannelId, [in] ITSSServCont_ControllerEvent * Event);
+
+    [ id(0x000000D5) ] HRESULT OnContButtonEvent([in] BSTR ChannelId, [in] ITSSServCont_ControllerPortRelayEvent * Event);
+    [ id(0x000000D6) ] HRESULT OnContDoorOpenEvent([in] BSTR ChannelId, [in] ITSSServCont_ControllerPortRelayEvent * Event);
+    [ id(0x000000D7) ] HRESULT OnContDoorCloseEvent([in] BSTR ChannelId, [in] ITSSServCont_ControllerPortRelayEvent * Event);
+
+    [ id(0x000000D8) ] HRESULT OnContKeyEvent([in] BSTR ChannelId, [in] ITSSServCont_ControllerKeyEvent * Event);
+
+    [ id(0x000000D9) ] HRESULT OnContStaticSensorEvent([in] BSTR ChannelId, [in] ITSSServCont_ControllerStaticSensorEvent * Event);
+
+    [ id(0x000000DA) ] HRESULT OnContErrorEvent([in] BSTR ChannelId, [in] ITSSServCont_ServcontDateTime * Time, [in] BSTR EClass, [in] BSTR EMessage, [in] long Addr);
+
+    [ id(0x000000DB) ] HRESULT OnContChannelErrorEvent([in] BSTR ChannelId, [in] ITSSServCont_ServcontDateTime * Time, [in] BSTR EClass, [in] BSTR EMessage);
+
+    [ id(0x000000DC) ] HRESULT OnContChannelStateEvent([in] BSTR ChannelId, [in] ITSSServCont_ServcontDateTime * Time, [in] VARIANT_BOOL IsReady);
+
+    [ id(0x000000DD) ] HRESULT OnContChannelPollSpeedEvent([in] BSTR ChannelId, [in] ITSSServCont_ServcontDateTime * Time, [in] long Value);
+
+    [ id(0x000000DE) ] HRESULT OnContChangeStateEvent([in] BSTR ChannelId, [in] long ControllerAddr, [in] ITSSServCont_ServcontDateTime * Time, [in] TTSSServCont_ControllerState State);
+    [ id(0x000000DF) ] HRESULT OnClientsChangedEvent([in] ITSSServCont_ServcontDateTime * Time);
+
+    [ id(0x000000E0) ] HRESULT OnContChannelChangedEvent([in] ITSSServCont_ServcontDateTime * Time);
+    [ id(0x000000E1) ] HRESULT OnContChangedEvent([in] BSTR ChannelId, [in] ITSSServCont_ServcontDateTime * Time);
+
+    [ id(0x000000E2) ] HRESULT OnReadyChangeEvent(void);
+
+    [ id(0x000000E3) ] HRESULT OnQueueFullEvent([in] ITSSServCont_ServcontDateTime * Time);
+
+  };
+
+  //Основной объект
+  [
+    uuid(EBB0D0A6-2779-4F08-9541-F33D5319FD8D),
+    version(1.0),
+    helpstring("TSSServCont Main object")
+  ]
+  coclass TSSServContX
+  {
+    [default] interface ITSSServCont;
+    [default, source] dispinterface ITSSServContEvents;
+  };
+
+  //Вспомогательные массивы и структуры используются в качестве In параметров
+  [ uuid(E1E14735-9BDC-4E3D-ABF8-32BC767FA63C), version(1.0) ]
+  coclass TSSServCont_TimetableSpecialDayListX
+  { [default] interface ITSSServCont_TimetableSpecialDayList;
+  };
+  [ uuid(B73C3BC3-494D-44C0-9C89-8DF36924D168), version(1.0) ]
+  coclass TSSServCont_TimetableItemListX
+  { [default] interface ITSSServCont_TimetableItemList;
+  };
+  [ uuid(5DBEE5CF-6625-47AA-93DB-86414D6B6CD4),version(1.0) ]
+  coclass TSSServCont_ControllerChipListX
+  { [default] interface ITSSServCont_ControllerChipList;
+  };
+  [ uuid(6EA0CF2B-F13C-4D69-87FC-9D2A5570D030), version(1.0)]
+  coclass TSSServCont_ControllerKeyValueX
+  { [default] interface ITSSServCont_ControllerKeyValue;
+  };
+  [ uuid(6AA7FE9B-C697-44BF-9BFB-197E87650D47), version(1.0)]
+  coclass TSSServCont_ControllerPortsX
+  { [default] interface ITSSServCont_ControllerPorts;
+  };
+  [ uuid(114D3040-05FD-4BE8-BE1D-4655653DB408), version(1.0)]
+  coclass TSSServCont_ControllerKeyX
+  { [default] interface ITSSServCont_ControllerKey;
+  };
+  [ uuid(23186999-1D20-49D9-8BEA-1490CFF4D8AE), version(1.0)]
+  coclass TSSServCont_ControllerChipX
+  { [default] interface ITSSServCont_ControllerChip;
+  };
+  [ uuid(D7C0B911-272B-4C75-914B-3A88CCD0E14A), version(1.0)]
+  coclass TSSServCont_ControllerTimetableSpecialDayX
+  { [default] interface ITSSServCont_ControllerTimetableSpecialDay;
+  };
+  [ uuid(29745400-E9D6-40E0-B5C7-87D43A7AB3CF), version(1.0)]
+  coclass TSSServCont_ControllerTimetableItemX
+  { [default] interface ITSSServCont_ControllerTimetableItem;
+  };
+  [ uuid(6361E92A-3EF0-4CA5-A42F-ABBEC0854C25), version(1.0)]
+  coclass TSSServCont_KeypadItemsX
+  { [default] interface ITSSServCont_KeypadItems;
+  };
+  [ uuid(F544254C-CEDF-4641-A2FE-50BE40C6AB9A), version(1.0)]
+  coclass TSSServCont_ServcontDateTimeX
+  { [default] interface ITSSServCont_ServcontDateTime;
+  };
+  [ uuid(8BD572B8-7BFE-4C43-94D9-28C4820DAC87), version(1.0)]
+  coclass TSSServCont_KeyListX
+  { [default] interface ITSSServCont_KeyList;
+  };
+
+
+
+
+
+};

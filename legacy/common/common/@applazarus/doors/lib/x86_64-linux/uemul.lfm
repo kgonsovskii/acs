@@ -1,0 +1,275 @@
+object formemul: Tformemul
+  Left = 89
+  Height = 469
+  Top = 112
+  Width = 1082
+  BorderStyle = bsSingle
+  Caption = ' '
+  ClientHeight = 469
+  ClientWidth = 1082
+  Color = 3947580
+  Font.Height = -21
+  Font.Name = 'Serif'
+  Font.Style = [fsBold]
+  LCLVersion = '2.2.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 80
+    Top = 0
+    Width = 1082
+    Align = alTop
+    BevelInner = bvRaised
+    BevelOuter = bvNone
+    Caption = ' '
+    ClientHeight = 80
+    ClientWidth = 1082
+    Color = clSilver
+    ParentColor = False
+    TabOrder = 0
+    object Button1: TButton
+      Left = 24
+      Height = 42
+      Top = 22
+      Width = 151
+      Caption = 'выполнить'
+      OnClick = Button1Click
+      TabOrder = 0
+      Visible = False
+    end
+    object ekluch: TEdit
+      Left = 192
+      Height = 35
+      Top = 24
+      Width = 137
+      Color = clSilver
+      Font.Color = clBlack
+      Font.Height = -19
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      Text = 'ekluch'
+      Visible = False
+    end
+    object emars: TEdit
+      Left = 320
+      Height = 37
+      Top = 8
+      Width = 137
+      Color = clSilver
+      Font.Height = -21
+      Font.Name = 'Tahoma'
+      ParentFont = False
+      TabOrder = 2
+      Text = '1,2,3'
+      Visible = False
+    end
+    object entmz: TEdit
+      Left = 432
+      Height = 37
+      Top = 16
+      Width = 137
+      Color = clSilver
+      Font.Height = -21
+      Font.Name = 'Tahoma'
+      ParentFont = False
+      TabOrder = 3
+      Text = 'marsrut'
+      Visible = False
+    end
+    object lerepeat: TLabeledEdit
+      Left = 720
+      Height = 28
+      Top = 22
+      Width = 88
+      Alignment = taCenter
+      BorderStyle = bsNone
+      Color = clWhite
+      EditLabel.Height = 21
+      EditLabel.Width = 88
+      EditLabel.Caption = 'Повторить'
+      EditLabel.ParentColor = False
+      EditLabel.ParentFont = False
+      EditLabel.Font.Height = -19
+      EditLabel.Font.Name = 'Serif'
+      Font.Height = -21
+      Font.Name = 'Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 4
+      Text = '1'
+    end
+    object lerint: TLabeledEdit
+      Left = 808
+      Height = 28
+      Top = 22
+      Width = 88
+      Alignment = taCenter
+      BorderStyle = bsNone
+      Color = clWhite
+      EditLabel.Height = 21
+      EditLabel.Width = 88
+      EditLabel.Caption = 'интервал'
+      EditLabel.ParentColor = False
+      EditLabel.ParentFont = False
+      EditLabel.Font.Height = -19
+      EditLabel.Font.Name = 'Serif'
+      Font.Height = -21
+      Font.Name = 'Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 5
+      Text = '100'
+    end
+    object cb1: TCheckBox
+      Left = 920
+      Height = 23
+      Top = 24
+      Width = 76
+      Caption = ' ЗВУК'
+      Font.Height = -19
+      Font.Name = 'Serif'
+      ParentFont = False
+      TabOrder = 6
+    end
+    object DBNavigator1: TDBNavigator
+      Left = 360
+      Height = 57
+      Top = 2
+      Width = 241
+      BevelOuter = bvNone
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.EnlargeVertical = crsScaleChilds
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 100
+      ClientHeight = 57
+      ClientWidth = 241
+      DataSource = ds
+      Font.Color = clBlack
+      Font.Height = -27
+      Font.Name = 'Serif'
+      Options = []
+      ParentFont = False
+      TabOrder = 7
+      VisibleButtons = [nbFirst, nbNext, nbLast, nbInsert, nbDelete, nbCancel, nbRefresh]
+    end
+    object lecn: TLabeledEdit
+      Left = 624
+      Height = 28
+      Top = 22
+      Width = 88
+      Alignment = taCenter
+      BorderStyle = bsNone
+      Color = clWhite
+      EditLabel.Height = 21
+      EditLabel.Width = 88
+      EditLabel.Caption = '      №'
+      EditLabel.ParentColor = False
+      EditLabel.ParentFont = False
+      EditLabel.Font.Height = -19
+      EditLabel.Font.Name = 'Serif'
+      Font.Height = -21
+      Font.Name = 'Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 8
+      Text = '1'
+      Visible = False
+    end
+  end
+  object DBGrid1: TDBGrid
+    Left = 0
+    Height = 389
+    Top = 80
+    Width = 1082
+    Align = alClient
+    Color = clGray
+    Columns = <    
+      item
+        Title.Caption = 'kluch'
+        Width = 200
+        FieldName = 'kluch'
+      end    
+      item
+        Title.Alignment = taCenter
+        Title.Caption = 'keycode'
+        FieldName = 'keycode'
+      end    
+      item
+        Title.Caption = 'fio'
+        Width = 300
+        FieldName = 'fio'
+      end    
+      item
+        Title.Caption = 'mrs'
+        Width = 200
+        FieldName = 'mrs'
+      end    
+      item
+        Title.Caption = 'врем.зона'
+        FieldName = 'ntmz'
+      end>
+    DataSource = ds
+    Font.Color = clBlack
+    Font.Height = -16
+    Font.Name = 'Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    PopupMenu = pop1
+    TabOrder = 1
+  end
+  object md: TMemDataset
+    Active = True
+    FieldDefs = <    
+      item
+        Name = 'kluch'
+        DataType = ftString
+        Size = 14
+      end    
+      item
+        Name = 'fio'
+        DataType = ftString
+        Size = 100
+      end    
+      item
+        Name = 'mrs'
+        DataType = ftString
+        Size = 40
+      end    
+      item
+        Name = 'ntmz'
+        DataType = ftString
+        Size = 8
+      end    
+      item
+        Name = 'keycode'
+        DataType = ftString
+        Size = 8
+      end>
+    Left = 115
+    Top = 152
+  end
+  object ds: TDataSource
+    DataSet = md
+    Left = 171
+    Top = 156
+  end
+  object pop1: TPopupMenu
+    Left = 273
+    Top = 168
+    object MenuItem1: TMenuItem
+      Caption = 'выполнить'
+      OnClick = MenuItem1Click
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'Сбросить состояние APBOUT'
+      OnClick = MenuItem2Click
+    end
+    object MenuItem3: TMenuItem
+      Caption = 'Сбросить состояние APBIN'
+      OnClick = MenuItem3Click
+    end
+  end
+end

@@ -1,0 +1,10 @@
+object formmars0: Tformmars0
+  Left = 452
+  Height = 716
+  Top = 288
+  Width = 1039
+  Caption = 'formmars0'
+  DesignTimePPI = 144
+  OnCreate = FormCreate
+  LCLVersion = '2.2.0.4'
+end

@@ -1,0 +1,37 @@
+object fmMain: TfmMain
+  Left = 1334
+  Height = 171
+  Top = 196
+  Width = 293
+  Caption = ' Color Menu Test'
+  Font.Name = 'Arial Black'
+  Menu = MainMenu1
+  Position = poScreenCenter
+  LCLVersion = '2.2.6.0'
+  object MainMenu1: TMainMenu
+    Left = 52
+    Top = 28
+    object MenuItem1: TMenuItem
+      Caption = 'MenuItem1'
+      OnDrawItem = MenuItem1DrawItem
+      object MenuItem1_1: TMenuItem
+        Caption = 'MenuItem1_1'
+        OnDrawItem = MenuItem1_1DrawItem
+      end
+      object MenuItem1_2: TMenuItem
+        Caption = 'MenuItem1_2'
+        OnDrawItem = MenuItem1_2DrawItem
+      end
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'MenuItem2'
+      OnDrawItem = MenuItem2DrawItem
+      object MenuItem2_1: TMenuItem
+        Caption = 'MenuItem2_1'
+      end
+      object MenuItem2_2: TMenuItem
+        Caption = 'MenuItem2_2'
+      end
+    end
+  end
+end

@@ -1,0 +1,50 @@
+object formpgs: Tformpgs
+  Left = 134
+  Height = 272
+  Top = 182
+  Width = 550
+  Caption = 'formpgs'
+  ClientHeight = 272
+  ClientWidth = 550
+  OnCreate = FormCreate
+  LCLVersion = '2.2.2.0'
+  object elink: TEdit
+    Left = 19
+    Height = 30
+    Top = 201
+    Width = 453
+    OnChange = elinkChange
+    TabOrder = 0
+    Text = 'elink'
+  end
+  object pgc1: TPQConnection
+    Connected = True
+    LoginPrompt = False
+    AfterConnect = pgc1AfterConnect
+    AfterDisconnect = pgc1AfterDisconnect
+    DatabaseName = 'postgres'
+    KeepConnection = True
+    Password = 'Tss2252531'
+    Transaction = trc1
+    UserName = 'postgres'
+    CharSet = 'utf-8'
+    HostName = '192.168.0.251'
+    LogEvents = [detExecute, detCommit, detRollBack]
+    Left = 148
+    Top = 45
+  end
+  object qrs: TSQLQuery
+    FieldDefs = <>
+    Database = pgc1
+    Params = <>
+    Macros = <>
+    Left = 65
+    Top = 55
+  end
+  object trc1: TSQLTransaction
+    Active = False
+    Database = pgc1
+    Left = 229
+    Top = 49
+  end
+end

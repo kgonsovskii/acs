@@ -1,0 +1,90 @@
+object Form1: TForm1
+  Left = 380
+  Height = 286
+  Top = 218
+  Width = 736
+  Caption = 'Form1'
+  ClientHeight = 286
+  ClientWidth = 736
+  OnCreate = FormCreate
+  LCLVersion = '2.2.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 88
+    Top = 0
+    Width = 736
+    Align = alTop
+    BevelInner = bvRaised
+    BevelWidth = 3
+    Caption = ' '
+    ClientHeight = 88
+    ClientWidth = 736
+    TabOrder = 0
+    OnClick = Panel1Click
+    object Button1: TButton
+      Left = 6
+      Height = 25
+      Top = 8
+      Width = 123
+      Caption = 'CONNECT'
+      OnClick = Button1Click
+      TabOrder = 0
+    end
+    object Button2: TButton
+      Left = 8
+      Height = 25
+      Top = 42
+      Width = 120
+      Caption = 'SUBSCRIBE'
+      TabOrder = 1
+    end
+    object Button3: TButton
+      Left = 217
+      Height = 25
+      Top = 30
+      Width = 75
+      Caption = 'SEND'
+      OnClick = Button3Click
+      TabOrder = 2
+    end
+  end
+  object Splitter1: TSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 20
+    Top = 88
+    Width = 736
+    Align = alTop
+    Color = clGray
+    ParentColor = False
+    ResizeAnchor = akTop
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 178
+    Top = 108
+    Width = 736
+    Align = alClient
+    BevelInner = bvLowered
+    BevelWidth = 3
+    Caption = ' '
+    ClientHeight = 178
+    ClientWidth = 736
+    TabOrder = 2
+    object lsb: TListBox
+      Left = 6
+      Height = 166
+      Top = 6
+      Width = 724
+      Align = alClient
+      Color = clBlack
+      Font.Color = clLime
+      Font.Height = -16
+      Font.Name = 'Sans'
+      ItemHeight = 0
+      ParentFont = False
+      TabOrder = 0
+      TopIndex = -1
+    end
+  end
+end

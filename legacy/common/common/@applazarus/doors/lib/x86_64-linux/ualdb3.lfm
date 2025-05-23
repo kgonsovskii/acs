@@ -1,0 +1,27 @@
+object Dmdb3: TDmdb3
+  OnCreate = DataModuleCreate
+  OldCreateOrder = False
+  Height = 343
+  HorizontalOffset = 53
+  VerticalOffset = 27
+  Width = 436
+  PPI = 115
+  object bsqlconfig: TSQLite3Connection
+    Connected = False
+    LoginPrompt = False
+    DatabaseName = 'altssconfig.db3'
+    KeepConnection = False
+    Transaction = db3tr
+    CharSet = 'utf-8'
+    HostName = '/home/gonso/common/doors/config/altssconfig.db3'
+    AlwaysUseBigint = False
+    Left = 163
+    Top = 24
+  end
+  object db3tr: TSQLTransaction
+    Active = False
+    Database = bsqlconfig
+    Left = 153
+    Top = 139
+  end
+end

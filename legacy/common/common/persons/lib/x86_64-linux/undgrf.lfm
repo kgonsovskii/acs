@@ -1,0 +1,37 @@
+object formindgrf: Tformindgrf
+  Left = 105
+  Height = 271
+  Top = 400
+  Width = 362
+  Caption = 'formindgrf'
+  ClientHeight = 271
+  ClientWidth = 362
+  Color = clSilver
+  LCLVersion = '2.2.2.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 128
+    Top = 0
+    Width = 362
+    Align = alTop
+    Caption = 'Panel1'
+    ClientHeight = 128
+    ClientWidth = 362
+    Color = clGray
+    ParentColor = False
+    TabOrder = 0
+    object DateEdit1: TDateEdit
+      Left = 83
+      Height = 30
+      Top = 22
+      Width = 103
+      CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
+      DateOrder = doNone
+      ButtonWidth = 23
+      NumGlyphs = 1
+      MaxLength = 0
+      TabOrder = 0
+      Text = 'DateEdit1'
+    end
+  end
+end

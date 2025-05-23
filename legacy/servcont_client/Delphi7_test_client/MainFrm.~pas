@@ -1,0 +1,2229 @@
+unit MainFrm;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, SyncObjs, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, uRPCSocket, uRPC, ComCtrls, IniFiles, ExtCtrls,
+  ActnList, Grids, Menus, TSSServcontAPI;
+
+type
+  TfrmMain = class(TForm)
+    Panel1: TPanel;
+    GroupBox4: TGroupBox;
+    cbxRpcHost: TComboBox;
+    Button4: TButton;
+    GroupBox2: TGroupBox;
+    pgcChannel: TPageControl;
+    tbsSerial: TTabSheet;
+    Label5: TLabel;
+    Label6: TLabel;
+    cbxChannelSerialPort: TComboBox;
+    cbxChannelSerialSpeed: TComboBox;
+    tbsIp: TTabSheet;
+    Label7: TLabel;
+    Label8: TLabel;
+    cbxChannelIPHost: TComboBox;
+    cbxChannelIPPort: TComboBox;
+    Add: TButton;
+    Button2: TButton;
+    Button5: TButton;
+    Button6: TButton;
+    GroupBox3: TGroupBox;
+    Label10: TLabel;
+    cbxControllerAddr: TComboBox;
+    Button1: TButton;
+    Button8: TButton;
+    GroupBox1: TGroupBox;
+    Label3: TLabel;
+    Label4: TLabel;
+    Button7: TButton;
+    Button14: TButton;
+    cbxRelayPort: TComboBox;
+    cbxRelayInterval: TComboBox;
+    ActionList1: TActionList;
+    actRpcClose: TAction;
+    actRpcOpen: TAction;
+    Button3: TButton;
+    actServcontAddChannel: TAction;
+    actServcontRemoveChannel: TAction;
+    actServcontActivateChannel: TAction;
+    actServcontDeactivateChannel: TAction;
+    actServcontAddController: TAction;
+    actServcontRemoveController: TAction;
+    actControllerRelayOn: TAction;
+    actControllerRelayOff: TAction;
+    Label1: TLabel;
+    pgcEvents: TPageControl;
+    tbsKey: TTabSheet;
+    Label2: TLabel;
+    sttReady: TStaticText;
+    sgdKey: TStringGrid;
+    tbsBtn: TTabSheet;
+    sgdButton: TStringGrid;
+    tbsDoorOpen: TTabSheet;
+    tbsDoorClose: TTabSheet;
+    sgdDoorOpen: TStringGrid;
+    sgdDoorClose: TStringGrid;
+    Button9: TButton;
+    actControllerPollOn: TAction;
+    actControllerPollOff: TAction;
+    Button10: TButton;
+    chbSuppressDoorEvent: TCheckBox;
+    tbsCase: TTabSheet;
+    sgdCase: TStringGrid;
+    tbs220V: TTabSheet;
+    sgd220V: TStringGrid;
+    tbsTimer: TTabSheet;
+    tbsAutoTimeout: TTabSheet;
+    tbsRestart: TTabSheet;
+    tbsStart: TTabSheet;
+    sgdTimer: TStringGrid;
+    sgdAutoTimeout: TStringGrid;
+    sgdRestart: TStringGrid;
+    sgdStart: TStringGrid;
+    actControllerTimerOn: TAction;
+    actControllerTimerOff: TAction;
+    cbxControllerAuto: TCheckBox;
+    cbxControllerReliable: TCheckBox;
+    GroupBox6: TGroupBox;
+    cbxKeyValue: TComboBox;
+    Button16: TButton;
+    Button17: TButton;
+    Button18: TButton;
+    actControllerWriteKey: TAction;
+    Label9: TLabel;
+    actControllerEraseKey: TAction;
+    actControllerKeyExist: TAction;
+    Button12: TButton;
+    actControllerEraseAllKeys: TAction;
+    chbKeyPort1: TCheckBox;
+    chbKeyPort2: TCheckBox;
+    chbKeyPort3: TCheckBox;
+    chbKeyPort4: TCheckBox;
+    chbKeyPort5: TCheckBox;
+    chbKeyPort6: TCheckBox;
+    chbKeyPort7: TCheckBox;
+    chbKeyPort8: TCheckBox;
+    Label12: TLabel;
+    chbKeySuppressDoorEvent: TCheckBox;
+    Label13: TLabel;
+    cbxKeyPersCat: TComboBox;
+    actControllerProgId: TAction;
+    actControllerProgVer: TAction;
+    actControllerSerNum: TAction;
+    actControllerReadClock: TAction;
+    actControllerWriteClockDate: TAction;
+    actControllerWriteClockTime: TAction;
+    Button19: TButton;
+    actControllerReadAllKeys: TAction;
+    actControllerTimetableEdit: TAction;
+    actControllerTimetableErase: TAction;
+    actControllerRestartProg: TAction;
+    tbsSensor: TTabSheet;
+    sgdSensor: TStringGrid;
+    cbxChannelResponseTimeout: TComboBox;
+    Label14: TLabel;
+    Label15: TLabel;
+    tbsChannelError: TTabSheet;
+    sgdChannelError: TStringGrid;
+    tbsControllerError: TTabSheet;
+    sgdControllerError: TStringGrid;
+    Panel2: TPanel;
+    btnClear: TButton;
+    Button25: TButton;
+    sttRecCnt: TStaticText;
+    Label16: TLabel;
+    tbsChannelState: TTabSheet;
+    sgdChannelState: TStringGrid;
+    actControllerEraseAllEvents: TAction;
+    actControllerEventsInfo: TAction;
+    actControllerKeysInfo: TAction;
+    actControllerPortsInfo: TAction;
+    actControllerGenerateTimerEvents: TAction;
+    actControllerEditKeypad: TAction;
+    actServcontChannelList: TAction;
+    actServcontControllerList: TAction;
+    MainMenu1: TMainMenu;
+    RPC1: TMenuItem;
+    Servcont1: TMenuItem;
+    Controller1: TMenuItem;
+    Application1: TMenuItem;
+    Exit1: TMenuItem;
+    Open1: TMenuItem;
+    Close1: TMenuItem;
+    Add1: TMenuItem;
+    Remove1: TMenuItem;
+    Activate1: TMenuItem;
+    Deactivate1: TMenuItem;
+    Add2: TMenuItem;
+    Remove2: TMenuItem;
+    ChannelList1: TMenuItem;
+    ControllerList1: TMenuItem;
+    On1: TMenuItem;
+    Off1: TMenuItem;
+    Poll1: TMenuItem;
+    Stoppolling1: TMenuItem;
+    On2: TMenuItem;
+    Off2: TMenuItem;
+    Write1: TMenuItem;
+    KeyErase1: TMenuItem;
+    KeyExist1: TMenuItem;
+    KeyEraseAll1: TMenuItem;
+    ProgId2: TMenuItem;
+    ProgVer2: TMenuItem;
+    SerNum2: TMenuItem;
+    ReadClock2: TMenuItem;
+    WriteClockDate2: TMenuItem;
+    WriteClockTime2: TMenuItem;
+    ReadAll1: TMenuItem;
+    Edit1: TMenuItem;
+    imetableErase1: TMenuItem;
+    RestartProg2: TMenuItem;
+    EraseAllEvents2: TMenuItem;
+    EventsInfo2: TMenuItem;
+    KeysInfo2: TMenuItem;
+    PortsInfo2: TMenuItem;
+    GenerateTimerEvents2: TMenuItem;
+    EditKeypad2: TMenuItem;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
+    N7: TMenuItem;
+    N8: TMenuItem;
+    tbsChannelPollSpeed: TTabSheet;
+    sgdChannelPollSpeed: TStringGrid;
+    actServcontSwitchToAuto: TAction;
+    SwitchtoAutonomicmode1: TMenuItem;
+    N9: TMenuItem;
+    actControllerGenerateKeyBase: TAction;
+    GenerateKeyBase1: TMenuItem;
+    N10: TMenuItem;
+    actControllerReadAllChips: TAction;
+    actControllerWriteAllChips: TAction;
+    Chips1: TMenuItem;
+    N11: TMenuItem;
+    actControllerActivateChip: TAction;
+    actControllerDeactivateChip: TAction;
+    actControllerEraseAllChips: TAction;
+    actServcontMainClient: TAction;
+    MainClient1: TMenuItem;
+    N12: TMenuItem;
+    actServcontCoEvtLogSend: TAction;
+    N13: TMenuItem;
+    CoEvtLogSend1: TMenuItem;
+    actServcontCoEvtLogClear: TAction;
+    CoEvtLogClear1: TMenuItem;
+    GroupBox5: TGroupBox;
+    Button11: TButton;
+    chbLogControllerEvents: TCheckBox;
+    tbsControllerState: TTabSheet;
+    sgdControllerState: TStringGrid;
+    Label11: TLabel;
+    cbxChannelAliveTimeout: TComboBox;
+    Label17: TLabel;
+    Label18: TLabel;
+    cbxChannelDeadTimeout: TComboBox;
+    Label19: TLabel;
+    actServcontClientList: TAction;
+    ClientList1: TMenuItem;
+    tbsChannelsChanged: TTabSheet;
+    tbsControllersChanged: TTabSheet;
+    tbsClientsChanged: TTabSheet;
+    sgdChannelsChanged: TStringGrid;
+    sgdControllersChanged: TStringGrid;
+    sgdClientsChanged: TStringGrid;
+    cbxQueueLimit: TComboBox;
+    Label20: TLabel;
+    tbsQueueFull: TTabSheet;
+    sgdQueueFull: TStringGrid;
+    actServcontSetHostClock: TAction;
+    N14: TMenuItem;
+    SetHostClock1: TMenuItem;
+    tbsRs422: TTabSheet;
+    Label21: TLabel;
+    cbxChannelRS422Speed: TComboBox;
+    actControllerReadSetup: TAction;
+    actControllerWriteSetup: TAction;
+    N15: TMenuItem;
+    ReadSetup1: TMenuItem;
+    WriteSetup1: TMenuItem;
+    OpenDialog1: TOpenDialog;
+    actControllerChipInfo: TAction;
+    actControllerChipInfo1: TMenuItem;
+    chbRelayOnAnyKey: TCheckBox;
+    actServcontFindControllers: TAction;
+    Button13: TButton;
+    ControllerGenerateKeyBaseAsync: TAction;
+    ControllerGenerateKeyBaseAsync1: TMenuItem;
+    TabSheet1: TTabSheet;
+    sgdWriteAllKeysAsync: TStringGrid;
+    procedure btnClearClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure actRpcOpenExecute(Sender: TObject);
+    procedure actRpcCloseExecute(Sender: TObject);
+    procedure ActionList1Update(Action: TBasicAction;
+      var Handled: Boolean);
+    procedure actServcontAddChannelExecute(Sender: TObject);
+    procedure actServcontRemoveChannelExecute(Sender: TObject);
+    procedure actServcontActivateChannelExecute(Sender: TObject);
+    procedure actServcontDeactivateChannelExecute(Sender: TObject);
+    procedure actServcontAddControllerExecute(Sender: TObject);
+    procedure actServcontRemoveControllerExecute(Sender: TObject);
+    procedure actControllerRelayOnExecute(Sender: TObject);
+    procedure actControllerRelayOffExecute(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure actControllerPollOnExecute(Sender: TObject);
+    procedure actControllerPollOffExecute(Sender: TObject);
+    procedure actControllerTimerOffExecute(Sender: TObject);
+    procedure actControllerTimerOnExecute(Sender: TObject);
+    procedure actControllerWriteKeyExecute(Sender: TObject);
+    procedure actControllerEraseKeyExecute(Sender: TObject);
+    procedure actControllerKeyExistExecute(Sender: TObject);
+    procedure actControllerEraseAllKeysExecute(Sender: TObject);
+    procedure actControllerProgIdExecute(Sender: TObject);
+    procedure actControllerProgVerExecute(Sender: TObject);
+    procedure actControllerSerNumExecute(Sender: TObject);
+    procedure actControllerReadClockExecute(Sender: TObject);
+    procedure actControllerWriteClockDateExecute(Sender: TObject);
+    procedure actControllerWriteClockTimeExecute(Sender: TObject);
+    procedure actControllerReadAllKeysExecute(Sender: TObject);
+    procedure actControllerTimetableEditExecute(Sender: TObject);
+    procedure actControllerTimetableEraseExecute(Sender: TObject);
+    procedure actControllerRestartProgExecute(Sender: TObject);
+    procedure Button25Click(Sender: TObject);
+    procedure pgcEventsChange(Sender: TObject);
+    procedure actControllerEraseAllEventsExecute(Sender: TObject);
+    procedure actControllerEventsInfoExecute(Sender: TObject);
+    procedure actControllerKeysInfoExecute(Sender: TObject);
+    procedure actControllerPortsInfoExecute(Sender: TObject);
+    procedure actControllerGenerateTimerEventsExecute(Sender: TObject);
+    procedure actControllerEditKeypadExecute(Sender: TObject);
+    procedure actServcontChannelListExecute(Sender: TObject);
+    procedure actServcontControllerListExecute(Sender: TObject);
+    procedure Exit1Click(Sender: TObject);
+    procedure actServcontSwitchToAutoExecute(Sender: TObject);
+    procedure actControllerGenerateKeyBaseExecute(Sender: TObject);
+    procedure actControllerReadAllChipsExecute(Sender: TObject);
+    procedure Chips1Click(Sender: TObject);
+    procedure actControllerWriteAllChipsExecute(Sender: TObject);
+    procedure actControllerActivateChipExecute(Sender: TObject);
+    procedure actControllerDeactivateChipExecute(Sender: TObject);
+    procedure actControllerEraseAllChipsExecute(Sender: TObject);
+    procedure actServcontMainClientExecute(Sender: TObject);
+    procedure actServcontCoEvtLogSendExecute(Sender: TObject);
+    procedure actServcontCoEvtLogClearExecute(Sender: TObject);
+    procedure actServcontClientListExecute(Sender: TObject);
+    procedure actServcontSetHostClockExecute(Sender: TObject);
+    procedure actControllerReadSetupExecute(Sender: TObject);
+    procedure actControllerWriteSetupExecute(Sender: TObject);
+    procedure actControllerChipInfoExecute(Sender: TObject);
+    procedure actServcontFindControllersExecute(Sender: TObject);
+    procedure ControllerGenerateKeyBaseAsyncExecute(Sender: TObject);
+  private
+    { Private declarations }
+    Rpc: TrpcClientSide;
+    ChReady: Boolean;
+    Procedure RpcNeedExecute(const Sender : TObject; const ProcName : String; Params : TrpcParamsOnReceive;
+      ResultParams : TrpcParamsToSend; var Handled : Boolean);
+    procedure RpcChange(Sender: TObject);
+    procedure RpcControllerExec(const ProcName: string);
+    procedure Maintain;
+    procedure ExecRelay(IsOn: Boolean);
+    procedure ExecTimer(Interval: Integer);
+    procedure ControllChannel(Active: Boolean);
+    procedure EditControllers(IsAdd: Boolean);
+    function ChannelId: string;
+    function ControllerAddr: Integer;
+    function ControllerEvent(Grid: TStringGrid; const Channel: string; pData: PControllerEvent): Integer;
+    function ChannelEvent(Grid: TStringGrid; Params: TrpcParamsOnReceive): Integer;
+    function ChannelErrorEvent(Grid: TStringGrid; Params: TrpcParamsOnReceive; Row: Integer): Integer;
+    procedure ControllerPortEvent(Grid: TStringGrid; pData: PControllerPortEvent);
+    procedure ControllerPortRelayEvent(Grid: TStringGrid; pData: PControllerPortRelayEvent);
+    procedure SerializeCheckBox(ini: TIniFile; chb: TCheckBox);
+    procedure InitGrid(ini: TIniFile; Grid: TStringGrid);
+    procedure ControllerKey(Params: TrpcParamsOnReceive);
+    procedure ControllerButton(Params: TrpcParamsOnReceive);
+    procedure ControllerDoorOpen(Params: TrpcParamsOnReceive);
+    procedure ControllerDoorClose(Params: TrpcParamsOnReceive);
+    procedure Controller220V(Params: TrpcParamsOnReceive);
+    procedure ControllerCase(Params: TrpcParamsOnReceive);
+    procedure ControllerTimer(Params: TrpcParamsOnReceive);
+    procedure ControllerAutoTimeout(Params: TrpcParamsOnReceive);
+    procedure ControllerRestart(Params: TrpcParamsOnReceive);
+    procedure ControllerStart(Params: TrpcParamsOnReceive);
+    procedure ControllerStaticSensor(Params: TrpcParamsOnReceive);
+    procedure ChannelError(Params: TrpcParamsOnReceive);
+    procedure ControllerError(Params: TrpcParamsOnReceive);
+    procedure ControllerState(Params: TrpcParamsOnReceive);
+    procedure ChannelState(Params: TrpcParamsOnReceive);
+    procedure ChannelPollSpeed(Params: TrpcParamsOnReceive);
+    procedure ControllerWriteClock(IsTime: Boolean);
+    procedure ReadTimetable(var SpecialDays, Items: string);
+    procedure WriteTimetable(const SpecialDays, Items: string);
+    procedure ControlChip(Active: Boolean);
+    procedure ChannelsChanged(Params: TrpcParamsOnReceive);
+    procedure ControllersChanged(Params: TrpcParamsOnReceive);
+    procedure ClientsChanged(Params: TrpcParamsOnReceive);
+    procedure QueueFull(Params: TrpcParamsOnReceive);
+    procedure WriteAllKeysAsync(Params: TrpcParamsOnReceive);
+    function RpcExec(Proc: TrpcProc; TimeOut: Cardinal = 0): TrpcParamsOnReceive;
+  public
+    { Public declarations }
+  end;
+
+var
+  frmMain: TfrmMain;
+
+function Dump(Data: PChar; Size: Integer): string;
+function Raw(Data: PChar; Size: Integer): string;
+function Bin(const S: string): string;
+procedure ClearGrid(Grid: TStringGrid);
+function AddGridRow(Grid: TStringGrid): Integer;
+function GridLastRow(Grid: TStringGrid): Integer;
+procedure RemoveGridRow(Grid: TStringGrid; Row: Integer);
+procedure InitComboBox(ini: TIniFile; cbx: TComboBox);
+procedure InitCheckBox(ini: TIniFile; chb: TCheckBox);
+procedure SerializeGrid(ini: TIniFile; Grid: TStringGrid);
+procedure SerializeComboBox(ini: TIniFile; cbx: TComboBox);
+function Timestamp2Str(pTimestamp: PServcontDateTime): string;
+function ControllerPorts2Str(pPorts: PControllerPorts): string;
+procedure Now2ServcontDateTime(pTimestamp: PServcontDateTime; SecAdj: Integer);
+
+
+implementation
+
+uses
+  TypInfo, DateUtils, DateTimeFrm, KeysFrm, TimetableFrm, KeypadFrm, ChipsFrm, ChannelsFrm;
+
+{$R *.dfm}
+
+function Bin(const S: string): string;
+var
+  Len, i: Integer;
+begin
+  Result := '';
+  Len := Length(S);
+  i := 1;
+  while i < Len do begin
+    if S[i] = #32 then begin
+      Inc(i);
+      Continue;
+    end;
+    Result := Result + Char(StrToInt('$' + AnsiString(S[i]) + AnsiString(S[i+1])));
+    Inc(i, 2);
+  end;
+end;
+
+procedure ClearGrid(Grid: TStringGrid);
+var
+  i: Integer;
+begin
+  for i:=1 to Grid.RowCount - 1 do
+    Grid.Rows[i].Clear;
+  Grid.RowCount := 2;
+end;
+
+function AddGridRow(Grid: TStringGrid): Integer;
+var
+  x: Integer;
+begin
+  x := Grid.RowCount + 1;
+  Grid.RowCount := x;
+  Result := Grid.RowCount - 2;
+  Grid.Row := Result;
+end;
+
+function Dump(Data: PChar; Size: Integer): string;
+var
+  i,j: Integer;
+begin
+  Result := '';
+  j := Size - 1;
+  for i:=0 to j do
+    if i <> j then
+      Result := Result + IntToHex(Integer(Data[i]), 2) + ' '
+    else
+      Result := Result + IntToHex(Integer(Data[i]), 2);
+end;
+
+function Raw(Data: PChar; Size: Integer): string;
+var
+  i: Integer;
+begin
+  SetLength(Result, Size);
+  for i:=0 to Size - 1 do
+    Result[i + 1] := Data[i];
+end;
+
+function GridLastRow(Grid: TStringGrid): Integer;
+begin
+  Result := Grid.RowCount - 2;
+end;
+
+procedure RemoveGridRow(Grid: TStringGrid; Row: Integer);
+var
+  i: Integer;
+begin
+  if ((Row + 1) = Grid.RowCount) or (Grid.RowCount = 2) then
+    Exit;
+  for i := Row + 1 to Grid.RowCount - 1 do
+    Grid.Rows[i - 1].Text := Grid.Rows[i].Text;
+  Grid.RowCount := Grid.RowCount - 1;
+end;
+
+procedure InitComboBox(ini: TIniFile; cbx: TComboBox);
+var
+  i: Integer;
+  s: string;
+begin
+  i := 0;
+  while ini.ValueExists(cbx.Name, IntToStr(i)) do begin
+    s := Trim(ini.ReadString(cbx.Name, IntToStr(i), ''));
+    if s <> '' then
+      cbx.Items.Add(s);
+    Inc(i);
+  end;
+  i := ini.ReadInteger(cbx.Name, 'i', 0);
+  if cbx.Items.Count > i then
+    cbx.ItemIndex := i;
+end;
+
+procedure InitCheckBox(ini: TIniFile; chb: TCheckBox);
+begin
+  chb.Checked := ini.ReadBool('FLAGS', chb.Name, False);
+end;
+
+procedure SerializeGrid(ini: TIniFile; Grid: TStringGrid);
+var
+  i: Integer;
+begin
+  for i:=0 to Grid.ColCount - 1 do
+    ini.WriteInteger(Grid.Name, IntToStr(i), Grid.ColWidths[i]);
+end;
+
+procedure SerializeComboBox(ini: TIniFile; cbx: TComboBox);
+var
+  i: Integer;
+  s: string;
+begin
+  ini.EraseSection(cbx.Name);
+  i := cbx.Items.IndexOf(cbx.Text);
+  if i <> -1 then
+    ini.WriteInteger(cbx.Name, 'i', i);
+  for i:=0 to cbx.Items.Count - 1 do begin
+    s := Trim(cbx.Items[i]);
+    if s <> '' then
+      ini.WriteString(cbx.Name, IntToStr(i), s);
+  end;
+end;
+
+function Timestamp2Str(pTimestamp: PServcontDateTime): string;
+var
+  dt: TDateTime;
+begin
+  with pTimestamp^ do
+    if TryEncodeDateTime(Year + 2000, Month, Day, Hour, Minute, Second, 0, dt) then
+      Result := DateTimeToStr(dt)
+    else
+      Result := '<Invalid Value>';
+end;
+
+function ControllerPorts2Str(pPorts: PControllerPorts): string;
+var
+  i: Integer;
+begin
+  Result := '';
+  for i:=0 to cPortCount - 1 do
+    Result := Result + IntToStr(Byte(pPorts^[i]));
+end;
+
+procedure Now2ServcontDateTime(pTimestamp: PServcontDateTime; SecAdj: Integer);
+var
+  y,m,d,h,n,s,z: Word;
+begin
+  DecodeDateTime(Now, y,m,d,h,n,s,z);
+  with pTimestamp^ do begin
+    Year := y - 2000;
+    Month := m;
+    Day := d;
+    Hour := h;
+    Minute := n;
+    Second := s + SecAdj;
+  end;
+end;
+
+function GenerateKeyBase(Capacity: Integer): string;
+var
+  Key: TControllerKey;
+  i, x: Integer;
+begin
+  FillChar(Key, SizeOf(TControllerKey), 0);
+  FillChar(Key.Ports, cPortCount, 1);
+  Key.PersCat := 16;
+  SetLength(Result, Capacity * SizeOf(TControllerKey));
+  for i:=0 to Capacity - 1 do begin
+    x := i + 1;
+    x := x shr 24 or x and $FFFFFF shr 16 shl 8 or x and $FFFF shr 8 shl 16 or x and $FF shl 24;
+    Move(x, Key.Value[2], SizeOf(Integer));
+    Move(Key, Result[i * SizeOf(TControllerKey) + 1], SizeOf(TControllerKey));
+  end;
+end;
+
+
+
+
+procedure TfrmMain.RpcNeedExecute(const Sender: TObject;
+  const ProcName: String; Params: TrpcParamsOnReceive;
+  ResultParams: TrpcParamsToSend; var Handled: Boolean);
+begin
+  Handled := True;
+  if SameText(ProcName, 'ControllerKey') then
+    ControllerKey(Params)
+  else
+  if SameText(ProcName, 'ControllerButton') then
+    ControllerButton(Params)
+  else
+  if SameText(ProcName, 'ControllerDoorOpen') then
+    ControllerDoorOpen(Params)
+  else
+  if SameText(ProcName, 'ControllerDoorClose') then
+    ControllerDoorClose(Params)
+  else
+  if SameText(ProcName, 'Controller220V') then
+    Controller220V(Params)
+  else
+  if SameText(ProcName, 'ControllerCase') then
+    ControllerCase(Params)
+  else
+  if SameText(ProcName, 'ControllerTimer') then
+    ControllerTimer(Params)
+  else
+  if SameText(ProcName, 'ControllerAutoTimeout') then
+    ControllerAutoTimeout(Params)
+  else
+  if SameText(ProcName, 'ControllerRestart') then
+    ControllerRestart(Params)
+  else
+  if SameText(ProcName, 'ControllerStart') then
+    ControllerStart(Params)
+  else
+  if SameText(ProcName, 'ControllerStaticSensor') then
+    ControllerStaticSensor(Params)
+  else
+  if SameText(ProcName, 'ChannelError') then
+    ChannelError(Params)
+  else
+  if SameText(ProcName, 'ControllerError') then
+    ControllerError(Params)
+  else
+  if SameText(ProcName, 'ChannelState') then
+    ChannelState(Params)
+  else
+  if SameText(ProcName, 'ChannelPollSpeed') then
+    ChannelPollSpeed(Params)
+  else
+  if SameText(ProcName, 'ControllerState') then
+    ControllerState(Params)
+  else
+  if SameText(ProcName, 'ChannelsChanged') then
+    ChannelsChanged(Params)
+  else
+  if SameText(ProcName, 'ControllersChanged') then
+    ControllersChanged(Params)
+  else
+  if SameText(ProcName, 'ClientsChanged') then
+    ClientsChanged(Params)
+  else
+  if SameText(ProcName, 'QueueFull') then
+    QueueFull(Params)
+  else
+    Handled := False;
+end;
+
+procedure TfrmMain.btnClearClick(Sender: TObject);
+var
+  Grid: TStringGrid;
+begin
+  Grid := pgcEvents.ActivePage.Controls[0] as TStringGrid;
+  ClearGrid(Grid);
+  sttRecCnt.Caption := '0';
+end;
+
+procedure TfrmMain.FormCreate(Sender: TObject);
+var
+  ini: TIniFile;
+  i: Integer;
+begin
+  Caption := Application.Title;
+
+  sgdKey.Cells[9,0] := 'Key';
+  sgdKey.Cells[10,0] := 'IsTimeRestrict';
+  sgdKey.Cells[11,0] := 'IsTimeRestrictDone';
+  sgdKey.Cells[12,0] := 'IsAccessGranted';
+  sgdKey.Cells[13,0] := 'IsKeyFound';
+  sgdKey.Cells[14,0] := 'IsKeySearchDone';
+  sgdSensor.Cells[7,0] := 'Value';
+
+  ini := TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
+  try
+    for i:=0 to ComponentCount - 1 do
+      if (Components[i] is TComboBox) then
+        InitComboBox(ini, TComboBox(Components[i]))
+      else
+      if (Components[i] is TCheckBox) then
+        InitCheckBox(ini, TCheckBox(Components[i]))
+      else
+      if (Components[i] is TStringGrid) then
+        InitGrid(ini, TStringGrid(Components[i]));
+  finally
+    ini.Free;
+  end;
+
+  Rpc := TrpcClientSide.Create(Self);
+  Rpc.TimeOut := 60000;
+  Rpc.EventsInActivatingThread := True;
+  Rpc.OnRpcNeedExecute := RpcNeedExecute;
+  Rpc.OnRpcChange := RpcChange;
+end;
+
+procedure TfrmMain.ExecRelay(IsOn: Boolean);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    if IsOn then
+      p.Name := 'RelayOn'
+    else
+      p.Name := 'RelayOff';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    p.Params.vInteger['Port'] := StrToInt(cbxRelayPort.Text);
+    p.Params.vBoolean['SuppressDoorEvent'] := chbSuppressDoorEvent.Checked;
+    if IsOn then
+      p.Params.vInteger['interval'] := StrToInt(cbxRelayInterval.Text);
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.ControllChannel(Active: Boolean);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ControllChannel';
+    p.Params.vString['Id'] := ChannelId;
+    p.Params.vBoolean['Active'] := Active;
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+  
+  Maintain;
+end;
+
+procedure TfrmMain.Maintain;
+var
+  i: Integer;
+  cbx: TComboBox;
+  s: string;
+begin
+  for i:=0 to ComponentCount - 1 do
+    if Components[i] is TComboBox then begin
+      cbx := TComboBox(Components[i]);
+      s := Trim(cbx.Text);
+      if s <> '' then
+        if cbx.Items.IndexOf(s) = -1 then
+          cbx.Items.Add(s);
+    end;
+end;
+
+procedure TfrmMain.FormDestroy(Sender: TObject);
+var
+  ini: TIniFile;
+  i: Integer;
+begin
+  ini := TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
+  try
+    for i:=0 to ComponentCount - 1 do
+      if (Components[i] is TComboBox) then
+        SerializeComboBox(ini, TComboBox(Components[i]))
+      else
+      if Components[i] is TCheckBox then
+        SerializeCheckBox(ini, TCheckBox(Components[i]))
+      else
+      if (Components[i] is TStringGrid) then
+        SerializeGrid(ini, TStringGrid(Components[i]));
+  finally
+    ini.Free;
+  end;
+  Rpc.Free;
+end;
+
+procedure TfrmMain.EditControllers(IsAdd: Boolean);
+begin
+  if IsAdd then
+    RpcControllerExec('AddController')
+  else
+    RpcControllerExec('RemoveController');
+
+  Maintain;
+end;
+
+procedure TfrmMain.actRpcOpenExecute(Sender: TObject);
+begin
+  Rpc.pSocket.Values['Host'] := cbxRpcHost.Text;
+  Rpc.pSocket.Values['Port'] := '4000';
+  Rpc.Open;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actRpcCloseExecute(Sender: TObject);
+begin
+  Rpc.Close;
+end;
+
+procedure TfrmMain.ActionList1Update(Action: TBasicAction;
+  var Handled: Boolean);
+begin
+  Handled := True;
+  if Action = actRpcOpen then
+    TAction(Action).Enabled := not Rpc.Active
+  else
+  if Action = actRpcClose then
+    TAction(Action).Enabled := Rpc.Active
+  else
+    TAction(Action).Enabled := Rpc.Ready;
+end;
+
+procedure TfrmMain.actServcontAddChannelExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  IsIp: Boolean;
+begin
+  p := Rpc.DoProc;
+  try
+    if pgcChannel.ActivePage = tbsRs422 then begin
+      p.Name := 'AddDvRs422Channel';
+      p.Params.vInteger['speed'] := StrToInt(cbxChannelRS422Speed.Text);
+    end else begin
+      p.Name := 'AddChannel';
+      IsIp := pgcChannel.ActivePage = tbsIp;
+      p.Params.vBoolean['IsIP'] := IsIp;
+      if IsIp then begin
+        p.Params.vString['host'] := cbxChannelIPHost.Text;
+        p.Params.vInteger['port'] := StrToInt(cbxChannelIPPort.Text);
+      end else begin
+        p.Params.vString['port'] := cbxChannelSerialPort.Text;
+        p.Params.vInteger['speed'] := StrToInt(cbxChannelSerialSpeed.Text);
+      end;
+    end;
+    p.Params.vInteger['ResponseTimeout'] := StrToInt(cbxChannelResponseTimeout.Text);
+    p.Params.vInteger['AliveTimeout'] := StrToInt(cbxChannelAliveTimeout.Text);
+    p.Params.vInteger['DeadTimeout'] := StrToInt(cbxChannelDeadTimeout.Text);
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actServcontRemoveChannelExecute(Sender: TObject);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'RemoveChannel';
+    p.Params.vString['id'] := ChannelId;
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actServcontActivateChannelExecute(Sender: TObject);
+begin
+  ControllChannel(True);
+end;
+
+procedure TfrmMain.actServcontDeactivateChannelExecute(Sender: TObject);
+begin
+  ControllChannel(False);
+end;
+
+procedure TfrmMain.actServcontAddControllerExecute(Sender: TObject);
+begin
+  EditControllers(True);
+end;
+
+procedure TfrmMain.actServcontRemoveControllerExecute(Sender: TObject);
+begin
+  EditControllers(False);
+end;
+
+procedure TfrmMain.actControllerRelayOnExecute(Sender: TObject);
+begin
+  ExecRelay(True);
+end;
+
+procedure TfrmMain.actControllerRelayOffExecute(Sender: TObject);
+begin
+  ExecRelay(False);
+end;
+
+function TfrmMain.ChannelId: string;
+begin
+  if pgcChannel.ActivePage = tbsRs422 then
+    Result := 'DVRS422'
+  else if pgcChannel.ActivePage = tbsIp then
+    Result := cbxChannelIPHost.Text + ':' + cbxChannelIPPort.Text
+  else
+    Result := cbxChannelSerialPort.Text;
+end;
+
+procedure TfrmMain.InitGrid(ini: TIniFile; Grid: TStringGrid);
+var
+  i: Integer;
+begin
+  if (Grid = sgdChannelsChanged) or (Grid = sgdClientsChanged) or (Grid = sgdQueueFull) then
+    Grid.Cells[0,0] := 'Time'
+  else
+    Grid.Cells[0,0] := 'Channel';
+  if not((Grid = sgdChannelError) or (Grid = sgdControllerError) or (Grid = sgdChannelState) or (Grid = sgdChannelPollSpeed) or (Grid = sgdControllerState) or (Grid = sgdControllersChanged)) then begin
+    Grid.Cells[1,0] := 'Time2';
+    Grid.Cells[2,0] := 'Addr';
+    Grid.Cells[3,0] := 'No';
+    Grid.Cells[4,0] := 'IsAuto';
+    Grid.Cells[5,0] := 'Time1';
+    Grid.Cells[6,0] := 'IsLast';
+    if (Grid = sgdKey) or (Grid = sgdButton) or (Grid = sgdDoorOpen) or (Grid = sgdDoorClose) then
+      Grid.Cells[7,0] := 'Port';
+    if (Grid = sgdKey) or (Grid = sgdButton) then
+      Grid.Cells[8,0] := 'IsOpen';
+  end else begin
+    Grid.Cells[1,0] := 'Time';
+    if Grid = sgdChannelState then
+      Grid.Cells[2,0] := 'IsReady'
+    else
+    if Grid = sgdControllerState then begin
+      Grid.Cells[2,0] := 'Addr';
+      Grid.Cells[3,0] := 'State';
+    end else
+    if (Grid = sgdChannelError) or (Grid = sgdControllerError) then begin
+      Grid.Cells[2,0] := 'Class';
+      Grid.Cells[3,0] := 'Message';
+      if Grid = sgdControllerError then
+        Grid.Cells[4,0] := 'Addr';
+    end else
+    if Grid = sgdChannelPollSpeed then
+      Grid.Cells[2,0] := 'Value';
+  end;
+
+  for i:=0 to Grid.ColCount - 1 do
+    Grid.ColWidths[i] := ini.ReadInteger(Grid.Name, IntToStr(i), Grid.DefaultColWidth);
+end;
+
+function TfrmMain.ControllerEvent(Grid: TStringGrid; const Channel: string; pData: PControllerEvent): Integer;
+begin
+  Result := AddGridRow(Grid);
+  pgcEventsChange(pgcEvents);
+  Grid.Cells[0, Result] := Channel;
+  with Grid, pData^ do begin
+    Cells[1, Result] := Timestamp2Str(@Timestamp2);
+    Cells[2, Result] := IntToStr(Addr);
+    Cells[3, Result] := IntToStr(No);
+    Cells[4, Result] := BoolToStr(IsAuto, True);
+    Cells[5, Result] := Timestamp2Str(@Timestamp1);
+    Cells[6, Result] := BoolToStr(IsLast, True);
+  end;
+end;
+
+procedure TfrmMain.RpcChange(Sender: TObject);
+begin
+  sttReady.Caption := BoolToStr(Rpc.Ready, True);
+end;
+
+procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  Tag := 1;
+  actRpcClose.Execute;
+end;
+
+procedure TfrmMain.ControllerKey(Params: TrpcParamsOnReceive);
+var
+  pData: Pointer;
+  x: Integer;
+begin
+  pData := @Params.vString['Data'][1];
+  x := ControllerEvent(sgdKey, Params.vString['Channel'], pData);
+  ControllerPortEvent(sgdKey, pData);
+  ControllerPortRelayEvent(sgdKey, pData);
+  with sgdKey, PControllerKeyEvent(pData)^ do begin
+    Cells[9, x] := Dump(@Key, 6);
+    Cells[10, x] := BoolToStr(IsTimeRestrict, True);
+    Cells[11, x] := BoolToStr(IsTimeRestrictDone, True);
+    Cells[12, x] := BoolToStr(IsAccessGranted, True);
+    Cells[13, x] := BoolToStr(IsKeyFound, True);
+    Cells[14, x] := BoolToStr(IsKeySearchDone, True);
+  end;
+  if chbRelayOnAnyKey.Checked then
+    actControllerRelayOn.Execute;
+end;
+
+procedure TfrmMain.ControllerButton(Params: TrpcParamsOnReceive);
+var
+  pData: Pointer;
+  x: Integer;
+begin
+  pData := @Params.vString['Data'][1];
+  x := ControllerEvent(sgdButton, Params.vString['Channel'], pData);
+  ControllerPortEvent(sgdButton, pData);
+  ControllerPortRelayEvent(sgdButton, pData);
+  with PControllerPortRelayEvent(pData)^ do
+    sgdButton.Cells[8, x] := BoolToStr(IsOpen, True);
+end;
+
+procedure TfrmMain.ControllerDoorOpen(Params: TrpcParamsOnReceive);
+var
+  pData: Pointer;
+begin
+  pData := @Params.vString['Data'][1];
+  ControllerEvent(sgdDoorOpen, Params.vString['Channel'], pData);
+  ControllerPortEvent(sgdDoorOpen, pData);
+  ControllerPortRelayEvent(sgdDoorOpen, pData);
+end;
+
+procedure TfrmMain.ControllerDoorClose(Params: TrpcParamsOnReceive);
+var
+  pData: Pointer;
+begin
+  pData := @Params.vString['Data'][1];
+  ControllerEvent(sgdDoorClose, Params.vString['Channel'], pData);
+  ControllerPortEvent(sgdDoorClose, pData);
+  ControllerPortRelayEvent(sgdDoorClose, pData);
+end;
+
+procedure TfrmMain.actControllerPollOnExecute(Sender: TObject);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'PollOn';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    p.Params.vBoolean['IsAuto'] := cbxControllerAuto.Checked;
+    p.Params.vBoolean['IsReliable'] := cbxControllerReliable.Checked;
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.actControllerPollOffExecute(Sender: TObject);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'PollOff';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    p.Params.vBoolean['ForceAuto'] := True;
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.ControllerPortEvent(Grid: TStringGrid;
+  pData: PControllerPortEvent);
+begin
+  Grid.Cells[7, GridLastRow(Grid)] := IntToStr(pData^.Port);
+end;
+
+procedure TfrmMain.ControllerPortRelayEvent(Grid: TStringGrid;
+  pData: PControllerPortRelayEvent);
+begin
+  Grid.Cells[8, GridLastRow(Grid)] := BoolToStr(pData^.IsOpen, True);
+end;
+
+procedure TfrmMain.ControllerCase(Params: TrpcParamsOnReceive);
+var
+  pData: Pointer;
+begin
+  pData := @Params.vString['Data'][1];
+  ControllerEvent(sgdCase, Params.vString['Channel'], pData);
+end;
+
+procedure TfrmMain.Controller220V(Params: TrpcParamsOnReceive);
+var
+  pData: Pointer;
+begin
+  pData := @Params.vString['Data'][1];
+  ControllerEvent(sgd220V, Params.vString['Channel'], pData);
+end;
+
+procedure TfrmMain.ControllerTimer(Params: TrpcParamsOnReceive);
+var
+  Ch: string;
+  pData: Pointer;
+begin
+  pData := @Params.vString['Data'][1];
+  Ch := Params.vString['Channel'];
+  ControllerEvent(sgdTimer, Ch, pData);
+
+  //Sleep(50);
+  //raise Exception.Create('Test Exception on Client');
+  //actControllerReadClock.Execute;
+end;
+
+procedure TfrmMain.ControllerAutoTimeout(Params: TrpcParamsOnReceive);
+var
+  pData: Pointer;
+begin
+  pData := @Params.vString['Data'][1];
+  ControllerEvent(sgdAutoTimeout, Params.vString['Channel'], pData);
+end;
+
+procedure TfrmMain.ControllerRestart(Params: TrpcParamsOnReceive);
+var
+  pData: Pointer;
+begin
+  pData := @Params.vString['Data'][1];
+  ControllerEvent(sgdRestart, Params.vString['Channel'], pData);
+end;
+
+procedure TfrmMain.ControllerStart(Params: TrpcParamsOnReceive);
+var
+  pData: Pointer;
+begin
+  pData := @Params.vString['Data'][1];
+  ControllerEvent(sgdStart, Params.vString['Channel'], pData);
+end;
+
+procedure TfrmMain.ExecTimer(Interval: Integer);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'Timer';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    p.Params.vInteger['Interval'] := Interval;
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerTimerOffExecute(Sender: TObject);
+begin
+  ExecTimer(0);
+end;
+
+procedure TfrmMain.actControllerTimerOnExecute(Sender: TObject);
+var
+  s: string;
+begin
+  s := '1';
+  if InputQuery('Timer', 'Interval:', s) then
+    ExecTimer(StrToInt(s));
+end;
+
+procedure TfrmMain.actControllerWriteKeyExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  s: string;
+  i: Integer;
+  chb: TCheckBox;
+  Key: TControllerKey;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'WriteKey';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    s := Bin(cbxKeyValue.Text);
+    if Length(s) <> cKeySize then
+      raise Exception.Create('Invalid key value');
+    Move(s[1], Key.Value, SizeOf(Key.Value));
+    for i:=0 to cPortCount - 1 do begin
+       chb := FindComponent('chbKeyPort' + IntToStr(i+1)) as TCheckBox;
+       Assert(chb <> nil);
+       Key.Ports[i] := chb.Checked;
+    end;
+    Key.PersCat := StrToInt(cbxKeyPersCat.Text);
+    Key.SuppressDoorEvent := chbKeySuppressDoorEvent.Checked;
+    Key.OpenEvenComplex := False;
+    Key.IsSilent := False;
+    SetLength(s, SizeOf(TControllerKey));
+    Move(Key, s[1], SizeOf(TControllerKey));
+    p.Params.vString['Key'] := s;
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+function TfrmMain.ControllerAddr: Integer;
+begin
+  Result := StrToInt(cbxControllerAddr.Text);
+end;
+
+procedure TfrmMain.actControllerEraseKeyExecute(Sender: TObject);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'EraseKey';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    p.Params.vString['Key'] := Bin(cbxKeyValue.Text);
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerKeyExistExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  IsExist: Boolean;
+  s, KeyAttr: string;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'KeyExist';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    p.Params.vString['Key'] := Bin(cbxKeyValue.Text);
+    r := RpcExec(p);
+    IsExist := r.vBoolean['Result'];
+    s := 'IsExist: ' + BoolToStr(IsExist, True);
+    if IsExist then begin
+      KeyAttr := r.vString['KeyAttr'];
+      s := s + #13#10 + 'Ports: ';
+      with PControllerKeyAttr(@KeyAttr[1])^ do begin
+        s := s + ControllerPorts2Str(@Ports);
+        s := s + #13#10 + 'PersCat: ' + IntToStr(PersCat) + #13#10;
+        s := s + 'SuppressDoorEvent: ' + BoolToStr(SuppressDoorEvent, True) + #13#10;
+        s := s + 'OpenEvenComplex: ' + BoolToStr(OpenEvenComplex, True) + #13#10;
+        s := s + 'IsSilent: ' + BoolToStr(IsSilent, True);
+      end;
+    end;
+    ShowMessage(s);
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerEraseAllKeysExecute(Sender: TObject);
+begin
+  RpcControllerExec('EraseAllKeys');
+
+  Maintain;
+end;
+
+procedure TfrmMain.SerializeCheckBox(ini: TIniFile; chb: TCheckBox);
+begin
+  ini.WriteBool('FLAGS', chb.Name, chb.Checked);
+end;
+
+procedure TfrmMain.actControllerProgIdExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ProgId';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p);
+    ShowMessage(IntToHex(r.vInteger['Result'], 2) + 'h');
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerProgVerExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  i: Integer;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ProgVer';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p);
+    i := r.vInteger['Result'];
+    ShowMessage(IntToStr(i shr 8) + '.' + IntToStr(i and $FF));
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerSerNumExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'SerNum';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p);
+    ShowMessage(IntToStr(r.vInteger['Result']));
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerReadClockExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ReadClock';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p);
+    ShowMessage('Controller Clock: ' + Timestamp2Str(PServcontDateTime(@r.vString['Result'][1])));
+    //Caption := 'Controller Clock: ' + Timestamp2Str(PServcontDateTime(@r.vString['Result'][1]));
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerWriteClockDateExecute(Sender: TObject);
+begin
+  ControllerWriteClock(False);
+end;
+
+procedure TfrmMain.actControllerWriteClockTimeExecute(Sender: TObject);
+begin
+  ControllerWriteClock(True);
+end;
+
+procedure TfrmMain.ControllerWriteClock(IsTime: Boolean);
+var
+  p: TrpcProc;
+begin
+  with TfrmDateTime.Create(nil) do
+    try
+      Init(IsTime);
+      ShowModal;
+      if ModalResult <> mrOk then Exit;
+
+      p := Rpc.DoProc;
+      try
+        if IsTime then
+          p.Name := 'WriteClockTime'
+        else
+          p.Name := 'WriteClockDate';
+        p.Params.vString['Channel'] := ChannelId;
+        p.Params.vInteger['Addr'] := ControllerAddr;
+        if IsTime then
+          p.Params.vString['Value'] := GetTime
+        else
+          p.Params.vString['Value'] := GetDate;
+        RpcExec(p);
+      finally
+        p.Leave;
+      end;
+
+    finally
+      Free;
+    end;
+end;
+
+procedure TfrmMain.actControllerReadAllKeysExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  i, KeyCount: Integer;
+  Keys: string;
+  y: Integer;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ReadAllKeys';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p, INFINITE);
+    KeyCount := r.vInteger['Count'];
+    if KeyCount <> 0 then begin
+      with TfrmKeys.Create(nil) do
+        try
+          StatusBar.SimpleText := 'Total: ' + IntToStr(KeyCount);
+          Grid.RowCount := KeyCount + 1;
+          Keys := r.vString['Keys'];
+          for i:=0 to KeyCount - 1 do begin
+            y := i + 1;
+            Grid.Cells[0, y] := IntToStr(y);
+            with Grid, PControllerKey(@Keys[i * SizeOf(TControllerKey) + 1])^ do begin
+              Cells[1, y] := Dump(@Value, cKeySize);
+              Cells[2, y] := ControllerPorts2Str(@Ports);
+              Cells[3, y] := IntToStr(PersCat);
+              Cells[4, y] := BoolToStr(SuppressDoorEvent, True);
+              Cells[5, y] := BoolToStr(OpenEvenComplex, True);
+              Cells[6, y] := BoolToStr(IsSilent, True);
+            end;
+          end;
+          ShowModal;
+        finally
+          Free;
+        end;
+    end else
+      ShowMessage('No keys.');
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerTimetableEditExecute(Sender: TObject);
+var
+  SpecialDays, Items: string;
+begin
+  with TfrmTimetable.Create(nil) do
+    try
+      ReadTimetable(SpecialDays, Items);
+      Timetable2Controls(SpecialDays, Items);
+      ShowModal;
+      if ModalResult <> mrOk then
+        Exit;
+      Controls2Timetable(SpecialDays, Items);
+      WriteTimetable(SpecialDays, Items);
+    finally
+      Free;
+    end;
+end;
+
+procedure TfrmMain.WriteTimetable(const SpecialDays, Items: string);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'WriteTimetable';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    p.Params.vString['SpecialDays'] := SpecialDays;
+    p.Params.vString['Items'] := Items;
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.ReadTimetable(var SpecialDays, Items: string);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ReadTimetable';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p);
+    SpecialDays := r.vString['SpecialDays'];
+    Items := r.vString['Items'];
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerTimetableEraseExecute(Sender: TObject);
+begin
+  RpcControllerExec('EraseTimetable');
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerRestartProgExecute(Sender: TObject);
+begin
+  RpcControllerExec('RestartProg');
+
+  Maintain;
+end;
+
+procedure TfrmMain.RpcControllerExec(const ProcName: string);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := ProcName;
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.ControllerStaticSensor(Params: TrpcParamsOnReceive);
+var
+  pData: Pointer;
+begin
+  pData := @Params.vString['Data'][1];
+  sgdSensor.Cells[7, ControllerEvent(sgdSensor, Params.vString['Channel'], pData)] :=
+    IntToStr(PControllerStaticSensor(pData)^.Value);
+end;
+
+procedure TfrmMain.ChannelError(Params: TrpcParamsOnReceive);
+var
+  x: Integer;
+begin
+  x := ChannelEvent(sgdChannelError, Params);
+  ChannelErrorEvent(sgdChannelError, Params, x)
+end;
+
+procedure TfrmMain.Button25Click(Sender: TObject);
+var
+  i: Integer;
+begin
+  for i:=0 to pgcEvents.PageCount - 1 do
+    ClearGrid( pgcEvents.Pages[i].Controls[0] as TStringGrid );
+  sttRecCnt.Caption := '0';
+end;
+
+procedure TfrmMain.ControllerError(Params: TrpcParamsOnReceive);
+var
+  x: Integer;
+begin
+  x := ChannelEvent(sgdControllerError, Params);
+  ChannelErrorEvent(sgdControllerError, Params, x);
+  sgdControllerError.Cells[4, x] := IntToStr(Params.vInteger['Addr']);
+end;
+
+function TfrmMain.ChannelEvent(Grid: TStringGrid; Params: TrpcParamsOnReceive): Integer;
+begin
+  Result := AddGridRow(Grid);
+  pgcEventsChange(pgcEvents);
+  Grid.Cells[0, Result] := Params.vString['Channel'];
+  Grid.Cells[1, Result] := Timestamp2Str(@Params.vString['Time'][1]);
+end;
+
+function TfrmMain.ChannelErrorEvent(Grid: TStringGrid;
+  Params: TrpcParamsOnReceive; Row: Integer): Integer;
+begin
+  Grid.Cells[2, Row] := Params.vString['Class'];
+  Grid.Cells[3, Row] := Params.vString['Message'];
+  Result := Row;
+end;
+
+procedure TfrmMain.pgcEventsChange(Sender: TObject);
+begin
+  sttRecCnt.Caption := IntToStr((pgcEvents.ActivePage.Controls[0] as TStringGrid).RowCount - 2);
+end;
+
+procedure TfrmMain.ChannelState(Params: TrpcParamsOnReceive);
+var
+  x: Integer;
+begin
+  x := ChannelEvent(sgdChannelState, Params);
+  ChReady := Params.vBoolean['IsReady'];
+  sgdChannelState.Cells[2, x] := BoolToStr(ChReady, True);
+end;
+
+procedure TfrmMain.actControllerEraseAllEventsExecute(Sender: TObject);
+begin
+  RpcControllerExec('EraseAllEvents');
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerEventsInfoExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  Capacity, Count: Integer;
+  s: string;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'EventsInfo';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p);
+    Capacity := r.vInteger['Capacity'];
+    Count := r.vInteger['Count'];
+    s := Format('Capacity = %d'#13#10'Count = %d', [Capacity, Count]);
+    ShowMessage(s);
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerKeysInfoExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  Capacity, Count: Integer;
+  s: string;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'KeysInfo';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p);
+    Capacity := r.vInteger['Capacity'];
+    Count := r.vInteger['Count'];
+    s := Format('Capacity = %d'#13#10'Count = %d', [Capacity, Count]);
+    ShowMessage(s);
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerPortsInfoExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  s: string;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'PortsInfo';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p);
+    s := r.vString['Result'];
+    s := ControllerPorts2Str(@s[1]);
+    ShowMessage(s);
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerGenerateTimerEventsExecute(
+  Sender: TObject);
+var
+  p: TrpcProc;
+  s: string;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'GenerateTimerEvents';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    if not InputQuery('Count', '1 .. 65535', s) then
+      Exit;
+    p.Params.vInteger['Count'] := StrToInt(s);
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.actControllerEditKeypadExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  Items: TKeypadItems;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ReadKeypad';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p);
+    Move(r.vString['Data'][1], Items, SizeOf(TKeypadItems));
+    with TfrmKeypad.Create(Self) do
+      try
+        Data2Controls(@Items);
+        ShowModal;
+        if ModalResult = mrOk then begin
+          Controls2Data(@Items);
+          p.Name := 'WriteKeypad';
+          p.Params.vString['Data'] := Raw(@Items, SizeOf(TKeypadItems));
+          RpcExec(p);
+        end;
+      finally
+        Free;
+      end;
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.actServcontChannelListExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  Count, i: Integer;
+  s: string;
+  psc: PServcontChannel;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ChannelList';
+    r := RpcExec(p);
+    Count := r.vInteger['Count'];
+    s := r.vString['Items'];
+    with TfrmChannels.Create(Self) do
+      try
+        for i:=0 to Count - 1 do begin
+          psc := PServcontChannel(@s[SizeOf(TServcontChannel) * i + 1]);
+          cbxChannels.Items.AddObject(IntToStr(i + 1), TObject(psc));
+        end;
+        ShowModal;
+      finally
+        Free;
+      end;
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.actServcontControllerListExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  Count: Integer;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ControllerList';
+    p.Params.vString['Channel'] := ChannelId;
+    r := RpcExec(p);
+    Count := r.vInteger['Count'];
+    //r.vString['Items'];//TServcontController
+    ShowMessage(IntToStr(Count));
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.actServcontClientListExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  Count: Integer;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ClientList';
+    r := RpcExec(p);
+    Count := r.vInteger['Count'];
+    //r.vString['Items'];//TServcontClient
+    ShowMessage(IntToStr(Count));
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.Exit1Click(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmMain.ChannelPollSpeed(Params: TrpcParamsOnReceive);
+var
+  x: Integer;
+begin
+  x := ChannelEvent(sgdChannelPollSpeed, Params);
+  sgdChannelPollSpeed.Cells[2, x] := IntToStr(Params.vInteger['Value']);
+end;
+
+procedure TfrmMain.actServcontSwitchToAutoExecute(Sender: TObject);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'SwitchToAuto';
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.actControllerGenerateKeyBaseExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  s: string;
+  Capacity: Integer;
+  Start: DWORD;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+
+    p.Name := 'KeysInfo';
+    r := RpcExec(p);
+    Capacity := r.vInteger['Capacity'];
+    if not InputQuery('Count', Format('1..%d:', [Capacity]), s) then
+      Exit;
+    Capacity := StrToInt(s);
+
+    p.Name := 'WriteAllKeys';
+    s := GenerateKeyBase(Capacity);
+    p.Params.vString['Keys'] := s;
+    Start := GetTickCount;
+    RpcExec(p, INFINITE);
+  finally
+    p.Leave;
+  end;
+  ShowMessage(Format('%d keys in %d seconds.', [Capacity, (GetTickCount - Start) div 1000]));
+end;
+
+procedure TfrmMain.actControllerReadAllChipsExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  i, ChipCount, j: Integer;
+  Chips: string;
+  y: Integer;
+  chb: TCheckBox;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ReadAllChips';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p, INFINITE);
+    ChipCount := r.vInteger['Count'];
+    ClearGrid(frmChips.Grid);
+    if ChipCount <> 0 then begin
+      with frmChips do begin
+        StatusBar.SimpleText := 'Chips read: ' + IntToStr(ChipCount);
+        Grid.RowCount := ChipCount + 2;
+        Chips := r.vString['Chips'];
+        for j:=0 to cPortCount - 1 do begin
+          chb := FindComponent('chbPort' + IntToStr(j+1)) as TCheckBox;
+          Assert(chb <> nil);
+          chb.Checked := PControllerChips(@Chips[1])^.Ports[j];
+        end;
+        for i:=0 to ChipCount - 1 do begin
+          y := i + 1;
+          with Grid, PControllerChips(@Chips[1])^.Chips[i] do begin
+            Cells[0, y] := Dump(@Value, cKeySize);
+            Cells[1, y] := BoolToStr(Active, True);
+            Cells[2, y] := BoolToStr(OpenEvenComplex, True);
+            Cells[3, y] := IntToStr(CheckCount);
+            Cells[4, y] := IntToStr(Port);
+          end;
+        end;
+      end;
+    end else
+      ShowMessage('No chips.');
+  finally
+    p.Leave;
+  end;
+
+  Maintain;
+end;
+
+procedure TfrmMain.Chips1Click(Sender: TObject);
+begin
+  frmChips := TfrmChips.Create(nil);
+  try
+    frmChips.ShowModal;
+  finally
+    frmChips.Free;
+  end;
+end;
+
+procedure TfrmMain.actControllerWriteAllChipsExecute(Sender: TObject);
+var
+  Data: string;
+  p: TrpcProc;
+  Count: Integer;
+begin
+  Count := frmChips.Controls2Data(Data);
+  if Count < 1 then begin
+    frmChips.StatusBar.SimpleText := 'Chips written: ' + IntToStr(0);
+    Exit;
+  end;
+  p := Rpc.DoProc;
+  try
+    p.Name := 'WriteAllChips';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    p.Params.vString['Chips'] := Data;
+    RpcExec(p);
+    frmChips.StatusBar.SimpleText := 'Chips written: ' + IntToStr(Count);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.ControlChip(Active: Boolean);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ControlChip';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    p.Params.vBoolean['Active'] := Active;
+    with frmChips.Grid do
+      p.Params.vString['Chip'] := Bin(Cells[0, Row]);
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.actControllerActivateChipExecute(Sender: TObject);
+begin
+  ControlChip(True);
+end;
+
+procedure TfrmMain.actControllerDeactivateChipExecute(Sender: TObject);
+begin
+  ControlChip(False);
+end;
+
+procedure TfrmMain.actControllerEraseAllChipsExecute(Sender: TObject);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'EraseAllChips';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.actServcontMainClientExecute(Sender: TObject);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'MainClient';
+    p.Params.vInteger['QueueLimit'] := StrToInt(cbxQueueLimit.Text);
+    p.Params.vBoolean['LogControllerEvents'] := chbLogControllerEvents.Checked;
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.actServcontCoEvtLogSendExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  Interval: TServcontDateTime;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'CoEvtLogSend';
+
+    Interval.Year := 0;  Interval.Hour := 0;
+    Interval.Month := 0; Interval.Minute := 0;
+    Interval.Day := 0;  Interval.Second := 0;
+    p.Params.vString['BEG'] := Raw(@Interval, SizeOf(TServcontDateTime));
+
+    Interval.Year := 99;  Interval.Hour := 99;
+    Interval.Month := 99; Interval.Minute := 99;
+    Interval.Day := 99;  Interval.Second := 99;
+    p.Params.vString['END'] := Raw(@Interval, SizeOf(TServcontDateTime));
+
+    P.Params.vInteger['Limit'] := 1000;
+    p.Params.vInteger['Offset'] := -1;
+
+    r := RpcExec(p);
+    ShowMessage(IntToStr(r.vInteger['Count']));
+    //Caption := IntToStr(r.vInteger['Count']);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.actServcontCoEvtLogClearExecute(Sender: TObject);
+var
+  p: TrpcProc;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'CoEvtLogClear';
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.ControllerState(Params: TrpcParamsOnReceive);
+var
+  x: Integer;
+begin
+  x := ChannelEvent(sgdControllerState, Params);
+  sgdControllerState.Cells[2, x] := IntToStr(Params.vInteger['Addr']);
+  sgdControllerState.Cells[3, x] := GetEnumName(TypeInfo(TControllerState), Params.vInteger['State']);
+end;
+
+procedure TfrmMain.ChannelsChanged(Params: TrpcParamsOnReceive);
+var
+  x: Integer;
+begin
+  x := AddGridRow(sgdChannelsChanged);
+  sgdChannelsChanged.Cells[0, x] := Timestamp2Str(@Params.vString['Time'][1]);
+end;
+
+procedure TfrmMain.ClientsChanged(Params: TrpcParamsOnReceive);
+var
+  x: Integer;
+begin
+  x := AddGridRow(sgdClientsChanged);
+  sgdClientsChanged.Cells[0, x] := Timestamp2Str(@Params.vString['Time'][1]);
+end;
+
+procedure TfrmMain.ControllersChanged(Params: TrpcParamsOnReceive);
+begin
+  ChannelEvent(sgdControllersChanged, Params);
+end;
+
+procedure TfrmMain.QueueFull(Params: TrpcParamsOnReceive);
+var
+  x: Integer;
+begin
+  x := AddGridRow(sgdQueueFull);
+  sgdQueueFull.Cells[0, x] := Timestamp2Str(@Params.vString['Time'][1]);
+end;
+
+procedure TfrmMain.actServcontSetHostClockExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  dt: TServcontDateTime;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'SetHostClock';
+    Now2ServcontDateTime(@dt, 1);
+    p.Params.vString['Value'] := Raw(@dt, SizeOf(TServcontDateTime));
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.actControllerReadSetupExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  fs: TFileStream;
+  Data: string;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ReadSetup';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    r := RpcExec(p);
+    Data := r.vString['Data'];
+  finally
+    p.Leave;
+  end;
+
+  if not OpenDialog1.Execute then
+    Exit;
+
+  fs := TFileStream.Create(OpenDialog1.FileName, fmCreate);
+  try
+    fs.Write(Data[1], 255);
+  finally
+    fs.Free;
+  end;
+
+end;
+
+procedure TfrmMain.actControllerWriteSetupExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  fs: TFileStream;
+  Data: string;
+begin
+  if not OpenDialog1.Execute then
+    Exit;
+
+  fs := TFileStream.Create(OpenDialog1.FileName, fmOpenRead);
+  try
+    if fs.Size < 255 then
+      raise Exception.Create('Invalid setup file len');
+    SetLength(Data, 255);
+    fs.Read(Data[1], 255)
+  finally
+    fs.Free;
+  end;
+
+  p := Rpc.DoProc;
+  try
+    p.Name := 'WriteSetup';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    p.Params.vString['Data'] := Data;
+    RpcExec(p);
+  finally
+    p.Leave;
+  end;
+end;
+
+function TfrmMain.RpcExec(Proc: TrpcProc; TimeOut: Cardinal): TrpcParamsOnReceive;
+begin
+  Result := Rpc.Exec(Proc);
+end;
+
+procedure TfrmMain.actControllerChipInfoExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  s: string;
+  Idx: Integer;
+  Hdr: TControllerChipInfoHdr;
+  Data: PChar;
+  Info: TControllerChipInfo;
+  Info2: TControllerChipInfo2;
+begin
+  if not InputQuery('ChipInfo', 'Index:', s) then
+    Exit;
+  Idx := StrToInt(s);
+  p := Rpc.DoProc;
+  try
+    p.Name := 'ChipInfo';
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+    p.Params.vInteger['Idx'] := Idx;
+    r := RpcExec(p);
+    Data := @r.vString['Result'][1];
+    Move(Data^, Hdr, SizeOf(TControllerChipInfoHdr));
+    if Hdr.IsFullInfo then begin
+      Move((Data + SizeOf(TControllerChipInfoHdr))^, Info, SizeOf(TControllerChipInfo));
+    end else begin
+      Move((Data + SizeOf(TControllerChipInfoHdr))^, Info2, SizeOf(TControllerChipInfo2));
+    end;
+    ShowMessage('Port: ' + IntToStr(Hdr.Port));
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.actServcontFindControllersExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  Count, i: Integer;
+  Data: PChar;
+  s: string;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Name := 'FindControllers';
+    p.Params.vString['Channel'] := ChannelId;
+    r := RpcExec(p);
+    Count := r.vInteger['Count'];
+    s := '';
+    if Count > 0 then begin
+      Data := @r.vString['Addrs'][1];
+      for i := 0 to Count - 1 do
+        s := s + IntToStr(Ord(Data[i])) + #13#10;
+    end else
+      s := 'no controllers found';
+    ShowMessage(s);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.ControllerGenerateKeyBaseAsyncExecute(Sender: TObject);
+var
+  p: TrpcProc;
+  r: TrpcParamsOnReceive;
+  s: string;
+  Capacity: Integer;
+begin
+  p := Rpc.DoProc;
+  try
+    p.Params.vString['Channel'] := ChannelId;
+    p.Params.vInteger['Addr'] := ControllerAddr;
+
+    p.Name := 'KeysInfo';
+    r := RpcExec(p);
+    Capacity := r.vInteger['Capacity'];
+    if not InputQuery('Count', Format('1..%d:', [Capacity]), s) then
+      Exit;
+    Capacity := StrToInt(s);
+
+    p.Name := 'WriteAllKeysAsync';
+    s := GenerateKeyBase(Capacity);
+    p.Params.vString['Keys'] := s;
+    RpcExec(p, INFINITE);
+  finally
+    p.Leave;
+  end;
+end;
+
+procedure TfrmMain.WriteAllKeysAsync(Params: TrpcParamsOnReceive);
+var
+  x: Integer;
+begin
+  x := ChannelEvent(sgdWriteAllKeysAsync, Params);
+  sgdWriteAllKeysAsync.Cells[2, x] := IntToStr(Params.vInteger['Addr']);
+  sgdWriteAllKeysAsync.Cells[3, x] := Params.vString['Error'];
+end;
+
+end.

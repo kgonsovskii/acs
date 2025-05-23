@@ -1,0 +1,23 @@
+object Dmdb3: TDmdb3
+  OnCreate = DataModuleCreate
+  OldCreateOrder = False
+  Height = 286
+  HorizontalOffset = 768
+  VerticalOffset = 438
+  Width = 364
+  object bsqlconfig: TSQLite3Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = False
+    Transaction = db3tr
+    AlwaysUseBigint = False
+    Left = 136
+    Top = 20
+  end
+  object db3tr: TSQLTransaction
+    Active = False
+    Database = bsqlconfig
+    Left = 128
+    Top = 116
+  end
+end

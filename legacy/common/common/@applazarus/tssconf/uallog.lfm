@@ -1,0 +1,60 @@
+object formallog: Tformallog
+  Left = 104
+  Height = 340
+  Top = 783
+  Width = 1514
+  Caption = 'formallog'
+  ClientHeight = 340
+  ClientWidth = 1514
+  DesignTimePPI = 115
+  OnCreate = FormCreate
+  LCLVersion = '2.2.6.0'
+  object sg: TStringGrid
+    Left = 0
+    Height = 340
+    Top = 0
+    Width = 1514
+    Align = alClient
+    Color = 3947580
+    ColCount = 3
+    Columns = <    
+      item
+        MinSize = 12
+        MaxSize = 359
+        Title.Caption = 'nn'
+        Width = 240
+      end    
+      item
+        MinSize = 12
+        MaxSize = 240
+        Title.Caption = 'pr'
+        Width = 0
+        Visible = False
+      end    
+      item
+        MinSize = 120
+        MaxSize = 1198
+        Title.Caption = 'txt'
+        Width = 240
+      end>
+    FixedCols = 0
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -26
+    Font.Name = 'Arial Narrow'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Options = [goRangeSelect, goColSizing, goEditing, goSmoothScroll]
+    ParentFont = False
+    PopupMenu = pop1
+    TabOrder = 0
+    OnPrepareCanvas = sgPrepareCanvas
+  end
+  object pop1: TPopupMenu
+    Left = 633
+    Top = 80
+    object MenuItem1: TMenuItem
+      Caption = 'Очистить'
+      OnClick = MenuItem1Click
+    end
+  end
+end

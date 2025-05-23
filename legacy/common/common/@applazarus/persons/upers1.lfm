@@ -1,0 +1,986 @@
+object form_pers1: Tform_pers1
+  Left = 304
+  Height = 438
+  Top = 406
+  Width = 1305
+  Caption = 'form_pers1'
+  ClientHeight = 438
+  ClientWidth = 1305
+  Color = clSilver
+  DesignTimePPI = 115
+  OnCreate = FormCreate
+  LCLVersion = '2.2.6.0'
+  Scaled = False
+  object Panel2: TPanel
+    Left = 0
+    Height = 402
+    Top = 58
+    Width = 470
+    Caption = ' '
+    TabOrder = 0
+  end
+  object sb2: TStatusBar
+    Left = 0
+    Height = 32
+    Top = 406
+    Width = 1305
+    Color = clSkyBlue
+    Font.Height = -68
+    Font.Name = 'Serif'
+    Font.Style = [fsBold]
+    Panels = <    
+      item
+        Text = '11111'
+        Width = 96
+      end    
+      item
+        Text = '2222'
+        Width = 96
+      end    
+      item
+        Width = 96
+      end>
+    ParentBiDiMode = False
+    ParentColor = False
+    ParentFont = False
+    SimplePanel = False
+  end
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 339
+    Top = 67
+    Width = 1305
+    ActivePage = TabSheet2
+    Align = alClient
+    AutoSize = True
+    Style = tsButtons
+    TabIndex = 2
+    TabOrder = 2
+    TabPosition = tpRight
+    OnChange = PageControl1Change
+    object TabSheet3: TTabSheet
+      AutoSize = True
+      Caption = 'Выборка'
+      ClientHeight = 335
+      ClientWidth = 1158
+      OnContextPopup = TabSheet3ContextPopup
+      object DBGrid1: TDBGrid
+        Left = 0
+        Height = 335
+        Top = 0
+        Width = 1158
+        Align = alClient
+        Color = clSilver
+        Columns = <        
+          item
+            MinSize = 12
+            MaxSize = 240
+            Title.Alignment = taCenter
+            Title.Caption = 'nn'
+            Width = 48
+            FieldName = 'nn'
+          end        
+          item
+            MinSize = 12
+            MaxSize = 240
+            Title.Alignment = taCenter
+            Title.Caption = 'fio'
+            Width = 359
+            FieldName = 'fio'
+          end        
+          item
+            MinSize = 12
+            MaxSize = 240
+            Title.Alignment = taCenter
+            Title.Caption = 'bpkeys'
+            Width = 96
+            FieldName = 'bpkeys'
+          end        
+          item
+            MinSize = 12
+            MaxSize = 240
+            Title.Alignment = taCenter
+            Title.Caption = 'myid'
+            Width = 96
+            FieldName = 'myid'
+          end        
+          item
+            MinSize = 12
+            MaxSize = 240
+            Title.Alignment = taCenter
+            Title.Caption = 'bidtree'
+            Width = 96
+            FieldName = 'biddtree'
+          end        
+          item
+            MinSize = 12
+            MaxSize = 240
+            Title.Alignment = taCenter
+            Title.Caption = 'infmyid'
+            Width = 96
+            FieldName = 'infmyid'
+          end        
+          item
+            MinSize = 12
+            MaxSize = 240
+            Title.Alignment = taCenter
+            Title.Caption = 'адм'
+            Width = 48
+            FieldName = 'fadmin'
+          end        
+          item
+            MinSize = 12
+            MaxSize = 240
+            Title.Alignment = taCenter
+            Title.Caption = 'акт'
+            Width = 48
+            FieldName = 'actual'
+          end        
+          item
+            MinSize = 12
+            MaxSize = 240
+            Title.Alignment = taCenter
+            Title.Caption = 'crcdts'
+            Width = 192
+            FieldName = 'crcdts'
+          end        
+          item
+            MinSize = 12
+            MaxSize = 240
+            Title.Alignment = taCenter
+            Title.Caption = 'updcdts'
+            Width = 192
+            FieldName = 'updcdts'
+          end>
+        DataSource = dsmd
+        Font.Height = -23
+        Font.Name = 'Roboto Condensed'
+        ParentFont = False
+        PopupMenu = POP1
+        TabOrder = 0
+        OnCellClick = DBGrid1CellClick
+      end
+    end
+    object TabSheet1: TTabSheet
+      Caption = 'FIO FOTO'
+      ClientHeight = 335
+      ClientWidth = 1158
+      object panact1: TPanel
+        Left = 0
+        Height = 42
+        Top = 0
+        Width = 144
+        Align = alCustom
+        BevelInner = bvLowered
+        BevelOuter = bvLowered
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = ' '
+        ClientHeight = 40
+        ClientWidth = 142
+        Color = clSilver
+        Font.Color = clBlack
+        Font.Height = -19
+        Font.Name = 'Serif'
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 0
+        object cbactkey: TCheckBox
+          Left = 10
+          Height = 32
+          Top = 10
+          Width = 170
+          Caption = 'Актуальность'
+          Checked = True
+          Color = clYellow
+          ParentColor = False
+          State = cbChecked
+          TabOrder = 0
+        end
+      end
+      object Pan_name3: TPanel
+        Left = 0
+        Height = 82
+        Top = 104
+        Width = 280
+        Align = alCustom
+        BevelInner = bvLowered
+        BevelOuter = bvLowered
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = ' '
+        ClientHeight = 80
+        ClientWidth = 278
+        Color = clSilver
+        ParentColor = False
+        TabOrder = 1
+        object le_name3: TLabeledEdit
+          Left = 19
+          Height = 39
+          Top = 38
+          Width = 297
+          Color = clSkyBlue
+          EditLabel.Height = 26
+          EditLabel.Width = 297
+          EditLabel.Caption = 'фамилия'
+          EditLabel.ParentColor = False
+          EditLabel.ParentFont = False
+          EditLabel.Font.Height = -23
+          EditLabel.Font.Name = 'Serif'
+          EditLabel.Font.Style = [fsBold]
+          Font.Color = clBlack
+          Font.Height = -25
+          Font.Name = 'Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          Text = 'фамилия'
+        end
+        object cb_name3: TCheckBox
+          Left = 230
+          Height = 32
+          Top = 0
+          Width = 88
+          Alignment = taLeftJustify
+          Caption = 'поиск'
+          ParentFont = False
+          TabOrder = 1
+        end
+      end
+      object Pan_name5: TPanel
+        Left = 272
+        Height = 82
+        Top = 104
+        Width = 280
+        Align = alCustom
+        BevelInner = bvLowered
+        BevelOuter = bvLowered
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = ' '
+        ClientHeight = 80
+        ClientWidth = 278
+        Color = clSilver
+        ParentColor = False
+        TabOrder = 2
+        object le_name1: TLabeledEdit
+          Left = 19
+          Height = 39
+          Top = 38
+          Width = 297
+          Color = clSkyBlue
+          EditLabel.Height = 26
+          EditLabel.Width = 297
+          EditLabel.Caption = 'имя'
+          EditLabel.ParentColor = False
+          EditLabel.ParentFont = False
+          EditLabel.Font.Height = -23
+          EditLabel.Font.Name = 'Serif'
+          EditLabel.Font.Style = [fsBold]
+          Font.Color = clBlack
+          Font.Height = -25
+          Font.Name = 'Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          Text = 'ИМЯ'
+        end
+        object cb_name2: TCheckBox
+          Left = 220
+          Height = 32
+          Top = 10
+          Width = 88
+          Caption = 'поиск'
+          ParentFont = False
+          TabOrder = 1
+        end
+      end
+      object Pan_name2: TPanel
+        Left = 552
+        Height = 82
+        Top = 104
+        Width = 280
+        Align = alCustom
+        BevelInner = bvLowered
+        BevelOuter = bvLowered
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = ' '
+        ClientHeight = 80
+        ClientWidth = 278
+        Color = clSilver
+        ParentColor = False
+        TabOrder = 3
+        object le_name2: TLabeledEdit
+          Left = 19
+          Height = 39
+          Top = 38
+          Width = 297
+          Color = clSkyBlue
+          EditLabel.Height = 26
+          EditLabel.Width = 297
+          EditLabel.Caption = 'имя'
+          EditLabel.ParentColor = False
+          EditLabel.ParentFont = False
+          EditLabel.Font.Height = -23
+          EditLabel.Font.Name = 'Serif'
+          EditLabel.Font.Style = [fsBold]
+          Font.Color = clBlack
+          Font.Height = -25
+          Font.Name = 'Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          Text = 'отчество'
+        end
+        object cb_name1: TCheckBox
+          Left = 220
+          Height = 32
+          Top = 10
+          Width = 88
+          Caption = 'поиск'
+          ParentFont = False
+          TabOrder = 1
+        end
+      end
+      object Panel3: TPanel
+        Left = 769
+        Height = 335
+        Top = 0
+        Width = 389
+        Align = alRight
+        BevelInner = bvLowered
+        BevelOuter = bvLowered
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = 'НЕТ ФОТО'
+        ClientHeight = 333
+        ClientWidth = 387
+        Color = clGray
+        Font.Height = -25
+        Font.Name = 'Sans'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        TabOrder = 4
+        object Panel4: TPanel
+          Left = 6
+          Height = 60
+          Top = 6
+          Width = 375
+          Align = alTop
+          BevelInner = bvLowered
+          BevelOuter = bvLowered
+          Caption = ' '
+          Color = clSilver
+          ParentColor = False
+          TabOrder = 0
+        end
+      end
+      object Pan_name4: TPanel
+        Left = 0
+        Height = 82
+        Top = 184
+        Width = 272
+        Align = alCustom
+        BevelInner = bvLowered
+        BevelOuter = bvLowered
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = 'созд. '
+        ClientHeight = 80
+        ClientWidth = 270
+        Color = clSilver
+        ParentColor = False
+        TabOrder = 5
+        object le_crcdts: TLabeledEdit
+          Left = 19
+          Height = 39
+          Top = 38
+          Width = 278
+          Color = clSkyBlue
+          EditLabel.Height = 26
+          EditLabel.Width = 278
+          EditLabel.Caption = 'созд. '
+          EditLabel.ParentColor = False
+          EditLabel.ParentFont = False
+          EditLabel.Font.Height = -23
+          EditLabel.Font.Name = 'Serif'
+          EditLabel.Font.Style = [fsBold]
+          Font.Color = clBlack
+          Font.Height = -25
+          Font.Name = 'Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          Text = 'созд. '
+        end
+        object cb_name4: TCheckBox
+          Left = 230
+          Height = 32
+          Top = 0
+          Width = 88
+          Alignment = taLeftJustify
+          Caption = 'поиск'
+          ParentFont = False
+          TabOrder = 1
+        end
+      end
+      object Pan_name6: TPanel
+        Left = 272
+        Height = 82
+        Top = 184
+        Width = 272
+        Align = alCustom
+        BevelInner = bvLowered
+        BevelOuter = bvLowered
+        BevelWidth = 3
+        BorderStyle = bsSingle
+        Caption = 'созд. '
+        ClientHeight = 80
+        ClientWidth = 270
+        Color = clSilver
+        ParentColor = False
+        TabOrder = 6
+        object le_updcdts: TLabeledEdit
+          Left = 19
+          Height = 39
+          Top = 38
+          Width = 278
+          Color = clSkyBlue
+          EditLabel.Height = 26
+          EditLabel.Width = 278
+          EditLabel.Caption = 'созд. '
+          EditLabel.ParentColor = False
+          EditLabel.ParentFont = False
+          EditLabel.Font.Height = -23
+          EditLabel.Font.Name = 'Serif'
+          EditLabel.Font.Style = [fsBold]
+          Font.Color = clBlack
+          Font.Height = -25
+          Font.Name = 'Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 0
+          Text = 'созд. '
+        end
+        object cb_name5: TCheckBox
+          Left = 230
+          Height = 32
+          Top = 0
+          Width = 88
+          Alignment = taLeftJustify
+          Caption = 'поиск'
+          ParentFont = False
+          TabOrder = 1
+        end
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Ключи'
+      ClientHeight = 335
+      ClientWidth = 1158
+      object Panel5: TPanel
+        Left = 0
+        Height = 128
+        Top = 0
+        Width = 1158
+        Align = alTop
+        Caption = ' '
+        ClientHeight = 128
+        ClientWidth = 1158
+        TabOrder = 0
+        OnClick = Panel5Click
+        object le_start: TLabeledEdit
+          Left = 29
+          Height = 39
+          Top = 0
+          Width = 182
+          Color = clSkyBlue
+          EditLabel.Height = 26
+          EditLabel.Width = 63
+          EditLabel.Caption = 'старт '
+          EditLabel.ParentColor = False
+          EditLabel.ParentFont = False
+          EditLabel.Font.Height = -23
+          EditLabel.Font.Name = 'Serif'
+          EditLabel.Font.Style = [fsBold]
+          EditLabel.Layout = tlBottom
+          Font.Color = clBlack
+          Font.Height = -25
+          Font.Name = 'Serif'
+          Font.Style = [fsBold]
+          LabelPosition = lpRight
+          ParentFont = False
+          TabOrder = 0
+          Text = ' '
+        end
+        object le_stop: TLabeledEdit
+          Left = 29
+          Height = 39
+          Top = 48
+          Width = 182
+          Color = clSkyBlue
+          EditLabel.Height = 26
+          EditLabel.Width = 58
+          EditLabel.Caption = 'стоп  '
+          EditLabel.ParentColor = False
+          EditLabel.ParentFont = False
+          EditLabel.Font.Height = -23
+          EditLabel.Font.Name = 'Serif'
+          EditLabel.Font.Style = [fsBold]
+          EditLabel.Layout = tlBottom
+          Font.Color = clBlack
+          Font.Height = -25
+          Font.Name = 'Serif'
+          Font.Style = [fsBold]
+          LabelPosition = lpRight
+          ParentFont = False
+          TabOrder = 1
+          Text = ' '
+          OnChange = le_stopChange
+        end
+        object cd1: TDateEdit
+          Left = -10
+          Height = 42
+          Top = 7
+          Width = 40
+          CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
+          DateOrder = doNone
+          ButtonWidth = 28
+          NumGlyphs = 1
+          MaxLength = 0
+          OnChange = cd1Change
+          TabOrder = 2
+          Text = 'cd1'
+        end
+        object cd2: TDateEdit
+          Left = -10
+          Height = 42
+          Top = 58
+          Width = 40
+          CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
+          DateOrder = doNone
+          ButtonWidth = 28
+          NumGlyphs = 1
+          MaxLength = 0
+          OnChange = cd2Change
+          TabOrder = 3
+          Text = 'cd2'
+        end
+        object ustatus: TLabeledEdit
+          Left = 307
+          Height = 36
+          Top = 48
+          Width = 259
+          Color = clLime
+          EditLabel.Height = 26
+          EditLabel.Width = 259
+          EditLabel.Caption = ' '
+          EditLabel.ParentColor = False
+          EditLabel.ParentFont = False
+          EditLabel.Font.Height = -23
+          EditLabel.Font.Name = 'Serif'
+          EditLabel.Font.Style = [fsBold]
+          EditLabel.Layout = tlBottom
+          Font.Color = clBlack
+          Font.Height = -25
+          Font.Name = 'Terminus'
+          ParentFont = False
+          TabOrder = 4
+          Text = ' '
+        end
+        object lb1: TListBox
+          Left = 575
+          Height = 115
+          Top = 10
+          Width = 910
+          Color = clBlack
+          Font.Height = -23
+          Font.Name = 'Serif'
+          ItemHeight = 0
+          ParentFont = False
+          TabOrder = 5
+          TopIndex = -1
+        end
+        object Button1: TButton
+          Left = 359
+          Height = 30
+          Top = 7
+          Width = 139
+          Caption = 'restore bppers'
+          OnClick = Button1Click
+          TabOrder = 6
+        end
+      end
+      object Splitter1: TSplitter
+        Cursor = crVSplit
+        Left = 0
+        Height = 6
+        Top = 128
+        Width = 1158
+        Align = alTop
+        ResizeAnchor = akTop
+      end
+      object Panel6: TPanel
+        Left = 0
+        Height = 201
+        Top = 134
+        Width = 1158
+        Align = alClient
+        Caption = 'Panel6'
+        ClientHeight = 201
+        ClientWidth = 1158
+        TabOrder = 2
+        object DBGrid2: TDBGrid
+          Left = 1
+          Height = 199
+          Top = 1
+          Width = 1156
+          Align = alClient
+          Color = clSilver
+          Columns = <          
+            item
+              MinSize = 12
+              MaxSize = 240
+              Title.Caption = 'nn'
+              Width = 96
+              FieldName = 'nn'
+            end          
+            item
+              MinSize = 12
+              MaxSize = 240
+              Title.Caption = 'myid'
+              Width = 96
+              FieldName = 'myid'
+            end          
+            item
+              MinSize = 12
+              MaxSize = 240
+              Title.Caption = 'bppers'
+              Width = 96
+              FieldName = 'bppers'
+            end          
+            item
+              MinSize = 12
+              MaxSize = 240
+              Title.Caption = 'kluch'
+              FieldName = 'kluch'
+            end          
+            item
+              MinSize = 12
+              MaxSize = 240
+              Title.Caption = 'code'
+              Width = 120
+              FieldName = 'code'
+            end          
+            item
+              MinSize = 12
+              MaxSize = 240
+              Title.Caption = 'start'
+              Width = 120
+              FieldName = 'start'
+            end          
+            item
+              MinSize = 12
+              MaxSize = 240
+              Title.Caption = 'stop'
+              Width = 120
+              FieldName = 'stop'
+            end          
+            item
+              MinSize = 12
+              MaxSize = 240
+              Title.Caption = 'вр.зона'
+              Width = 192
+              FieldName = 'tmzname'
+            end          
+            item
+              MinSize = 12
+              MaxSize = 240
+              Title.Caption = 'keypad'
+              FieldName = 'keypad'
+            end          
+            item
+              MinSize = 12
+              MaxSize = 240
+              Title.Caption = 'actual'
+              FieldName = 'actual'
+            end          
+            item
+              MinSize = 12
+              MaxSize = 240
+              Title.Caption = 'zapret'
+              Width = 72
+              FieldName = 'zapret'
+            end          
+            item
+              MinSize = 12
+              MaxSize = 240
+              PickList.Strings = (
+                'уволен'
+                'потеря'
+                'сломан'
+              )
+              Title.Caption = 'причина'
+              Width = 120
+              FieldName = 'cause'
+            end>
+          DataSource = dsmdks
+          Font.Height = -23
+          Font.Name = 'Roboto Condensed'
+          ParentFont = False
+          PopupMenu = popks
+          TabOrder = 0
+          OnCellClick = DBGrid2CellClick
+        end
+      end
+    end
+    object TabSheet4: TTabSheet
+      AutoSize = True
+      Caption = 'Авто'
+    end
+    object TabSheet5: TTabSheet
+      AutoSize = True
+      Caption = 'Спец. инфо'
+    end
+    object TabSheet6: TTabSheet
+      Caption = 'Инд. граф'
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 67
+    Top = 0
+    Width = 1305
+    Align = alTop
+    ClientHeight = 67
+    ClientWidth = 1305
+    TabOrder = 3
+    object DBNavigator4: TDBNavigator
+      Left = 29
+      Height = 40
+      Top = 10
+      Width = 155
+      BevelInner = bvRaised
+      BevelOuter = bvNone
+      ChildSizing.EnlargeHorizontal = crsScaleChilds
+      ChildSizing.EnlargeVertical = crsScaleChilds
+      ChildSizing.ShrinkHorizontal = crsScaleChilds
+      ChildSizing.ShrinkVertical = crsScaleChilds
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 100
+      ClientHeight = 40
+      ClientWidth = 155
+      DataSource = dsmd
+      Options = []
+      TabOrder = 0
+      VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
+    end
+    object le_fio: TEdit
+      Left = 776
+      Height = 39
+      Top = 10
+      Width = 632
+      Alignment = taCenter
+      Color = clSkyBlue
+      Font.Color = clBlack
+      Font.Height = -25
+      Font.Name = 'Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 1
+      Text = '???'
+    end
+    object le_root: TEdit
+      Left = 422
+      Height = 44
+      Top = 7
+      Width = 355
+      Alignment = taCenter
+      Color = clSkyBlue
+      Font.Color = clBlack
+      Font.Height = -23
+      Font.Name = 'Sans'
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 2
+      Text = '???'
+    end
+    object Button2: TButton
+      Left = 201
+      Height = 30
+      Top = 19
+      Width = 90
+      Caption = 'viborka'
+      OnClick = Button2Click
+      TabOrder = 3
+    end
+  end
+  object md: TMemDataset
+    Active = True
+    FieldDefs = <    
+      item
+        Name = 'nn'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'bpkeys'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'myid'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'biddtree'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'infmyid'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'fadmin'
+        DataType = ftBoolean
+      end    
+      item
+        Name = 'actual'
+        DataType = ftBoolean
+      end    
+      item
+        Name = 'crcdts'
+        DataType = ftString
+        Size = 30
+      end    
+      item
+        Name = 'updcdts'
+        DataType = ftString
+        Size = 30
+      end    
+      item
+        Name = 'fio'
+        DataType = ftString
+        Size = 80
+      end    
+      item
+        Name = 'root'
+        DataType = ftString
+        Size = 80
+      end    
+      item
+        Name = 'name1'
+        DataType = ftString
+        Size = 30
+      end    
+      item
+        Name = 'name2'
+        DataType = ftString
+        Size = 30
+      end    
+      item
+        Name = 'name3'
+        DataType = ftString
+        Size = 30
+      end    
+      item
+        Name = 'kluch'
+        DataType = ftString
+        Size = 12
+      end>
+    Left = 77
+    Top = 403
+  end
+  object dsmd: TDataSource
+    DataSet = md
+    OnDataChange = dsmdDataChange
+    Left = 19
+    Top = 412
+  end
+  object mdks: TMemDataset
+    Active = True
+    FieldDefs = <    
+      item
+        Name = 'nn'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'myid'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'bppers'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'kluch'
+        DataType = ftString
+        Size = 12
+      end    
+      item
+        Name = 'code'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'keypad'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'actual'
+        DataType = ftBoolean
+      end    
+      item
+        Name = 'zapret'
+        DataType = ftBoolean
+      end    
+      item
+        Name = 'cause'
+        DataType = ftString
+        Size = 40
+      end    
+      item
+        Name = 'start'
+        DataType = ftString
+        Size = 10
+      end    
+      item
+        Name = 'stop'
+        DataType = ftString
+        Size = 10
+      end    
+      item
+        Name = 'tmzname'
+        DataType = ftString
+        Size = 50
+      end>
+    Left = 431
+    Top = 192
+  end
+  object dsmdks: TDataSource
+    DataSet = mdks
+    OnDataChange = dsmdksDataChange
+    Left = 288
+    Top = 151
+  end
+  object POP1: TPopupMenu
+    Left = 550
+    Top = 151
+    object MenuItem1: TMenuItem
+      Caption = 'обновить'
+      OnClick = MenuItem1Click
+    end
+  end
+  object popks: TPopupMenu
+    Left = 555
+    Top = 235
+    object MenuItem2: TMenuItem
+      Caption = 'Выполнить'
+      OnClick = MenuItem2Click
+    end
+    object MenuItem3: TMenuItem
+      Caption = 'Удалить ключ'
+      OnClick = MenuItem3Click
+    end
+  end
+end

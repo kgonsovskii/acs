@@ -1,0 +1,32 @@
+object forhelp: Tforhelp
+  Left = 846
+  Height = 216
+  Top = 251
+  Width = 626
+  Caption = 'forhelp'
+  ClientHeight = 216
+  ClientWidth = 626
+  OnCreate = FormCreate
+  LCLVersion = '2.2.2.0'
+  object ListBox1: TListBox
+    Left = 0
+    Height = 216
+    Top = 0
+    Width = 626
+    Align = alClient
+    Color = clSilver
+    Font.Height = -24
+    Font.Name = 'Lshelploc'
+    Font.Style = [fsBold]
+    Items.Strings = (
+      '    даннах по локациям нет'
+      'на темном фоне правый клик мыши-меню.'
+      'сначала пукт название объекта'
+      'далее правый клик на объекте этаж'
+      'далее примерно также'
+    )
+    ItemHeight = 32
+    ParentFont = False
+    TabOrder = 0
+  end
+end

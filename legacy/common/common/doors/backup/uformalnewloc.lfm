@@ -1,0 +1,68 @@
+object formalnewloc: Tformalnewloc
+  Left = 1018
+  Height = 202
+  Top = 302
+  Width = 424
+  BorderStyle = bsSingle
+  ClientHeight = 202
+  ClientWidth = 424
+  Color = clMedGray
+  OnCreate = FormCreate
+  OnShow = FormShow
+  LCLVersion = '2.2.2.0'
+  object lename: TLabeledEdit
+    Left = 24
+    Height = 30
+    Top = 32
+    Width = 280
+    Color = clSilver
+    EditLabel.Height = 18
+    EditLabel.Width = 280
+    EditLabel.Caption = 'название'
+    EditLabel.ParentColor = False
+    Font.Color = clBlack
+    Font.Height = -19
+    Font.Name = 'Terminus'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+    Text = ' '
+  end
+  object Button1: TButton
+    Left = 88
+    Height = 25
+    Top = 136
+    Width = 75
+    Caption = 'Добавить'
+    OnClick = Button1Click
+    TabOrder = 1
+  end
+  object cmb: TComboBox
+    Left = 24
+    Height = 37
+    Top = 72
+    Width = 368
+    Color = clWindowFrame
+    Font.Color = clBlack
+    Font.Height = -21
+    Font.Name = 'Cmb'
+    Font.Style = [fsBold]
+    ItemHeight = 0
+    ParentFont = False
+    TabOrder = 2
+    Text = ' '
+  end
+  object cbinside: TCheckBox
+    Left = 315
+    Height = 21
+    Top = 179
+    Width = 78
+    Caption = 'cbinside'
+    Checked = True
+    Font.Name = 'Cbinside'
+    ParentFont = False
+    State = cbChecked
+    TabOrder = 3
+    Visible = False
+  end
+end

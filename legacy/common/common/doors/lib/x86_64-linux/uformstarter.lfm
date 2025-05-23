@@ -1,0 +1,193 @@
+object formstarter: Tformstarter
+  Left = 163
+  Height = 142
+  Top = 197
+  Width = 255
+  Caption = 'formstarter'
+  ClientHeight = 142
+  ClientWidth = 255
+  OnCreate = FormCreate
+  LCLVersion = '2.2.2.0'
+  object DBGrid1: TDBGrid
+    Left = 0
+    Height = 142
+    Top = 0
+    Width = 255
+    Align = alClient
+    Color = clSilver
+    Columns = <    
+      item
+        Title.Caption = 'myid'
+        FieldName = 'myid'
+      end    
+      item
+        Title.Caption = 'app'
+        Width = 100
+        FieldName = 'app'
+      end    
+      item
+        Title.Caption = 'tag'
+        FieldName = 'tag'
+      end    
+      item
+        Title.Caption = 'adrpath'
+        Width = 100
+        FieldName = 'adrpath'
+      end    
+      item
+        Title.Caption = 'dbn'
+        Width = 100
+        FieldName = 'dbn'
+      end    
+      item
+        Title.Caption = 'psw'
+        Width = 100
+        FieldName = 'psw'
+      end    
+      item
+        Title.Caption = 'abc'
+        Width = 100
+        FieldName = 'abc'
+      end>
+    FixedColor = clSilver
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Height = -20
+    Font.Name = 'Arial'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 0
+  end
+  object DBGrid2: TDBGrid
+    Left = 0
+    Height = 142
+    Top = 0
+    Width = 255
+    Align = alClient
+    Color = clSilver
+    Columns = <    
+      item
+        Title.Caption = 'myid'
+        Visible = False
+        FieldName = 'myid'
+      end    
+      item
+        Title.Caption = 'app'
+        Width = 100
+        FieldName = 'app'
+      end    
+      item
+        Title.Caption = 'tag'
+        Width = 50
+        FieldName = 'tag'
+      end    
+      item
+        Title.Caption = 'adrpath'
+        Width = 300
+        FieldName = 'adrpath'
+      end    
+      item
+        Title.Caption = 'dbn'
+        Width = 100
+        FieldName = 'dbn'
+      end    
+      item
+        Title.Caption = 'psw'
+        Width = 100
+        FieldName = 'psw'
+      end    
+      item
+        Title.Caption = 'abc'
+        Width = 100
+        FieldName = 'abc'
+      end>
+    DataSource = ds1
+    FixedColor = clSilver
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Height = -20
+    Font.Name = 'Arial'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold]
+    ParentFont = False
+    PopupMenu = pop1
+    TabOrder = 1
+  end
+  object bsqlstarter: TSQLite3Connection
+    Connected = False
+    LoginPrompt = False
+    AfterConnect = bsqlstarterAfterConnect
+    KeepConnection = False
+    Params.Strings = (
+      'AlwaysUseBigint=1'
+    )
+    CharSet = 'utf-8'
+    AlwaysUseBigint = True
+    Left = 532
+    Top = 36
+  end
+  object mds: TMemDataset
+    Active = True
+    FieldDefs = <    
+      item
+        Name = 'myid'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'app'
+        DataType = ftString
+        Size = 40
+      end    
+      item
+        Name = 'tag'
+        DataType = ftInteger
+      end    
+      item
+        Name = 'adrpath'
+        DataType = ftString
+        Size = 40
+      end    
+      item
+        Name = 'dbn'
+        DataType = ftString
+        Size = 40
+      end    
+      item
+        Name = 'psw'
+        DataType = ftString
+        Size = 40
+      end    
+      item
+        Name = 'abc'
+        DataType = ftString
+      end    
+      item
+        Name = 'tscd'
+        DataType = ftString
+        Size = 30
+      end>
+    Left = 196
+    Top = 60
+  end
+  object ds1: TDataSource
+    DataSet = mds
+    OnDataChange = ds1DataChange
+    Left = 310
+    Top = 62
+  end
+  object db3tr: TSQLTransaction
+    Active = False
+    Database = bsqlstarter
+    Left = 436
+    Top = 110
+  end
+  object pop1: TPopupMenu
+    Left = 561
+    Top = 140
+    object MenuItem1: TMenuItem
+      Caption = 'изменить все'
+      OnClick = MenuItem1Click
+    end
+  end
+end
