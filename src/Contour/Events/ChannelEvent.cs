@@ -13,7 +13,5 @@ public class ChannelEvent : Event
         Type = type;
         ChannelId = channelId;
     }
-
-    public override EventType Type { get; }
 }
 

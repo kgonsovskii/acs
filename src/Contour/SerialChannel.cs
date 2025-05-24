@@ -17,7 +17,7 @@ public class SerialChannel : Channel
         _connInfo = $"{devStr}@{speed}";
     }
 
-    public string Id => DevStr;
+    public override string Id => DevStr;
     public override string ConnInfo()
     {
         throw new NotImplementedException();

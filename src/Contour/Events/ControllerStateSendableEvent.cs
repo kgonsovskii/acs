@@ -1,14 +1,10 @@
-﻿HEADERnamespace a;
+﻿namespace SevenSeals.Tss.Contour.Events;
 
-
-namespace SevenSeals.Tss.Contour.Events
+public class ControllerStateSendableEvent : ChannelSendableEvent
 {
-    public class ControllerStateSendableEvent : ChannelSendableEvent
+    public ControllerStateSendableEvent(ControllerStateEvent evt) : base("ControllerState", evt)
     {
-        public ControllerStateSendableEvent(ControllerStateEvent evt) : base("ControllerState", evt)
-        {
-            Parameters["ADDR"] = evt.ControllerAddress;
-            Parameters["STATE"] = evt.State;
-        }
+        Parameters["ADDR"] = evt.ControllerAddress;
+        Parameters["STATE"] = evt.State;
     }
 }

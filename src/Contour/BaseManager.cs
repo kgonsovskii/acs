@@ -34,31 +34,39 @@ public abstract class BaseManager<TKey, T> : IEnumerable<T> where TKey : notnull
 
 public abstract class BaseManager<T> : IEnumerable<T>
 {
-    private readonly List<T> _items = new();
-    private readonly object _lock = new();
+    protected List<T> Items { get; } = new List<T>();
+    protected readonly Lock Lock = new();
 
     public T Add(T item)
     {
-        lock (_lock)
+        lock (Lock)
         {
-            _items.Add(item);
+            Items.Add(item);
         }
         return item;
     }
 
     public void Remove(T item)
     {
-        lock (_lock)
+        lock (Lock)
         {
-            _items.Remove(item);
+            Items.Remove(item);
+        }
+    }
+
+    public void Clear()
+    {
+        lock (Lock)
+        {
+            Items.Clear();
         }
     }
 
     public IEnumerator<T> GetEnumerator()
     {
-        lock (_lock)
+        lock (Lock)
         {
-            return _items.GetEnumerator();
+            return Items.GetEnumerator();
         }
     }
 

@@ -4,5 +4,6 @@
 public abstract class Event
 {
     public DateTime Timestamp { get; } = DateTime.UtcNow;
-    public abstract EventType Type { get; }
+
+    public virtual EventType Type { get; set; }
 }

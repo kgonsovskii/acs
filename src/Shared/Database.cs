@@ -5,36 +5,37 @@ namespace SevenSeals.Tss.Shared;
 
 public abstract class Database
 {
-    private readonly SqliteConnection _connection;
-    private readonly Settings _settings;
-    private readonly Lock _lock = new Lock();
+    protected readonly Settings Settings;
+    protected Lock Lock { get; } = new();
 
     protected abstract string Name { get; }
 
+    protected SqliteConnection Connection { get; }
+
     protected abstract void Initialize();
 
-    public Database(Settings settings)
+    protected Database(Settings settings)
     {
-        _settings = settings;
-        _connection = CreateDatabase();
+        Settings = settings;
+        Connection = CreateDatabase();
     }
 
     private SqliteConnection CreateDatabase()
     {
-        var path = _settings.DataDir + Name;
-        var conn = new SqliteConnection($"Data Source={Name}");
-        conn.Open();
-        Initialize();
-        return conn;
+        lock (Lock)
+        {
+            var path = Path.Combine(Settings.DataDir,Name);
+            var conn = new SqliteConnection($"Data Source={path}");
+            conn.Open();
+            Initialize();
+            return conn;
+        }
     }
 
-    public void Execute(string cmdText)
+    protected void Execute(string cmdText)
     {
-        lock (_lock)
-        {
-            using var cmd = _connection.CreateCommand();
-            cmd.CommandText = cmdText;
-            cmd.ExecuteNonQuery();
-        }
+        using var cmd = Connection.CreateCommand();
+        cmd.CommandText = cmdText;
+        cmd.ExecuteNonQuery();
     }
 }

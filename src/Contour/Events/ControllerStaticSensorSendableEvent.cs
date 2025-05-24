@@ -4,7 +4,7 @@ public class ControllerStaticSensorSendableEvent : ControllerSendableEvent
 {
     public ControllerStaticSensorSendableEvent(ControllerEvent evt) : base("ControllerStaticSensor", evt)
     {
-        Data[17] = evt.GetData()[3];
+        Data[17] = evt.Data[3];
         Parameters["DATA"] = Data;
     }
 }

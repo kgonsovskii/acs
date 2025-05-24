@@ -16,7 +16,7 @@ public interface IChannelEvents
 
 public class ChannelEvents : IChannelEvents
 {
-    private readonly ContourHost _app;
+    private readonly AppHost _app;
     private readonly EventQueue _eventQueue;
     public ChannelEvents(EventQueue eventQueue)
     {

@@ -6,10 +6,8 @@ public enum TaskEnum
     StopEventCue
 }
 
-public class ContourState
+public class AppState
 {
-
-
     public void DoTask(TaskEnum task)
     {
         switch (task)

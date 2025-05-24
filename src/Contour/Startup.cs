@@ -20,11 +20,11 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<QueueDatabase>();
         services.AddSingleton<Settings>();
-        services.AddSingleton<ContourState>();
-        services.AddSingleton<EventQueue>();
-        services.AddHostedService<ContourHost>();
+        services.AddSingleton<AppState>();
+        services.AddHostedService<AppHost>();
+        services.AddHostedService<EventQueue>();
+        services.AddSingleton<EventLog>();
         services.AddControllers()
             .AddJsonOptions(options =>
             {

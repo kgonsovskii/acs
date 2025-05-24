@@ -16,18 +16,18 @@ public class ClientManager: BaseManager<Client>
 
     public async Task DisconnectAsync()
     {
-
         foreach (var client in this)
         {
             await client.DisconnectAsync(true);
         }
-
         Clear();
     }
 
     public async Task CleanupAsync()
     {
-
-        _clients.RemoveAll(c => !c.IsReady);
+        lock (Lock)
+        {
+            Items.RemoveAll(c => !c.IsReady);
+        }
     }
 }

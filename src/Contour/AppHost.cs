@@ -4,28 +4,32 @@ using SevenSeals.Tss.Contour.Events;
 
 namespace SevenSeals.Tss.Contour;
 
-public class ContourHost : IHostedService
+public class AppHost : IHostedService
 {
     private readonly CancellationTokenSource _cts;
 
-    private EventQueue _eventQueue;
+    private readonly EventQueue _eventQueue;
 
-    private readonly ChannelManager _channels = new();
+    private readonly EventLog _eventLog;
 
-    private readonly ClientManager _clients = new();
-    private readonly ControllerEventLogger _coEvtLog = new();
+    private readonly ChannelManager _channels;
+
+    private readonly ClientManager _clients;
+
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     private readonly SemaphoreSlim _taskSemaphore = new(1, 1);
     private bool _cleanupClients;
     private bool _stopEventQueue;
-    private Task? _workerTask;
 
-    private readonly ILogger<ContourHost> _logger;
+    private readonly ILogger<AppHost> _logger;
     private readonly Settings _settings;
 
-    public ContourHost(Settings settings, EventQueue eventQueue, ILogger<ContourHost> logger)
+    public AppHost(Settings settings, EventQueue eventQueue, EventLog eventLog, ChannelManager channelManager, ClientManager clientManager, ILogger<AppHost> logger)
     {
         _eventQueue = eventQueue;
+        _eventLog = eventLog;
+        _channels = channelManager;
+        _clients = clientManager;
         _logger = logger;
         _settings = settings;
         _cts = new CancellationTokenSource();
@@ -33,8 +37,7 @@ public class ContourHost : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _eventQueue.Load();
-        _workerTask = Task.Run( async () => await WorkerLoop(_cts.Token), _cts.Token);
+        _ = Task.Run( async () => await WorkerLoop(_cts.Token), _cts.Token);
         await Task.CompletedTask;
     }
 
@@ -42,18 +45,9 @@ public class ContourHost : IHostedService
     {
         await _cts.CancelAsync();
         await SwitchToAuto(true, true, true);
-        _coEvtLog.Close();
         await _clients.DisconnectAsync();
-        _eventQueue.Stop();
-        _eventQueue.Save();
         await _cts.CancelAsync();
-        if (_workerTask != null)
-        {
-            await _workerTask;
-        }
     }
-
-
 
     private async Task WorkerLoop(CancellationToken ct)
     {
@@ -147,5 +141,4 @@ public class ContourHost : IHostedService
             _eventQueue.Push(new ChannelsChangedEvent());
         }
     }
-
 }

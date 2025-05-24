@@ -1,4 +1,6 @@
-﻿using SevenSeals.Tss.Contour.Events;
+﻿using Microsoft.Extensions.Hosting;
+using SevenSeals.Tss.Contour.Events;
+using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 
@@ -8,38 +10,54 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class EventQueue : IDisposable
+public class EventQueue : Database, IHostedService, IDisposable
 {
-    private readonly SemaphoreSlim _sem = new(0);
     private readonly ConcurrentQueue<Event> _queue = new();
     private readonly CancellationTokenSource _cts = new();
-    private readonly Task _senderTask;
-    private bool _busy;
+
     private int _limit = int.MaxValue;
-    private readonly object _lock = new();
 
-    private readonly Settings _settings;
-    private readonly ContourState _state;
+    private readonly AppState _state;
     private readonly ClientManager _clientManager;
-    private readonly Database _database;
 
-    public EventQueue(Settings settings, ContourState state, Database database, ClientManager clientManager)
+    protected override string Name => "ControllerEventQueue.db";
+
+    public EventQueue(Settings settings, AppState state, ClientManager clientManager): base(settings)
     {
-        _database = database;
-        _settings = settings;
         _state = state;
         _clientManager = clientManager;
-        _senderTask = Task.Run(SenderLoopAsync);
+    }
+
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        Load();
+        _ = Task.Run(SenderLoopAsync, cancellationToken);
+        await Task.CompletedTask;
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        Save();
+        await _cts.CancelAsync();
+    }
+
+
+    public void Dispose()
+    {
+        _cts.Dispose();
+    }
+
+    protected override void Initialize()
+    {
+        Execute("CREATE TABLE IF NOT EXISTS ControllerEventQueue(ch,t2,evt)");
     }
 
     public void Push(ControllerEvent evt)
     {
-        lock (_lock)
+        lock (Lock)
         {
             _queue.Enqueue(evt);
-            if (_queue.Count == 1)
-                _sem.Release();
-            else if (_queue.Count == _limit)
+            if (_queue.Count == _limit)
             {
                 _queue.Enqueue(new QueueFullEvent());
                 _state.DoTask(TaskEnum.StopEventCue);
@@ -49,27 +67,26 @@ public class EventQueue : IDisposable
 
     public void SetLimit(int limit)
     {
-        lock (_lock)
+        lock (Lock)
         {
             _limit = limit;
         }
     }
 
-    public void Save()
+    private void Save()
     {
-        lock (_lock)
+        lock (Lock)
         {
             if (_queue.IsEmpty) return;
 
-            using var db = CreateDatabase();
-            using var tx = db.BeginTransaction();
+            using var tx = Connection.BeginTransaction();
             foreach (var evt in _queue)
             {
                 if (evt is ControllerEvent ce)
                 {
-                    using var cmd = db.CreateCommand();
-                    cmd.CommandText = "INSERT INTO coevtcue (ch, t2, evt) VALUES (@ch, @t2, @evt)";
-                    cmd.Parameters.AddWithValue("@ch", ce.Channel);
+                    using var cmd = Connection.CreateCommand();
+                    cmd.CommandText = "INSERT INTO ControllerEventQueue (ch, t2, evt) VALUES (@ch, @t2, @evt)";
+                    cmd.Parameters.AddWithValue("@ch", ce.ChannelId);
                     cmd.Parameters.AddWithValue("@t2", ce.Timestamp);
                     cmd.Parameters.AddWithValue("@evt", ce.Data);
                     cmd.ExecuteNonQuery();
@@ -79,13 +96,12 @@ public class EventQueue : IDisposable
         }
     }
 
-    public void Load()
+    private void Load()
     {
-        lock (_lock)
+        lock (Lock)
         {
-            using var db = CreateDatabase();
-            using var cmd = db.CreateCommand();
-            cmd.CommandText = "SELECT ch, t2, evt FROM coevtcue";
+            using var cmd = Connection.CreateCommand();
+            cmd.CommandText = "SELECT ch, t2, evt FROM ControllerEventQueue";
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -93,31 +109,16 @@ public class EventQueue : IDisposable
                 evt.Used = true;
                 _queue.Enqueue(evt);
             }
-            Execute(db,"DROP TABLE IF EXISTS coevtcue");
-            Execute(db,"VACUUM");
+            Execute("DROP TABLE IF EXISTS ControllerEventQueue");
+            Execute("VACUUM");
         }
     }
 
-    public void Stop()
-    {
-        _cts.Cancel();
-        _sem.Release();
-    }
-
-    public void Signal()
-    {
-        lock (_lock)
-        {
-            if (!_busy)
-                _sem.Release();
-        }
-    }
 
     private async Task SenderLoopAsync()
     {
         while (!_cts.IsCancellationRequested)
         {
-            await _sem.WaitAsync(_cts.Token);
             while (_queue.TryPeek(out var evt))
             {
                 bool sent = _clientManager.Exec(evt);
@@ -128,12 +129,4 @@ public class EventQueue : IDisposable
             }
         }
     }
-
-    public void Dispose()
-    {
-        _cts.Cancel();
-        _sem.Dispose();
-        _cts.Dispose();
-    }
-
 }
