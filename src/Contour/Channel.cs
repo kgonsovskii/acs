@@ -52,6 +52,8 @@ public abstract class Channel: IDisposable
         return new List<char>();
     }
 
+    public ControllerManager Controllers => new ControllerManager();
+
     public void Activate()
     {
         _init();

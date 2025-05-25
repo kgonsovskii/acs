@@ -30,6 +30,11 @@ public abstract class BaseManager<TKey, T> : IEnumerable<T> where TKey : notnull
     {
         return GetEnumerator();
     }
+
+    public virtual void Clear()
+    {
+
+    }
 }
 
 public abstract class BaseManager<T> : IEnumerable<T>

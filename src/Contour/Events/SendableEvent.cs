@@ -19,7 +19,7 @@
             {
                 ControllerEvent controllerEvent => CreateControllerSendableEvent(controllerEvent),
                 ChannelErrorEvent channelErrorEvent => new ChannelErrorSendableEvent("ChannelError", channelErrorEvent),
-                ControllerErrorEvent controllerErrorEvent => new ControllerErrorSendableEvent(controllerErrorEvent),
+            //    ControllerErrorEvent controllerErrorEvent => new ControllerErrorSendableEvent(controllerErrorEvent),
                 ChannelStateEvent channelStateEvent => new ChannelStateSendableEvent(channelStateEvent),
                 ChannelPollSpeedEvent channelPollSpeedEvent => new ChannelPollSpeedSendableEvent(channelPollSpeedEvent),
                 ControllerStateEvent controllerStateEvent => new ControllerStateSendableEvent(controllerStateEvent),

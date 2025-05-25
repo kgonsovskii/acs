@@ -1,33 +1,64 @@
 ﻿using System.Net.Sockets;
+using SevenSeals.Tss.Contour.Events;
 
 namespace SevenSeals.Tss.Contour;
 
-
-public class ClientManager: BaseManager<Client>
+public class ClientManager : IDisposable
 {
+    private readonly List<Client> _clients = new();
+    private readonly object _sync = new();
     private Client? _mainClient;
+    private readonly ClientEvents _events;
 
-    public async Task AddAsync(Socket socket, string connectionInfo)
+    public ClientManager()
     {
-        var client = new Client(connectionInfo);
-        await client.OpenAsync(socket);
-        Add(client);
-    }
-
-    public async Task DisconnectAsync()
-    {
-        foreach (var client in this)
-        {
-            await client.DisconnectAsync(true);
-        }
-        Clear();
+        _mainClient = null;
+        _events = new ClientEvents();
     }
 
     public async Task CleanupAsync()
     {
-        lock (Lock)
+
+    }
+
+    public async Task DisconnectAsync()
+    {
+
+    }
+
+    public void Dispose()
+    {
+    }
+
+    public int Count
+    {
+        get
         {
-            Items.RemoveAll(c => !c.IsReady);
+            lock (_sync)
+            {
+                return _clients.Count;
+            }
         }
     }
+
+    public void Add(Socket socket, string name)
+    {
+        lock (_sync)
+        {
+            //var client = new Client(socket, name);
+            //_clients.Add(client);
+        }
+    }
+
+    public bool Exec(SendableEvent evt, bool forAll, bool noAck)
+    {
+        return true;
+    }
+
+
+    private void SwitchToAuto(bool a, bool b, bool c)
+    {
+        // implement as needed
+    }
 }
+

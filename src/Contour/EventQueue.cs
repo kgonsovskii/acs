@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using System.Security.Cryptography;
+using Microsoft.Extensions.Hosting;
 using SevenSeals.Tss.Contour.Events;
 using SevenSeals.Tss.Shared;
 
@@ -52,7 +53,7 @@ public class EventQueue : Database, IHostedService, IDisposable
         Execute("CREATE TABLE IF NOT EXISTS ControllerEventQueue(ch,t2,evt)");
     }
 
-    public void Push(ControllerEvent evt)
+    public void Push(Event evt)
     {
         lock (Lock)
         {
@@ -62,6 +63,15 @@ public class EventQueue : Database, IHostedService, IDisposable
                 _queue.Enqueue(new QueueFullEvent());
                 _state.DoTask(TaskEnum.StopEventCue);
             }
+        }
+    }
+
+    public void Pop(Event evt)
+    {
+        lock (Lock)
+        {
+            if (!_queue.IsEmpty)
+                _queue.TryPeek(out var result);
         }
     }
 
@@ -105,7 +115,9 @@ public class EventQueue : Database, IHostedService, IDisposable
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                var evt = new ControllerEvent(reader.GetString(0), reader.GetDateTime(1), reader.GetBytes(2));
+                byte[]? bytes = new byte[20];
+                reader.GetBytes(2,0, bytes, 0,10);
+                var evt = new ControllerEvent(reader.GetString(0), bytes, reader.GetDateTime(1));
                 evt.Used = true;
                 _queue.Enqueue(evt);
             }
@@ -121,12 +133,45 @@ public class EventQueue : Database, IHostedService, IDisposable
         {
             while (_queue.TryPeek(out var evt))
             {
-                bool sent = _clientManager.Exec(evt);
-                if (sent)
-                    _queue.TryDequeue(out _);
-                else
-                    break;
+                // bool sent = _clientManager.Exec(evt);
+                // if (sent)
+                //     _queue.TryDequeue(out _);
+                // else
+                //     break;
             }
         }
+    }
+
+    public SendableEvent? Front(out bool forAll, out bool coEvt)
+    {
+        lock (Lock)
+        {
+            forAll = false;
+            coEvt = false;
+
+            if (_queue.TryPeek(out var evt))
+            {
+                var sendable = SendableEvent.Create(evt); // assumes factory method like in C++
+
+                if (evt.Type == EventType.Controller) // assuming EventType enum
+                {
+                    coEvt = true;
+                    if (evt is ControllerEvent ce)
+                    {
+                        forAll = !ce.Used;
+                        ce.Used = true;
+                    }
+                }
+                else
+                {
+                    forAll = true;
+                    coEvt = false;
+                }
+
+                return sendable;
+            }
+        }
+
+        return null;
     }
 }

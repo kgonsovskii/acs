@@ -118,15 +118,15 @@ public class AppHost : IHostedService
 
                 if (closeChannel)
                 {
-                    await channel.DeactivateAsync();
+                    channel.Deactivate();
                 }
             }
 
             if (clearChannels)
             {
-                if (_channels.Count > 0)
+                if (_channels.Any())
                 {
-                    await _channels.ClearAsync();
+                     _channels.Clear();
                     channelsChanged = true;
                 }
             }

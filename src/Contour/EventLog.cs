@@ -15,6 +15,8 @@ public class EventLog: Database
         _eventQueue = eventQueue;
     }
 
+    public bool IsLogging => true;
+
     protected override string Name => "EventLog.db";
 
     protected override void Initialize()
@@ -24,18 +26,21 @@ public class EventLog: Database
         cmd.ExecuteNonQuery();
     }
 
-    public void Add(LogEvent evt)
+    public void Add(Event evt)
     {
         lock (Lock)
         {
-            using var cmd = Connection.CreateCommand();
-            cmd.CommandText = "INSERT INTO EventLog(@ch, @t1, @t2, @addr, @evt)";
-            cmd.Parameters.AddWithValue("@ch", evt.Ch);
-            cmd.Parameters.AddWithValue("@t1", evt.ControllerTimestamp);
-            cmd.Parameters.AddWithValue("@t2", evt.Timestamp);
-            cmd.Parameters.AddWithValue("@addr", new[] { evt.Addr });
-            cmd.Parameters.AddWithValue("@evt", evt.Data);
-            cmd.ExecuteNonQuery();
+            if (evt is LogEvent logEvent)
+            {
+                using var cmd = Connection.CreateCommand();
+                cmd.CommandText = "INSERT INTO EventLog(@ch, @t1, @t2, @addr, @evt)";
+                cmd.Parameters.AddWithValue("@ch", logEvent.Ch);
+                cmd.Parameters.AddWithValue("@t1", logEvent.ControllerTimestamp);
+                cmd.Parameters.AddWithValue("@t2", logEvent.Timestamp);
+                cmd.Parameters.AddWithValue("@addr", new[] { logEvent.Addr });
+                cmd.Parameters.AddWithValue("@evt", logEvent.Data);
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 
@@ -86,7 +91,7 @@ public class EventLog: Database
     }
 }
 
-public class LogEvent
+public class LogEvent: Event
 {
     public byte[] Ch { get; set; }
     public byte[] ControllerTimestamp { get; set; }

@@ -23,6 +23,7 @@ public class SerialChannel : Channel
         throw new NotImplementedException();
     }
 
+
     protected override void _init()
     {
         throw new NotImplementedException();
@@ -43,11 +44,10 @@ public class SerialChannel : Channel
         throw new NotImplementedException();
     }
 
-    public string ConnInfo => _connInfo;
 
     protected void Init()
     {
-        _comm = new SerialPortX(DevStr, (int)Speed);
+      //  _comm = new SerialPortX(DevStr, (int)Speed);
 
 #if WINDOWS
         _comm.ReadBufferSize = 512;
@@ -55,9 +55,9 @@ public class SerialChannel : Channel
         _comm.ReadTimeout = ResponseTimeout; // Assuming ResponseTimeout is available
 #endif
 
-        _comm.DtrEnable = false;
-        _comm.RtsEnable = true;
-        _comm.Open();
+        //_comm.DtrEnable = false;
+      //  _comm.RtsEnable = true;
+      //  _comm.Open();
 
         SetReady(true);
     }
@@ -68,7 +68,7 @@ public class SerialChannel : Channel
         if (_comm != null)
         {
             _comm.Close();
-            _comm.Dispose();
+           // _comm.Dispose();
             _comm = null;
         }
     }
@@ -80,7 +80,7 @@ public class SerialChannel : Channel
 #if LINUX
         // Implement waitInput functionality equivalent if needed
 #endif
-        return _comm.Read(buffer, 0, size);
+       // return _comm.Read(buffer, 0, size);
 
         return 0;
     }
@@ -94,7 +94,7 @@ public class SerialChannel : Channel
         if (_error)
             FlushInput();
 
-        _comm.Write(buffer, 0, size);
+     //   _comm.Write(buffer, 0, size);
     }
 
     protected bool _error = false;

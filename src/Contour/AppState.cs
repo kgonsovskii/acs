@@ -13,10 +13,10 @@ public class AppState
         switch (task)
         {
             case TaskEnum.CleanupClients:
-                _cleanupClients = true;
+             //   _cleanupClients = true;
                 break;
             case TaskEnum.StopEventCue:
-                _stopEventQueue = true;
+              //  _stopEventQueue = true;
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(task), task, null);

@@ -17,17 +17,19 @@ public interface IChannelEvents
 public class ChannelEvents : IChannelEvents
 {
     private readonly AppHost _app;
+    private readonly EventLog _eventLog;
     private readonly EventQueue _eventQueue;
-    public ChannelEvents(EventQueue eventQueue)
+    public ChannelEvents(EventLog eventLog, EventQueue eventQueue)
     {
+        _eventLog = eventLog;
         _eventQueue = eventQueue;
     }
     public void OnControllerEvent(Channel channel, byte[] rawEvent)
     {
         var controllerEvent = new ControllerEvent(channel.Id, rawEvent);
         _eventQueue.Push(controllerEvent);
-        if (_app.CoEvtLog.IsLogging)
-            _app.CoEvtLog.Add(controllerEvent);
+        if (_eventLog.IsLogging)
+            _eventLog.Add(controllerEvent);
     }
 
     public void OnControllerState(Channel ch, Controller controller, char state)
