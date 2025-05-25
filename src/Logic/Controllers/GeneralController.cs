@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SevenSeals.Tss.Shared;
 
-namespace SevenSeals.Tss.Contour.Controllers;
+namespace SevenSeals.Tss.Logic.Controllers;
 
 [ApiController]
 [Route("api/[controller]/")]

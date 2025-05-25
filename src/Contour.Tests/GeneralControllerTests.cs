@@ -1,7 +1,7 @@
-﻿using Contour.Application;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SevenSeals.Tss.Contour;
+using SevenSeals.Tss.Shared.Model;
 using Shared.Tests;
 
 namespace Contour.Tests;

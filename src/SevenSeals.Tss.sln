@@ -27,6 +27,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{152C81E3-0
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
+		..\readme.md = ..\readme.md
+		..\docker.ps1 = ..\docker.ps1
+		..\docker-compose.yml = ..\docker-compose.yml
+		..\Dockerfile = ..\Dockerfile
+		..\install.ps1 = ..\install.ps1
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.App", "Shared.App\Shared.App.csproj", "{A521F739-496E-4802-BD2F-F0729A90B487}"

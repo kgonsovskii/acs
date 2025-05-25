@@ -1,7 +1,7 @@
-﻿using Contour.Application;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SevenSeals.Tss.Shared;
+using SevenSeals.Tss.Shared.Model;
 
 namespace Contour;
 

@@ -1,6 +1,7 @@
 # .NET Core CLI
 /.dotnet/
 /.packages/
+/publish/
 dotnet-install.sh*
 *.lock.json
 
