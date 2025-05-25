@@ -40,7 +40,7 @@ public abstract class BaseManager<TKey, T> : IEnumerable<T> where TKey : notnull
 public abstract class BaseManager<T> : IEnumerable<T>
 {
     protected List<T> Items { get; } = new List<T>();
-    protected readonly Lock Lock = new();
+    protected readonly object Lock = new();
 
     public T Add(T item)
     {

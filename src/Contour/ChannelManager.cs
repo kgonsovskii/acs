@@ -6,7 +6,7 @@ public class ChannelManager : BaseManager<string, Channel>
     private readonly Dictionary<string, Channel> _map = new();
     private readonly ChannelEvents _events;
 
-    public ChannelManager(IChannelEvents? events, EventLog eventLog, EventQueue eventQueue)
+    public ChannelManager(EventLog eventLog, EventQueue eventQueue)
     {
         _events = new ChannelEvents(eventLog, eventQueue);
     }

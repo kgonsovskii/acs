@@ -16,7 +16,6 @@ public interface IChannelEvents
 
 public class ChannelEvents : IChannelEvents
 {
-    private readonly AppHost _app;
     private readonly EventLog _eventLog;
     private readonly EventQueue _eventQueue;
     public ChannelEvents(EventLog eventLog, EventQueue eventQueue)

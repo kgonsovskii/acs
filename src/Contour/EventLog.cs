@@ -1,6 +1,5 @@
 ﻿using SevenSeals.Tss.Contour.Events;
 using SevenSeals.Tss.Shared;
-using System;
 
 namespace SevenSeals.Tss.Contour;
 
@@ -9,10 +8,10 @@ public class EventLog: Database
     private readonly ChannelManager _channelManager;
     private readonly EventQueue _eventQueue;
 
-    public EventLog(ChannelManager channelManager, EventQueue eventQueue,  Settings settings): base(settings)
+    public EventLog(Settings settings): base(settings)
     {
-        _channelManager = channelManager;
-        _eventQueue = eventQueue;
+       // _channelManager = channelManager;
+       // _eventQueue = eventQueue;
     }
 
     public bool IsLogging => true;

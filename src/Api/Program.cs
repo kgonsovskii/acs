@@ -1,9 +1,18 @@
-﻿namespace SevenSeals.Tss.Api;
+using Microsoft.Extensions.Hosting;
+using SevenSeals.Tss.Shared;
 
-class Program
+namespace SevenSeals.Tss.Api;
+
+public class Program : ProgramBase<Startup>
 {
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        new Program().Run(args);
+    }
+
+    protected override IHostBuilder CreateHostBuilder(string[] args)
+    {
+        var builder = base.CreateHostBuilder(args);
+        return builder;
     }
 }

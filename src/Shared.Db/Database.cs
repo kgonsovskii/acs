@@ -1,34 +1,35 @@
 ﻿using Microsoft.Data.Sqlite;
-using SevenSeals.Tss.Contour;
 
 namespace SevenSeals.Tss.Shared;
 
 public abstract class Database
 {
     protected readonly Settings Settings;
-    protected Lock Lock { get; } = new();
+    protected object Lock { get; } = new();
 
     protected abstract string Name { get; }
 
-    protected SqliteConnection Connection { get; }
+    protected SqliteConnection Connection { get; private set; }
 
     protected abstract void Initialize();
 
     protected Database(Settings settings)
     {
         Settings = settings;
-        Connection = CreateDatabase();
+        CreateDatabase();
     }
 
-    private SqliteConnection CreateDatabase()
+    private void CreateDatabase()
     {
         lock (Lock)
         {
             var path = Path.Combine(Settings.DataDir,Name);
-            var conn = new SqliteConnection($"Data Source={path}");
-            conn.Open();
+            var dir = Path.GetDirectoryName(path)!;
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+            Connection = new SqliteConnection($"Data Source={path}");
+            Connection.Open();
             Initialize();
-            return conn;
         }
     }
 

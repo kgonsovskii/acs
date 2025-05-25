@@ -1,6 +1,6 @@
-﻿using SevenSeals.Tss.Shared;
+﻿using System.Reflection;
 
-namespace SevenSeals.Tss.Contour;
+namespace SevenSeals.Tss.Shared;
 
 public class Settings
 {
@@ -12,7 +12,8 @@ public class Settings
         _commandLineArgs = args;
     }
 
-    public string RootDir => Path.Combine(Path.GetDirectoryName(Args[0]) ?? ".", "..");
+    public string RootDir =>
+        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
 
     public string DataDir => Path.Combine(RootDir, "data");
 

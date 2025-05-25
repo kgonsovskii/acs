@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using SevenSeals.Tss.Contour.Events;
 using SevenSeals.Tss.Shared;
 

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using SevenSeals.Tss.Shared;
 
-namespace SevenSeals.Tss.Logic;
+namespace SevenSeals.Tss.Chronicle;
 
 public class Program : ProgramBase<Startup>
 {

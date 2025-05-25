@@ -1,11 +1,10 @@
 <Project>
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <AnalysisLevel>latest</AnalysisLevel>
-    <CS8803>false</CS8803>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
-
-  <ItemGroup>
-    <CompilerVisibleProperty Include="DisableConvertToPrimaryConstructor" />
-    <EditorConfigFiles Include="disable-rules.editorconfig" />
-  </ItemGroup>
 </Project>

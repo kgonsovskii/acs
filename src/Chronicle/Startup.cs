@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace SevenSeals.Tss.Contour;
+namespace SevenSeals.Tss.Chronicle;
 
 public class Startup: Shared.StartupBase<Startup>
 {
@@ -14,14 +14,8 @@ public class Startup: Shared.StartupBase<Startup>
 
     public override void ConfigureServices(IServiceCollection services)
     {
+        //
         base.ConfigureServices(services);
-
-        services.AddSingleton<AppState>();
-        services.AddHostedService<AppHost>();
-        services.AddSingleton<EventQueue>();
-        services.AddSingleton<EventLog>();
-        services.AddSingleton<ClientManager>();
-        services.AddSingleton<ChannelManager>();
     }
 
     public override void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
