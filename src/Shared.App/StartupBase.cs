@@ -37,6 +37,8 @@ public abstract class StartupBase<TStartup> where TStartup : class
 
     public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<TStartup> logger)
     {
+        logger.LogInformation("Environment: {EnvironmentName}", env.EnvironmentName);
+
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();

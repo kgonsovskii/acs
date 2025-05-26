@@ -20,7 +20,7 @@ public class EventQueue : Database, IHostedService, IDisposable
     private readonly AppState _state;
     private readonly ClientManager _clientManager;
 
-    protected override string Name => "ControllerEventQueue.db";
+    private readonly object _lock = new();
 
     public EventQueue(Settings settings, AppState state, ClientManager clientManager): base(settings)
     {
@@ -49,12 +49,19 @@ public class EventQueue : Database, IHostedService, IDisposable
 
     protected override void Initialize()
     {
-        Execute("CREATE TABLE IF NOT EXISTS ControllerEventQueue(ch,t2,evt)");
+        Execute(@"
+
+CREATE TABLE IF NOT EXISTS ControllerEventQueue (
+    ch TEXT,
+    t2 TIMESTAMP,
+    evt TEXT
+
+);");
     }
 
     public void Push(Event evt)
     {
-        lock (Lock)
+        lock (_lock)
         {
             _queue.Enqueue(evt);
             if (_queue.Count == _limit)
@@ -67,7 +74,7 @@ public class EventQueue : Database, IHostedService, IDisposable
 
     public void Pop(Event evt)
     {
-        lock (Lock)
+        lock (_lock)
         {
             if (!_queue.IsEmpty)
                 _queue.TryPeek(out var result);
@@ -76,7 +83,7 @@ public class EventQueue : Database, IHostedService, IDisposable
 
     public void SetLimit(int limit)
     {
-        lock (Lock)
+        lock (_lock)
         {
             _limit = limit;
         }
@@ -84,7 +91,7 @@ public class EventQueue : Database, IHostedService, IDisposable
 
     private void Save()
     {
-        lock (Lock)
+        lock (_lock)
         {
             if (_queue.IsEmpty) return;
 
@@ -107,7 +114,7 @@ public class EventQueue : Database, IHostedService, IDisposable
 
     private void Load()
     {
-        lock (Lock)
+        lock (_lock)
         {
             using var cmd = Connection.CreateCommand();
             cmd.CommandText = "SELECT ch, t2, evt FROM ControllerEventQueue";
@@ -143,7 +150,7 @@ public class EventQueue : Database, IHostedService, IDisposable
 
     public SendableEvent? Front(out bool forAll, out bool coEvt)
     {
-        lock (Lock)
+        lock (_lock)
         {
             forAll = false;
             coEvt = false;

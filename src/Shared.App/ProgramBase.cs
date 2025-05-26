@@ -41,11 +41,21 @@ public abstract class ProgramBase<TStartup> where TStartup : class
                 var env = hostingContext.HostingEnvironment;
 
                 config.Sources.Clear();
+#if DEBUG
+                var environmentName = "Development";
+#else
+                var environmentName = env.EnvironmentName;
+#endif
+
+                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true);
+
+                hostingContext.HostingEnvironment.EnvironmentName = environmentName;
 
                 config
                     .SetBasePath(env.ContentRootPath)
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true)
                     .AddEnvironmentVariables();
                 config.AddCommandLine(args);
             })

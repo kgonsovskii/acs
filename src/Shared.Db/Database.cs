@@ -1,16 +1,11 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using Npgsql;
 
 namespace SevenSeals.Tss.Shared;
 
 public abstract class Database
 {
     protected readonly Settings Settings;
-    protected object Lock { get; } = new();
-
-    protected abstract string Name { get; }
-
-    protected SqliteConnection Connection { get; private set; }
-
+    protected NpgsqlConnection Connection { get; private set; }
     protected abstract void Initialize();
 
     protected Database(Settings settings)
@@ -21,16 +16,29 @@ public abstract class Database
 
     private void CreateDatabase()
     {
-        lock (Lock)
+        var adminConnectionString = new NpgsqlConnectionStringBuilder(Settings.ConnectionString)
         {
-            var path = Path.Combine(Settings.DataDir,Name);
-            var dir = Path.GetDirectoryName(path)!;
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
-            Connection = new SqliteConnection($"Data Source={path}");
-            Connection.Open();
-            Initialize();
+            Database = "postgres"
+        }.ToString();
+
+        using (var adminConnection = new NpgsqlConnection(adminConnectionString))
+        {
+            adminConnection.Open();
+
+            using var checkCmd = new NpgsqlCommand("SELECT 1 FROM pg_database WHERE datname = @dbName", adminConnection);
+            checkCmd.Parameters.AddWithValue("dbName", "acs");
+            var exists = checkCmd.ExecuteScalar();
+
+            if (exists == null)
+            {
+                using var createCmd = new NpgsqlCommand("CREATE DATABASE acs", adminConnection);
+                createCmd.ExecuteNonQuery();
+            }
         }
+
+        Connection = new NpgsqlConnection(Settings.ConnectionString);
+        Connection.Open();
+        Initialize();
     }
 
     protected void Execute(string cmdText)

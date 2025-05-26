@@ -18,6 +18,7 @@ public class TestWebAppFactory<TStartup> : WebApplicationFactory<TStartup> where
                 configBuilder
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
                     .AddJsonFile("appsettings.Test.json", optional: false, reloadOnChange: true)
                     .AddEnvironmentVariables();
             })
