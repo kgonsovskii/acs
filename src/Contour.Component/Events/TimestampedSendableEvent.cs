@@ -8,7 +8,7 @@ public class TimestampedSendableEvent : SendableEvent
         Parameters["TIME"] = evt.Timestamp;
     }
 
-    public override Task ExecuteAsync(Client client, bool noAck)
+    public override Task ExecuteAsync(object client, bool noAck)
     {
         throw new NotImplementedException();
     }

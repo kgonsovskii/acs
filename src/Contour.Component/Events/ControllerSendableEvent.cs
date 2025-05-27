@@ -16,7 +16,7 @@ public class ControllerSendableEvent : SendableEvent
         Data[16] = (byte)(evt.IsLast ? 1 : 0);*/
     }
 
-    public override Task ExecuteAsync(Client client, bool noAck)
+    public override Task ExecuteAsync(object client, bool noAck)
     {
         // Implementation for controller event execution
         return Task.CompletedTask;

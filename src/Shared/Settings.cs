@@ -8,11 +8,14 @@ public class Settings
     private readonly CommandLineArgs _commandLineArgs;
     public string[] Args => this._commandLineArgs.Args;
 
+    public readonly int SpotPort;
+
     public string ConnectionString { get;}
 
     public Settings(CommandLineArgs args, IConfiguration configuration)
     {
         ConnectionString = configuration.GetConnectionString("Default")!;
+        SpotPort = configuration.GetValue<int>("Spot:Port");
         _commandLineArgs = args;
     }
 

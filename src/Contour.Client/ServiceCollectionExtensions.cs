@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Contour;
+namespace SevenSeals.Tss.Contour;
 
 public static class ServiceCollectionExtensions
 {

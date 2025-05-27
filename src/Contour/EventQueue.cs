@@ -1,14 +1,9 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using System.Collections.Concurrent;
+using Microsoft.Extensions.Hosting;
 using SevenSeals.Tss.Contour.Events;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
-
-
-using System;
-using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
 
 public class EventQueue : Database, IHostedService, IDisposable
 {
@@ -18,14 +13,12 @@ public class EventQueue : Database, IHostedService, IDisposable
     private int _limit = int.MaxValue;
 
     private readonly AppState _state;
-    private readonly ClientManager _clientManager;
 
     private readonly object _lock = new();
 
-    public EventQueue(Settings settings, AppState state, ClientManager clientManager): base(settings)
+    public EventQueue(Settings settings, AppState state): base(settings)
     {
         _state = state;
-        _clientManager = clientManager;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)

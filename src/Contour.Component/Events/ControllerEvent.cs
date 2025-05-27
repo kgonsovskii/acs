@@ -1,6 +1,4 @@
-﻿using SevenSeals.Tss.Shared;
-
-namespace SevenSeals.Tss.Contour.Events;
+﻿namespace SevenSeals.Tss.Contour.Events;
 
 public class ControllerEvent : ChannelEvent
 {
@@ -45,7 +43,7 @@ public class ControllerEvent : ChannelEvent
     }
 
     public ControllerEvent(byte[] channelId, byte[] evt, byte[] timestamp)
-        : base(EventType.Controller, channelId.ToTssString())
+        : base(EventType.Controller, "temp")
     {
         _data = new byte[Size];
         Array.Copy(evt, _data, Size);

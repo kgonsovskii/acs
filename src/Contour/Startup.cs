@@ -20,8 +20,7 @@ public class Startup: Shared.StartupBase<Startup>
         services.AddHostedService<AppHost>();
         services.AddSingleton<EventQueue>();
         services.AddSingleton<EventLog>();
-        services.AddSingleton<ClientManager>();
-        services.AddSingleton<ChannelManager>();
+        services.AddSingleton<ChannelHub>();
     }
 
     public override void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)

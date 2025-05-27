@@ -8,8 +8,13 @@ namespace SevenSeals.Tss.Shared;
 
 public abstract class ProtoController: ControllerBase
 {
+    /// <summary>
+    /// Returns a basic health check response indicating the service is alive.
+    /// </summary>
+    /// <param name="request">Optional request that carries trace context.</param>
+    /// <returns>StatusResponse with service name, status, timestamp, and trace ID.</returns>
     [HttpGet("status")]
-    [Description("Returns application status")]
+    [Description("Returns application status (heartbeat)")]
     [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
     [Produces("application/json")]
     public ActionResult<StatusResponse> GetStatus([FromQuery] StatusRequest request)

@@ -1,9 +1,5 @@
 ﻿namespace SevenSeals.Tss.Contour;
 
-using System;
-using System.Collections.Generic;
-using System.Threading;
-
 public abstract class Channel: IDisposable
 {
     public readonly IChannelEvents? events;
@@ -11,7 +7,9 @@ public abstract class Channel: IDisposable
     public readonly ushort aliveTimeout;
     public readonly ushort deadTimeout;
 
-    protected ControllerManager controllers = new ControllerManager();
+    public TimeSpan ResponseTimeout => TimeSpan.FromMilliseconds(1000);
+
+  //  protected ControllerManager controllers = new ControllerManager();
     protected Thread _thread;
     protected bool _ready = false;
     protected volatile bool _deactivating = false;
@@ -38,6 +36,9 @@ public abstract class Channel: IDisposable
         this._speedTimer = new SpeedTimer(this);
     }
 
+    public abstract Task Open();
+
+
     public virtual void Dispose()
     {
         GC.SuppressFinalize(this);
@@ -52,7 +53,7 @@ public abstract class Channel: IDisposable
         return new List<char>();
     }
 
-    public ControllerManager Controllers => new ControllerManager();
+    //public ControllerManager Controllers => new ControllerManager();
 
     public void Activate()
     {
@@ -70,14 +71,19 @@ public abstract class Channel: IDisposable
     }
 
     public bool Active => _thread != null;
-    public bool Ready => _ready;
-    public (bool Active, bool Ready) ActiveAndReady => (Active, Ready);
+    public bool IsReady => true;
+    public (bool Active, bool Ready) ActiveAndReady => (true, true);
     public uint PollSpeed => _speedOld;
 
     protected abstract void _init();
     protected abstract void _fini();
-    protected abstract int _read(byte[] buf, int size);
-    protected abstract void _write(byte[] buf, int size);
+    protected internal abstract int Read(byte[] buf, int size);
+
+    protected internal abstract int Read(byte[] buf, int offset, int size);
+    protected internal abstract void Write(byte[] buf, int size);
+    protected internal abstract void Write(byte[] buf, int offset,  int size);
+
+    protected internal void Write(byte[] buf) => Write(buf, buf.Length);
 
     protected void _flushInput()
     {
@@ -111,13 +117,13 @@ public abstract class Channel: IDisposable
         }
     }
 
-    protected bool _processController(Controller controller)
+    protected bool _processController(Spot spot)
     {
         // Stubbed logic
         return true;
     }
 
-    protected void _chkAndSetAliveTimer(Controller controller)
+    protected void _chkAndSetAliveTimer(Spot spot)
     {
         // Stubbed logic
     }

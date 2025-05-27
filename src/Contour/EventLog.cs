@@ -5,7 +5,7 @@ namespace SevenSeals.Tss.Contour;
 
 public class EventLog: Database
 {
-    private readonly ChannelManager _channelManager;
+    private readonly ChannelHub _channel;
     private readonly EventQueue _eventQueue;
 
     public EventLog(Settings settings): base(settings)
@@ -46,7 +46,7 @@ public class EventLog: Database
 
     public int Send(byte[] beg, byte[] end, int limit, int offset)
     {
-        if (_channelManager.Any())
+        if (_channel.Any())
             throw new InvalidOperationException("Channels not empty");
 
         using var cmd = Connection.CreateCommand();
@@ -72,7 +72,7 @@ public class EventLog: Database
 
     public void Clear()
     {
-        if (_channelManager.Any())
+        if (_channel.Any())
             throw new InvalidOperationException("Channels not empty");
 
         using var dropCmd = Connection.CreateCommand();

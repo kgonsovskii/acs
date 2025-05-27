@@ -1,29 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Concurrent;
 
-namespace SevenSeals.Tss.Contour;
+namespace SevenSeals.Tss.Shared;
 
-public abstract class BaseManager<TKey, T> : IEnumerable<T> where TKey : notnull
+public abstract class HubBase<TKey, T> : IEnumerable<T> where TKey : notnull
 {
-    private readonly ConcurrentDictionary<TKey, T> _items = new();
+    protected readonly ConcurrentDictionary<TKey, T> Items = new();
 
-    protected abstract T CreateItem(TKey key);
-
-    public T Add(TKey key)
+    public T Add(TKey key, T item)
     {
-        var item = CreateItem(key);
-        _items[key] = item;
+        Items[key] = item;
         return item;
     }
 
     public void Remove(TKey key)
     {
-        _items.TryRemove(key, out _);
+        Items.TryRemove(key, out _);
     }
 
     public IEnumerator<T> GetEnumerator()
     {
-        return _items.Values.ToList().GetEnumerator();
+        return Items.Values.ToList().GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -37,7 +34,7 @@ public abstract class BaseManager<TKey, T> : IEnumerable<T> where TKey : notnull
     }
 }
 
-public abstract class BaseManager<T> : IEnumerable<T>
+public abstract class HubBase<T> : IEnumerable<T>
 {
     protected List<T> Items { get; } = new List<T>();
     protected readonly object Lock = new();

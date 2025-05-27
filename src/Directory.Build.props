@@ -7,4 +7,22 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <AppSettingsExists Condition="Exists('$(MSBuildProjectDirectory)\appsettings.json') Or Exists('$(MSBuildProjectDirectory)\appsettings.Test.json')">true</AppSettingsExists>
+  </PropertyGroup>
+
+  <Target Name="CopyBaseAppSettings" BeforeTargets="BeforeBuild" Condition="'$(AppSettingsExists)' == 'true'">
+    <Copy
+      SourceFiles="$(MSBuildThisFileDirectory)\Shared.App\appsettings.base.json"
+      DestinationFiles="$(MSBuildProjectDirectory)\appsettings.base.json"
+      SkipUnchangedFiles="true"
+    />
+  </Target>
+
+  <ItemGroup Condition="'$(AppSettingsExists)' == 'true'">
+    <Content Include="appsettings.base.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@
         public string Name { get; }
         public Dictionary<string, object> Parameters { get; } = new();
 
-        public abstract Task ExecuteAsync(Client client, bool noAck);
+        public abstract Task ExecuteAsync(object client, bool noAck);
 
         public static SendableEvent Create(Event evt)
         {

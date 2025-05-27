@@ -8,7 +8,7 @@ namespace SevenSeals.Tss.Shared;
 public abstract class ProtoClient: IDisposable
 {
     private readonly HttpClient _httpClient;
-    private readonly string? _apiEndpoint;
+    private readonly string _apiEndpoint;
     private readonly ILogger? _logger;
     private readonly Action<string>? _loggerAction;
 
@@ -26,6 +26,7 @@ public abstract class ProtoClient: IDisposable
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _loggerAction = loggerAction ?? throw new ArgumentNullException(nameof(loggerAction));
+        _apiEndpoint = "http://localhost/api/";
     }
 
     protected virtual void Log(string message)
@@ -46,18 +47,18 @@ public abstract class ProtoClient: IDisposable
         _httpClient.DefaultRequestHeaders.Add(name, value);
     }
 
-    public async Task<TResponse> GetAsync<TRequest, TResponse>(TRequest request) where TRequest : RequestBase where TResponse : ResponseBase
+    public async Task<TResponse> GetAsync<TRequest, TResponse>(string action, TRequest request) where TRequest : RequestBase where TResponse : ResponseBase
     {
-        var url = BuildUrlFromRequest(request);
+        var url = BuildUrlFromRequest(action, request);
         Log($"GET {url}");
 
         var response = await _httpClient.GetAsync(url);
         return await HandleResponse<TResponse>(response);
     }
 
-    public async Task<TResponse> PostAsync<TRequest, TResponse>(TRequest request) where TRequest : RequestBase where TResponse : ResponseBase
+    public async Task<TResponse> PostAsync<TRequest, TResponse>(string action, TRequest request) where TRequest : RequestBase where TResponse : ResponseBase
     {
-        var url = BuildUrlFromRequest(request);
+        var url = BuildUrlFromRequest(action, request);
         var json = JsonSerializer.Serialize(request);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -67,9 +68,9 @@ public abstract class ProtoClient: IDisposable
         return await HandleResponse<TResponse>(response);
     }
 
-    public async Task<TResponse> PutAsync<TRequest, TResponse>(TRequest request) where TRequest : RequestBase where TResponse : ResponseBase
+    public async Task<TResponse> PutAsync<TRequest, TResponse>(string action, TRequest request) where TRequest : RequestBase where TResponse : ResponseBase
     {
-        var url = BuildUrlFromRequest(request);
+        var url = BuildUrlFromRequest(action, request);
         var json = JsonSerializer.Serialize(request);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -79,22 +80,20 @@ public abstract class ProtoClient: IDisposable
         return await HandleResponse<TResponse>(response);
     }
 
-    public async Task<TResponse> DeleteAsync<TRequest, TResponse>(TRequest request) where TRequest : RequestBase where TResponse : ResponseBase
+    public async Task<TResponse> DeleteAsync<TRequest, TResponse>(string action, TRequest request) where TRequest : RequestBase where TResponse : ResponseBase
     {
-        var url = BuildUrlFromRequest(request);
+        var url = BuildUrlFromRequest(action, request);
         Log($"DELETE {url}");
 
         var response = await _httpClient.DeleteAsync(url);
         return await HandleResponse<TResponse>(response);
     }
 
-    private string BuildUrlFromRequest<TRequest>(TRequest request) where TRequest : RequestBase
+    private Uri BuildUrlFromRequest<TRequest>(string action, TRequest request) where TRequest : RequestBase
     {
-        if (_apiEndpoint != null)
-            return _apiEndpoint;
-
-        // Caller must ensure HttpClient already has full BaseAddress+endpoint
-        return "";
+        var baseUri = new Uri(_apiEndpoint);
+        var fullUri = new Uri(baseUri, action);
+        return fullUri;
     }
 
     private async Task<TResponse> HandleResponse<TResponse>(HttpResponseMessage response) where TResponse : ResponseBase

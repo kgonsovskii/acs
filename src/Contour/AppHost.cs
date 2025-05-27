@@ -13,24 +13,19 @@ public class AppHost : IHostedService
 
     private readonly EventLog _eventLog;
 
-    private readonly ChannelManager _channels;
-
-    private readonly ClientManager _clients;
+    private readonly ChannelHub _channels;
 
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     private readonly SemaphoreSlim _taskSemaphore = new(1, 1);
-    private bool _cleanupClients;
-    private bool _stopEventQueue;
 
     private readonly ILogger<AppHost> _logger;
     private readonly Settings _settings;
 
-    public AppHost(Settings settings, EventQueue eventQueue, EventLog eventLog, ChannelManager channelManager, ClientManager clientManager, ILogger<AppHost> logger)
+    public AppHost(Settings settings, EventQueue eventQueue, EventLog eventLog, ChannelHub channelHub,ILogger<AppHost> logger)
     {
         _eventQueue = eventQueue;
         _eventLog = eventLog;
-        _channels = channelManager;
-        _clients = clientManager;
+        _channels = channelHub;
         _logger = logger;
         _settings = settings;
         _cts = new CancellationTokenSource();
@@ -46,7 +41,6 @@ public class AppHost : IHostedService
     {
         await _cts.CancelAsync();
         await SwitchToAuto(true, true, true);
-        await _clients.DisconnectAsync();
         await _cts.CancelAsync();
     }
 
@@ -74,20 +68,10 @@ public class AppHost : IHostedService
 
     private async Task WorkerLoopIteration()
     {
-        var stopEventQueue = _stopEventQueue;
-        _stopEventQueue = false;
-        var cleanupClients = _cleanupClients;
-        _cleanupClients = false;
-
-        if (stopEventQueue)
+        /*if (stopEventQueue)
         {
             await SwitchToAuto(true, false, false);
-        }
-
-        if (cleanupClients)
-        {
-            await _clients.CleanupAsync();
-        }
+        }*/
     }
 
     private async Task SwitchToAuto(bool doTheBest, bool closeChannel, bool clearChannels)
@@ -98,7 +82,7 @@ public class AppHost : IHostedService
         {
             foreach (var channel in _channels)
             {
-                foreach (var controller in channel.Controllers)
+                /*foreach (var controller in channel.Controllers)
                 {
                     try
                     {
@@ -120,7 +104,7 @@ public class AppHost : IHostedService
                 if (closeChannel)
                 {
                     channel.Deactivate();
-                }
+                }*/
             }
 
             if (clearChannels)

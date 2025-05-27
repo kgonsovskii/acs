@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using SevenSeals.Tss.Shared;
 using SevenSeals.Tss.Shared.Model;
 
-namespace Contour;
+namespace SevenSeals.Tss.Contour;
 
 public class ContourClient: ProtoClient
 {
@@ -16,5 +16,8 @@ public class ContourClient: ProtoClient
     }
 
     public async Task<StatusResponse> GetStatus(StatusRequest statusRequest)
-        => await GetAsync<StatusRequest, StatusResponse>(statusRequest);
+        => await GetAsync<StatusRequest, StatusResponse>("status", statusRequest);
+
+    public async Task<SpotResponse> Link(SpotRequest spotRequest)
+        => await PostAsync<SpotRequest, SpotResponse>("link", spotRequest);
 }

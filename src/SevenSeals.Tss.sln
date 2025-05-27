@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{152C81E3-0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.App", "Shared.App\Shared.App.csproj", "{A521F739-496E-4802-BD2F-F0729A90B487}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contour.Component", "Contour.Component\Contour.Component.csproj", "{95104196-9C35-4EA0-BE30-E6F711A06B51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,5 +92,9 @@ Global
 		{A521F739-496E-4802-BD2F-F0729A90B487}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A521F739-496E-4802-BD2F-F0729A90B487}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A521F739-496E-4802-BD2F-F0729A90B487}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95104196-9C35-4EA0-BE30-E6F711A06B51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95104196-9C35-4EA0-BE30-E6F711A06B51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95104196-9C35-4EA0-BE30-E6F711A06B51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95104196-9C35-4EA0-BE30-E6F711A06B51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

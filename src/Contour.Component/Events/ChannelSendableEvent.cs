@@ -7,7 +7,7 @@
             Parameters["CHANNEL"] = evt.ChannelId;
         }
 
-        public override Task ExecuteAsync(Client client, bool noAck)
+        public override Task ExecuteAsync(object client, bool noAck)
         {
             // Implementation for channel event execution
             return Task.CompletedTask;

@@ -1,16 +1,27 @@
-﻿namespace SevenSeals.Tss.Contour;
+using SevenSeals.Tss.Shared;
+
+namespace SevenSeals.Tss.Contour;
 
 
-public class ChannelManager : BaseManager<string, Channel>
+public class ChannelHub : HubBase<string, IpChannel>
 {
-    private readonly Dictionary<string, Channel> _map = new();
-    private readonly ChannelEvents _events;
+    private readonly Dictionary<string, IpChannel> _map = new();
+   // private readonly ChannelEvents _events;
 
-    public ChannelManager(EventLog eventLog, EventQueue eventQueue)
+   public async Task<IpChannel> OpenIpChannel(string host, int port)
+   {
+       var channel = new IpChannel(null, 1000, 1000, 1000, host, port);
+       if (_map.ContainsKey(channel.Id))
+           channel = Items[channel.Id];
+       await channel.Open();
+       return channel;
+   }
+
+    public ChannelHub()
     {
-        _events = new ChannelEvents(eventLog, eventQueue);
+       // _events = new ChannelEvents(eventLog, eventQueue);
     }
-
+/*
     public SerialChannel AddSerial(ushort responseTimeout, ushort aliveTimeout, ushort deadTimeout, string device, uint speed)
     {
         var ch = new SerialChannel(_events, responseTimeout, aliveTimeout, deadTimeout, device, speed);
@@ -40,8 +51,5 @@ public class ChannelManager : BaseManager<string, Channel>
     }
 
     public bool TryGet(string id, out Channel? channel) => _map.TryGetValue(id, out channel);
-    protected override Channel CreateItem(string key)
-    {
-        throw new NotImplementedException();
-    }
+*/
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
@@ -47,7 +46,9 @@ public abstract class ProgramBase<TStartup> where TStartup : class
                 var environmentName = env.EnvironmentName;
 #endif
 
-                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                config
+                    .AddJsonFile("appsettings.base.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true);
 
                 hostingContext.HostingEnvironment.EnvironmentName = environmentName;
@@ -59,5 +60,8 @@ public abstract class ProgramBase<TStartup> where TStartup : class
                     .AddEnvironmentVariables();
                 config.AddCommandLine(args);
             })
-            .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<TStartup>(); });
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<TStartup>();
+            });
 }

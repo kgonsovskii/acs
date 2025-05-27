@@ -2,7 +2,6 @@
 
 namespace SevenSeals.Tss.Contour;
 
-public class RelayController: ProtoController
+public class SpotHub : HubBase<byte, Spot>
 {
-
 }
