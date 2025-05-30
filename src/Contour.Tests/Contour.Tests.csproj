@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Contour.Client\Contour.Client.csproj" />
     <ProjectReference Include="..\Contour\Contour.csproj" />
+    <ProjectReference Include="..\Contour.Model\Contour.Model.csproj" />
     <ProjectReference Include="..\Shared.Tests\Shared.Tests.csproj" />
   </ItemGroup>
 
@@ -25,6 +26,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+
 
 
 </Project>

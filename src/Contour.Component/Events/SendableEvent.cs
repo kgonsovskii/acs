@@ -36,17 +36,17 @@
         {
             return evt.GetKind() switch
             {
-                ControllerEvent.Kind.Key => new ControllerPortKeySendableEvent(evt),
-                ControllerEvent.Kind.Button => new ControllerPortButtonSendableEvent(evt),
-                ControllerEvent.Kind.DoorOpen => new ControllerPortDoorOpenSendableEvent(evt),
-                ControllerEvent.Kind.DoorClose => new ControllerPortDoorCloseSendableEvent(evt),
-                ControllerEvent.Kind.Power220V => new Controller220VSendableEvent(evt),
-                ControllerEvent.Kind.Case => new ControllerCaseSendableEvent(evt),
-                ControllerEvent.Kind.Timer => new ControllerTimerSendableEvent(evt),
-                ControllerEvent.Kind.AutoTimeout => new ControllerAutoTimeoutSendableEvent(evt),
-                ControllerEvent.Kind.Restart => new ControllerRestartSendableEvent(evt),
-                ControllerEvent.Kind.Start => new ControllerStartSendableEvent(evt),
-                ControllerEvent.Kind.StaticSensor => new ControllerStaticSensorSendableEvent(evt),
+                ControllerEvent.KindEnum.Key => new ControllerPortKeySendableEvent(evt),
+                ControllerEvent.KindEnum.Button => new ControllerPortButtonSendableEvent(evt),
+                ControllerEvent.KindEnum.DoorOpen => new ControllerPortDoorOpenSendableEvent(evt),
+                ControllerEvent.KindEnum.DoorClose => new ControllerPortDoorCloseSendableEvent(evt),
+                ControllerEvent.KindEnum.Power220V => new Controller220VSendableEvent(evt),
+                ControllerEvent.KindEnum.Case => new ControllerCaseSendableEvent(evt),
+                ControllerEvent.KindEnum.Timer => new ControllerTimerSendableEvent(evt),
+                ControllerEvent.KindEnum.AutoTimeout => new ControllerAutoTimeoutSendableEvent(evt),
+                ControllerEvent.KindEnum.Restart => new ControllerRestartSendableEvent(evt),
+                ControllerEvent.KindEnum.Start => new ControllerStartSendableEvent(evt),
+                ControllerEvent.KindEnum.StaticSensor => new ControllerStaticSensorSendableEvent(evt),
                 _ => throw new ArgumentException("Unknown controller event kind")
             };
         }

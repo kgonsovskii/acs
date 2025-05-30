@@ -1,0 +1,34 @@
+﻿using System.Reflection;
+
+namespace SevenSeals.Tss.Shared;
+
+public abstract class Proto
+{
+    /// <summary>
+    /// Trace identifier for correlating requests.
+    /// </summary>
+    public virtual string TraceId { get; set; } =string.Empty;
+
+    public virtual int Hash { get; set; } = 0;
+
+    public virtual int GetHash()
+    {
+        var obj = this;
+        if (obj == null)
+            throw new ArgumentNullException(nameof(obj));
+
+        var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.Name != nameof(Hash) && p.CanRead);
+
+        unchecked
+        {
+            var hash = 17;
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(obj);
+                hash = hash * 31 + (value?.GetHashCode() ?? 0);
+            }
+            return hash;
+        }
+    }
+}

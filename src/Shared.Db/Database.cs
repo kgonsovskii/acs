@@ -16,6 +16,7 @@ public abstract class Database
 
     private void CreateDatabase()
     {
+        return;
         var adminConnectionString = new NpgsqlConnectionStringBuilder(Settings.ConnectionString)
         {
             Database = "postgres"
@@ -43,8 +44,10 @@ public abstract class Database
 
     protected void Execute(string cmdText)
     {
+        return;
         using var cmd = Connection.CreateCommand();
         cmd.CommandText = cmdText;
         cmd.ExecuteNonQuery();
     }
 }
+

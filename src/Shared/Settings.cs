@@ -6,22 +6,20 @@ namespace SevenSeals.Tss.Shared;
 public class Settings
 {
     private readonly CommandLineArgs _commandLineArgs;
-    public string[] Args => this._commandLineArgs.Args;
-
-    public readonly int SpotPort;
+    public string[] Args => _commandLineArgs.Args;
 
     public string ConnectionString { get;}
+
+    public readonly bool IsDevelopment = true;
 
     public Settings(CommandLineArgs args, IConfiguration configuration)
     {
         ConnectionString = configuration.GetConnectionString("Default")!;
-        SpotPort = configuration.GetValue<int>("Spot:Port");
+        IsDevelopment = true;
+
         _commandLineArgs = args;
     }
 
     public string RootDir =>
         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
-
-    public string DataDir => Path.Combine(RootDir, "data");
-
 }

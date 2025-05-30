@@ -164,6 +164,51 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="tss\app.hpp" />
+    <ClInclude Include="tss\assertnoiostream.hpp" />
+    <ClInclude Include="tss\cnfg.hpp" />
+    <ClInclude Include="tss\config.hpp" />
+    <ClInclude Include="tss\dynlib.hpp" />
+    <ClInclude Include="tss\file.hpp" />
+    <ClInclude Include="tss\filename.hpp" />
+    <ClInclude Include="tss\gpio.hpp" />
+    <ClInclude Include="tss\httpsrv.hpp" />
+    <ClInclude Include="tss\i2c.hpp" />
+    <ClInclude Include="tss\inifile.hpp" />
+    <ClInclude Include="tss\ip.hpp" />
+    <ClInclude Include="tss\map.hpp" />
+    <ClInclude Include="tss\modbus.hpp" />
+    <ClInclude Include="tss\nix\fcntl.hpp" />
+    <ClInclude Include="tss\nix\ioctl.hpp" />
+    <ClInclude Include="tss\nix\nix.hpp" />
+    <ClInclude Include="tss\nix\pthread.hpp" />
+    <ClInclude Include="tss\nix\semaphore.hpp" />
+    <ClInclude Include="tss\nix\sys\select.hpp" />
+    <ClInclude Include="tss\nix\sys\time.hpp" />
+    <ClInclude Include="tss\nix\termios.hpp" />
+    <ClInclude Include="tss\nix\unistd.hpp" />
+    <ClInclude Include="tss\ntsvc.hpp" />
+    <ClInclude Include="tss\ntsvcutils.hpp" />
+    <ClInclude Include="tss\os.hpp" />
+    <ClInclude Include="tss\pod_vector.hpp" />
+    <ClInclude Include="tss\ppi.hpp" />
+    <ClInclude Include="tss\process.hpp" />
+    <ClInclude Include="tss\rpc.hpp" />
+    <ClInclude Include="tss\serialport.hpp" />
+    <ClInclude Include="tss\servcont.hpp" />
+    <ClInclude Include="tss\sock.hpp" />
+    <ClInclude Include="tss\sqlite.hpp" />
+    <ClInclude Include="tss\str.hpp" />
+    <ClInclude Include="tss\sync.hpp" />
+    <ClInclude Include="tss\sys.hpp" />
+    <ClInclude Include="tss\thread.hpp" />
+    <ClInclude Include="tss\thread_old.hpp" />
+    <ClInclude Include="tss\time.hpp" />
+    <ClInclude Include="tss\timer.hpp" />
+    <ClInclude Include="tss\uuid.hpp" />
+    <ClInclude Include="tss\win\process.hpp" />
+    <ClInclude Include="tss\win\time.hpp" />
+    <ClInclude Include="tss\win\windows.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="file.cpp" />

@@ -7,8 +7,6 @@ namespace SevenSeals.Tss.Contour;
 
 public class AppHost : IHostedService
 {
-    private readonly CancellationTokenSource _cts;
-
     private readonly EventQueue _eventQueue;
 
     private readonly EventLog _eventLog;
@@ -20,28 +18,28 @@ public class AppHost : IHostedService
 
     private readonly ILogger<AppHost> _logger;
     private readonly Settings _settings;
+    private readonly AppState _appState;
 
-    public AppHost(Settings settings, EventQueue eventQueue, EventLog eventLog, ChannelHub channelHub,ILogger<AppHost> logger)
+    public AppHost(Settings settings, AppState appState, EventQueue eventQueue, EventLog eventLog, ChannelHub channelHub,ILogger<AppHost> logger)
     {
+        _appState = appState;
         _eventQueue = eventQueue;
         _eventLog = eventLog;
         _channels = channelHub;
         _logger = logger;
         _settings = settings;
-        _cts = new CancellationTokenSource();
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _ = Task.Run( async () => await WorkerLoop(_cts.Token), _cts.Token);
+        _ = Task.Run( async () => await WorkerLoop(_appState.CancellationTokenSource.Token), _appState.CancellationTokenSource.Token);
         await Task.CompletedTask;
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        await _cts.CancelAsync();
+        await _appState.CancellationTokenSource.CancelAsync();
         await SwitchToAuto(true, true, true);
-        await _cts.CancelAsync();
     }
 
     private async Task WorkerLoop(CancellationToken ct)
@@ -62,7 +60,7 @@ public class AppHost : IHostedService
                 _taskSemaphore.Release();
             }
 
-            await Task.Delay(100, _cts.Token);
+            await Task.Delay(100, ct);
         }
     }
 

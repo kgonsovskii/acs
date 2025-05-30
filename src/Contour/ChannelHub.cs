@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
@@ -5,17 +6,24 @@ namespace SevenSeals.Tss.Contour;
 
 public class ChannelHub : HubBase<string, IpChannel>
 {
-    private readonly Dictionary<string, IpChannel> _map = new();
-   // private readonly ChannelEvents _events;
+    private readonly SpotOptions _options;
+    private readonly AppState _appState;
+    public ChannelHub(IOptions<SpotOptions> settings, AppState state)
+    {
+        _options = settings.Value;
+        _appState = state;
+    }
+    public async Task<IpChannel> OpenIpChannel(SpotRequest request)
+    {
+        var channel = new IpChannel(_options, _appState.CancellationToken, request.Host, request.Port);
+        if (Map.TryGetValue(channel.Id, out var value))
+            channel = value; else
+            Map.TryAdd(channel.Id, channel);
 
-   public async Task<IpChannel> OpenIpChannel(string host, int port)
-   {
-       var channel = new IpChannel(null, 1000, 1000, 1000, host, port);
-       if (_map.ContainsKey(channel.Id))
-           channel = Items[channel.Id];
-       await channel.Open();
-       return channel;
-   }
+        await channel.Open();
+        return channel;
+    }
+
 
     public ChannelHub()
     {

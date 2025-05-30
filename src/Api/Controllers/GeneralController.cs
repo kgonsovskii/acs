@@ -7,5 +7,7 @@ namespace SevenSeals.Tss.Api.Controllers;
 [Route("api/[controller]/")]
 public class GeneralController : ProtoController
 {
-
+    public GeneralController(Settings settings) : base(settings)
+    {
+    }
 }

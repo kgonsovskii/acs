@@ -1,9 +1,9 @@
 ﻿namespace SevenSeals.Tss.Shared;
 
-public abstract class RequestBase
+public abstract class RequestBase: Proto
 {
     /// <summary>
-    /// Trace identifier for correlating requests.
+    /// Trace identifier for request
     /// </summary>
-    public string TraceId { get; } = Guid.NewGuid().ToString();
+    public override string TraceId { get; set; } = string.Empty;
 }

@@ -1,13 +1,13 @@
 ﻿namespace SevenSeals.Tss.Contour;
 
-public abstract class Channel: IDisposable
+public abstract class Channel: ProtoObject, IDisposable
 {
     public readonly IChannelEvents? events;
-    public readonly ushort responseTimeout;
-    public readonly ushort aliveTimeout;
-    public readonly ushort deadTimeout;
 
-    public TimeSpan ResponseTimeout => TimeSpan.FromMilliseconds(1000);
+    public readonly SpotOptions Options;
+
+
+    private readonly CancellationToken _cts;
 
   //  protected ControllerManager controllers = new ControllerManager();
     protected Thread _thread;
@@ -27,14 +27,14 @@ public abstract class Channel: IDisposable
 
     protected IDisposable _writeAllKeysTh;
 
-    protected Channel(IChannelEvents? events, ushort responseTimeout, ushort aliveTimeout, ushort deadTimeout)
+    protected Channel(SpotOptions options, CancellationToken cancellationToken)
     {
-        this.events = events;
-        this.responseTimeout = responseTimeout;
-        this.aliveTimeout = aliveTimeout;
-        this.deadTimeout = deadTimeout;
-        this._speedTimer = new SpeedTimer(this);
+        Options = options;
+        _cts = cancellationToken;
+        _speedTimer = new SpeedTimer(this);
     }
+
+    public bool IsPolling { get; set; }
 
     public abstract Task Open();
 
@@ -44,7 +44,7 @@ public abstract class Channel: IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public abstract string Id { get; }
+
     public abstract string ConnInfo();
 
     public List<char> FindControllers()
@@ -57,10 +57,13 @@ public abstract class Channel: IDisposable
 
     public void Activate()
     {
-        _init();
-        _thread = new Thread(_work);
-        _thread.Start();
+        if (IsPolling)
+            return;
+
+
     }
+
+
 
     public void Deactivate()
     {
@@ -78,6 +81,7 @@ public abstract class Channel: IDisposable
     protected abstract void _init();
     protected abstract void _fini();
     protected internal abstract int Read(byte[] buf, int size);
+    protected internal abstract int Read(out byte buf);
 
     protected internal abstract int Read(byte[] buf, int offset, int size);
     protected internal abstract void Write(byte[] buf, int size);
@@ -107,15 +111,6 @@ public abstract class Channel: IDisposable
         _speedZeroFired = false;
     }
 
-    protected void _work()
-    {
-        // Placeholder thread logic
-        while (!_deactivating)
-        {
-            Thread.Sleep(100);
-            // Simulated work
-        }
-    }
 
     protected bool _processController(Spot spot)
     {

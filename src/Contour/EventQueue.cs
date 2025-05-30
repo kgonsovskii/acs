@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
             if (_queue.Count == _limit)
             {
                 _queue.Enqueue(new QueueFullEvent());
-                _state.DoTask(TaskEnum.StopEventCue);
+            //    _state.DoTask(TaskEnum.StopEventCue);
             }
         }
     }

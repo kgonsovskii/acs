@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Shared.Tests;
 
-public class TestWebAppFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
+public abstract class TestWebAppFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
 {
     protected override IHostBuilder CreateHostBuilder()
     {
@@ -30,11 +30,21 @@ public class TestWebAppFactory<TStartup> : WebApplicationFactory<TStartup> where
             });
     }
 
+    protected abstract void ConfigureServices(WebHostBuilderContext context, IServiceCollection services);
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices((context, services) =>
         {
-            services.Configure<TestSettings>(context.Configuration.GetSection("TestSettings"));
+            var httpClientDescriptors = services.Where(d => d.ServiceType == typeof(HttpClient)).ToList();
+            foreach (var desc in httpClientDescriptors)
+                services.Remove(desc);
+            services.AddTransient<HttpClient>(_ =>
+            {
+                //
+                return this.CreateClient();
+            });
+            ConfigureServices(context, services);
         })
             .ConfigureLogging(logging =>
         {

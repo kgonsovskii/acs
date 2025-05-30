@@ -2,7 +2,7 @@
 
 public class ControllerEvent : ChannelEvent
 {
-    public enum Kind
+    public enum KindEnum
     {
         None,
         Key,
@@ -24,6 +24,8 @@ public class ControllerEvent : ChannelEvent
 
     private DateTime _controllerTimestamp;
 
+    public KindEnum Kind { get; set; }
+
     public bool Used { get; set; }
 
     public ControllerEvent(string channelId, byte[] evt)
@@ -32,6 +34,7 @@ public class ControllerEvent : ChannelEvent
         _data = new byte[Size];
         Array.Copy(evt, _data, Size);
         InitializeControllerTimestamp();
+        Kind = GetKind();
     }
 
     public ControllerEvent(string channelId, byte[] evt, DateTime timestamp)
@@ -50,34 +53,34 @@ public class ControllerEvent : ChannelEvent
         InitializeControllerTimestamp();
     }
 
-    public Kind GetKind()
+    public KindEnum GetKind()
     {
         byte x = (byte)(_data[1] & 7);
         if (x == 6 || x == 7)
-            return Kind.Key;
+            return KindEnum.Key;
         if (x == 4 || x == 5)
-            return Kind.Button;
+            return KindEnum.Button;
         if ((_data[1] & 15) == 3)
-            return Kind.DoorOpen;
+            return KindEnum.DoorOpen;
         if ((_data[1] & 15) == 11)
-            return Kind.DoorClose;
+            return KindEnum.DoorClose;
         if (x == 1)
         {
             switch ((_data[1] >> 4) & 7)
             {
-                case 0: return Kind.Power220V;
-                case 1: return Kind.Case;
-                case 2: return Kind.Timer;
-                case 3: return Kind.AutoTimeout;
-                case 6: return Kind.Restart;
-                case 7: return Kind.Start;
-                default: return Kind.None;
+                case 0: return KindEnum.Power220V;
+                case 1: return KindEnum.Case;
+                case 2: return KindEnum.Timer;
+                case 3: return KindEnum.AutoTimeout;
+                case 6: return KindEnum.Restart;
+                case 7: return KindEnum.Start;
+                default: return KindEnum.None;
             }
         }
 
         if (x == 2)
-            return Kind.StaticSensor;
-        return Kind.None;
+            return KindEnum.StaticSensor;
+        return KindEnum.None;
     }
 
     public byte[] Data => _data;

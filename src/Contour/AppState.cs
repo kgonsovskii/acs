@@ -1,25 +1,13 @@
-﻿namespace SevenSeals.Tss.Contour;
+﻿using System.Dynamic;
 
-public enum TaskEnum
-{
-    CleanupClients,
-    StopEventCue
-}
+namespace SevenSeals.Tss.Contour;
+
 
 public class AppState
 {
-    public void DoTask(TaskEnum task)
-    {
-        switch (task)
-        {
-            case TaskEnum.CleanupClients:
-             //   _cleanupClients = true;
-                break;
-            case TaskEnum.StopEventCue:
-              //  _stopEventQueue = true;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(task), task, null);
-        }
-    }
+    public readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
+
+    public CancellationToken CancellationToken => CancellationTokenSource.Token;
 }
+
+

@@ -4,7 +4,7 @@ namespace Shared.Tests;
 
 public abstract class TestBase
 {
-    protected void Log(string message)
+protected void Log(string message)
     {
         TestContext.WriteLine(message);
     }

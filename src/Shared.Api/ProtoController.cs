@@ -1,31 +1,38 @@
-﻿using System.ComponentModel;
-using System.Reflection;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using SevenSeals.Tss.Shared.Model;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace SevenSeals.Tss.Shared;
 
-public abstract class ProtoController: ControllerBase
+public abstract class ProtoController: ProtoController<RequestBase, ResponseBase>
 {
-    /// <summary>
-    /// Returns a basic health check response indicating the service is alive.
-    /// </summary>
-    /// <param name="request">Optional request that carries trace context.</param>
-    /// <returns>StatusResponse with service name, status, timestamp, and trace ID.</returns>
-    [HttpGet("status")]
-    [Description("Returns application status (heartbeat)")]
-    [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-    [Produces("application/json")]
-    public ActionResult<StatusResponse> GetStatus([FromQuery] StatusRequest request)
+    protected ProtoController(Settings settings) : base(settings)
     {
-        var response = new StatusResponse
+    }
+}
+
+[ApiController][Route("api/[controller]")]
+public abstract class ProtoController<TRequest, TResponse>: ControllerBase where TRequest : RequestBase where TResponse : ResponseBase
+{
+    protected Settings Settings { get; }
+    protected  ProtoController(Settings settings)
+    {
+        Settings = settings;
+    }
+
+    protected virtual OkObjectResult Ok(TRequest request, TResponse response)
+    {
+        return OkBase(request, response);
+    }
+
+    protected OkObjectResult OkBase(RequestBase request, ResponseBase response)
+    {
+        var newHash = request.GetHash();
+        if (!Settings.IsDevelopment && newHash != request.Hash)
         {
-            Service = Assembly.GetEntryAssembly()!.GetName().FullName,
-            TraceId = request.TraceId,
-            Status = "OK",
-            TimeStamp = DateTime.Now.ToLongTimeString()
-        };
-        return Ok(response);
+            throw new ApiException($"Invalid request hash on  server side, TraceId: {request.TraceId}");
+        }
+        response.TraceId = request.TraceId;
+        response.TimeStamp = DateTime.UtcNow.Ticks;
+        response.Hash = response.GetHash();
+        return base.Ok(response);
     }
 }

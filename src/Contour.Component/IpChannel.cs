@@ -6,24 +6,24 @@ namespace SevenSeals.Tss.Contour;
 
 public class IpChannel : Channel
 {
-    private readonly string host;
-    private readonly int port;
+    public string Host { get; }
+    public int Port { get; }
+
     private Socket _comm;
 
-    public IpChannel(IChannelEvents? events, ushort responseTimeout, ushort aliveTimeout, ushort deadTimeout, string host_, int port_)
-        : base(events, responseTimeout, aliveTimeout, deadTimeout)
+    public IpChannel(SpotOptions options, CancellationToken cancellationToken, string host, int port) : base(options, cancellationToken)
     {
-        host = host_;
-        port = port_;
+        Host = host;
+        Port = port;
     }
 
-    public override string Id => $"{host}:{port}";
+    public override string Id => $"{Host}:{Port}";
 
     public override async Task Open()
     {
         _comm = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        var ipAddr = Dns.GetHostAddresses(host)[0];
-        var endpoint = new IPEndPoint(ipAddr, port);
+        var ipAddr = Dns.GetHostAddresses(Host)[0];
+        var endpoint = new IPEndPoint(ipAddr, Port);
         await _comm.ConnectAsync(endpoint);
         _comm.NoDelay = true;
         _setReady(true);
@@ -35,7 +35,6 @@ public class IpChannel : Channel
         base.Dispose();
     }
 
-
     public override string ConnInfo()
     {
         throw new NotImplementedException();
@@ -44,8 +43,8 @@ public class IpChannel : Channel
     protected override void _init()
     {
         _comm = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        var ipAddr = Dns.GetHostAddresses(host)[0];
-        var endpoint = new IPEndPoint(ipAddr, port);
+        var ipAddr = Dns.GetHostAddresses(Host)[0];
+        var endpoint = new IPEndPoint(ipAddr, Port);
         _comm.Connect(endpoint);
         _comm.NoDelay = true;
         _setReady(true);
@@ -63,11 +62,19 @@ public class IpChannel : Channel
         Debug.Assert(size > 0);
         int bytesRead = 0;
 
-            if (!_waitInput(responseTimeout))
+            if (!_waitInput(Options.ResponseTimeout))
                 return 0;
             bytesRead = _comm.Receive(buffer, 0, size, SocketFlags.None);
 
         return bytesRead;
+    }
+
+    protected internal override int Read(out byte buf)
+    {
+        var buffer = new byte[1];
+        var result = Read(buffer, 0, buffer.Length);
+        buf = buffer[0];
+        return result;
     }
 
     protected internal override int Read(byte[] buf, int offset, int size)
@@ -75,7 +82,7 @@ public class IpChannel : Channel
         Debug.Assert(size > 0);
         int bytesRead = 0;
 
-        if (!_waitInput(responseTimeout))
+        if (!_waitInput(Options.ResponseTimeout))
             return 0;
         bytesRead = _comm.Receive(buf, offset, size, SocketFlags.None);
 
@@ -102,8 +109,8 @@ public class IpChannel : Channel
         _comm.Send(buf, offset, size, SocketFlags.None);
     }
 
-    private bool _waitInput(int timeout)
+    private bool _waitInput(TimeSpan timeout)
     {
-        return _comm.Poll(timeout * 1000, SelectMode.SelectRead);
+        return _comm.Poll(timeout, SelectMode.SelectRead);
     }
 }

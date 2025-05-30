@@ -5,22 +5,22 @@ namespace SevenSeals.Tss.Shared;
 
 public abstract class HubBase<TKey, T> : IEnumerable<T> where TKey : notnull
 {
-    protected readonly ConcurrentDictionary<TKey, T> Items = new();
+    public readonly ConcurrentDictionary<TKey, T> Map = new();
 
     public T Add(TKey key, T item)
     {
-        Items[key] = item;
+        Map[key] = item;
         return item;
     }
 
     public void Remove(TKey key)
     {
-        Items.TryRemove(key, out _);
+        Map.TryRemove(key, out _);
     }
 
     public IEnumerator<T> GetEnumerator()
     {
-        return Items.Values.ToList().GetEnumerator();
+        return Map.Values.ToList().GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
