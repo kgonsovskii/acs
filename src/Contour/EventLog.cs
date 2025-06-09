@@ -54,7 +54,7 @@ public class EventLog: Database
         cmd.Parameters.AddWithValue("@beg", beg);
         cmd.Parameters.AddWithValue("@end", end);
 
-        int count = 0;
+        var count = 0;
         using var reader = cmd.ExecuteReader();
         while (reader.Read())
         {

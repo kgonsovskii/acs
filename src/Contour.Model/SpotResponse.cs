@@ -1,5 +1,7 @@
 ﻿using SevenSeals.Tss.Shared;
 
+namespace SevenSeals.Tss.Contour;
+
 public class SpotResponse : ResponseBase
 {
     /// <summary>

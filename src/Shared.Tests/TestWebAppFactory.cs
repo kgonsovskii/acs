@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SevenSeals.Tss.Shared;
 
 namespace Shared.Tests;
 
@@ -41,9 +43,9 @@ public abstract class TestWebAppFactory<TStartup> : WebApplicationFactory<TStart
                 services.Remove(desc);
             services.AddTransient<HttpClient>(_ =>
             {
-                //
                 return this.CreateClient();
-            });
+            })
+            .ConfigureShared();
             ConfigureServices(context, services);
         })
             .ConfigureLogging(logging =>

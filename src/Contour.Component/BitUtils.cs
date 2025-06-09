@@ -6,8 +6,8 @@ public static class BitUtils
 {
     public static void ExpandMask<TOut>(TOut[] output, uint mask) where TOut : struct
     {
-        int bitCount = sizeof(uint) * 8;
-        for (int i = 0; i < bitCount; i++)
+        var bitCount = sizeof(uint) * 8;
+        for (var i = 0; i < bitCount; i++)
         {
             output[i] = (TOut)Convert.ChangeType((mask & (1u << i)) != 0, typeof(TOut));
         }
@@ -15,8 +15,8 @@ public static class BitUtils
 
     public static string HexDump(byte[] buf, int size)
     {
-        StringBuilder sb = new StringBuilder(size * 3);
-        for (int i = 0; i < size; i++)
+        var sb = new StringBuilder(size * 3);
+        for (var i = 0; i < size; i++)
         {
             sb.AppendFormat("{0:X2} ", buf[i]);
         }
@@ -34,13 +34,13 @@ public static class BitUtils
 
     public static byte BinToBcd(byte val)
     {
-        byte x = (byte)(val / 10);
+        var x = (byte)(val / 10);
         return (byte)((x << 4) + (val - x * 10));
     }
 
     public static byte[] PackShort(ushort x, bool isBigEndian = false)
     {
-        byte[] buf = new byte[2];
+        var buf = new byte[2];
         if (isBigEndian)
         {
             buf[0] = (byte)(x >> 8);

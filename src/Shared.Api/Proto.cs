@@ -7,9 +7,16 @@ public abstract class Proto
     /// <summary>
     /// Trace identifier for correlating requests.
     /// </summary>
-    public virtual string TraceId { get; set; } =string.Empty;
+    public string TraceId { get; set; } = string.Empty;
 
-    public virtual int Hash { get; set; } = 0;
+    /// <summary>
+    /// Agent with Machine-Code identifier for correlating requests.
+    /// </summary>
+    public string Agent { get; set; } = string.Empty;
+
+    public int Chop { get; set; } = 1;
+
+public virtual int Hash { get; set; } = 0;
 
     public virtual int GetHash()
     {

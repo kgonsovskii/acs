@@ -2,11 +2,11 @@
 
 public class SpotException : Exception
 {
-    public SpotException(Spot spot, string className, string message)
+    public SpotException(Contour contour, string className, string message)
         : base($"{className}: {message}")
     {
-        Spot = spot;
+        Contour = contour;
     }
 
-    public Spot Spot { get; }
+    public Contour Contour { get; }
 }

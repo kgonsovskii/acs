@@ -6,12 +6,12 @@ public interface IChannelEvents
 {
     void OnControllerEvent(Channel ch, string msg);
     void OnError(Channel ch, Exception ex);
-    void OnControllerError(Channel ch, Spot spot, Exception ex);
+    void OnControllerError(Channel ch, Contour contour, Exception ex);
     void OnChangeState(Channel ch, bool state);
     void OnPollSpeed(Channel ch, int speed);
-    void OnControllerState(Channel ch, Spot spot, char state);
+    void OnControllerState(Channel ch, Contour contour, char state);
     void OnControllersChanged(Channel ch);
-    void OnWriteAllKeysAsync(Spot spot, string data);
+    void OnWriteAllKeysAsync(Contour contour, string data);
 }
 
 public class ChannelEvents : IChannelEvents
@@ -31,7 +31,7 @@ public class ChannelEvents : IChannelEvents
         //    _eventLog.Add(controllerEvent);
     }
 
-    public void OnControllerState(Channel ch, Spot spot, char state)
+    public void OnControllerState(Channel ch, Contour contour, char state)
     {
         throw new NotImplementedException();
     }
@@ -46,7 +46,7 @@ public class ChannelEvents : IChannelEvents
       //  _eventQueue.Push(new ChannelErrorEvent(channel.Id, ex.GetType().Name, ex.Message));
     }
 
-    public void OnControllerError(Channel channel, Spot spot, Exception ex)
+    public void OnControllerError(Channel channel, Contour contour, Exception ex)
     {
       //  _eventQueue.Push(new ControllerErrorEvent(channel.Id, ex.GetType().Name, ex.Message,
       //      controller.Address));
@@ -64,7 +64,7 @@ public class ChannelEvents : IChannelEvents
 
 
 
-    public void OnControllerState(Channel channel, Spot spot, byte state)
+    public void OnControllerState(Channel channel, Contour contour, byte state)
     {
       //  _eventQueue.Push(new ControllerStateEvent(channel.Id, controller.Address, state));
     }
@@ -74,7 +74,7 @@ public class ChannelEvents : IChannelEvents
        // _eventQueue.Push(new ControllersChangedEvent(channel.Id));
     }
 
-    public void OnWriteAllKeysAsync(Spot spot, string error)
+    public void OnWriteAllKeysAsync(Contour contour, string error)
     {
         //_eventQueue.Push(new WriteAllKeysAsyncEvent(controller.Channel.Id, controller.Address, error));
     }

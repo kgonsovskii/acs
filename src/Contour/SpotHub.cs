@@ -1,10 +1,9 @@
-﻿using Microsoft.VisualBasic;
-using SevenSeals.Tss.Contour.Events;
+﻿using SevenSeals.Tss.Contour.Events;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 
-public class SpotHub : HubBase<string, Spot>
+public class SpotHub : HubBase<string, Contour>
 {
     private readonly AppState _state;
     public ChannelHub ChannelHub { get; }
@@ -23,7 +22,7 @@ public class SpotHub : HubBase<string, Spot>
 
     public List<Evt> Events { get; } = new List<Evt>();
 
-    public void OnEvent(Spot spot, byte[] buf)
+    public void OnEvent(Contour contour, byte[] buf)
     {
         var ce = new ControllerEvent("123", buf);
         var msg = ce.Kind.ToString();
@@ -35,10 +34,10 @@ public class SpotHub : HubBase<string, Spot>
         Events.Insert(0, evt);
     }
 
-    public async Task<Spot> GetSpot(SpotRequest request, bool force = false)
+    public async Task<Contour> GetSpot(SpotRequest request, bool force = false)
     {
-        var channel = await ChannelHub.OpenIpChannel(request);
-        var spot = new Spot(channel, _state.CancellationToken, request.AddressByte);
+        var channel = await ChannelHub.OpenChannel(request);
+        var spot = new Contour(channel, _state.CancellationToken, request.AddressByte);
         if (Map.TryGetValue(spot.Id, out var value))
             spot = value; else Map.TryAdd(spot.Id, spot);
         spot.OnEvent = OnEvent;

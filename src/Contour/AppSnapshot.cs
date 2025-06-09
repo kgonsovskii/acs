@@ -1,6 +1,4 @@
-﻿using System.Dynamic;
-
-namespace SevenSeals.Tss.Contour;
+﻿namespace SevenSeals.Tss.Contour;
 
 public class AppSnapshot
 {
@@ -28,7 +26,7 @@ public class AppSnapshot
                 Channels = ChannelHub.Map.Values.ToList().Select(a =>
                     new
                     {
-                        a.Host, a.Port, a.IsPolling
+                        a.Id, a.IsPolling
                     }),
                 Spots = SpotHub.Map.Values.ToList().Select(a =>
                     new

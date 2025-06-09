@@ -22,26 +22,47 @@ public abstract class StartupBase<TStartup> where TStartup : class
     public virtual void ConfigureServices(IServiceCollection services)
     {
         services
+            .ConfigureShared()
             .AddSingleton(new CommandLineArgs(Environment.GetCommandLineArgs()))
             .AddSingleton<Settings>()
-            .AddControllers()
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                options.JsonSerializerOptions.WriteIndented = true;
-            });
+            .AddHttpClient()
+            .AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ConfigureJson());
         services
             .AddEndpointsApiExplorer()
             .AddSwaggerGen(c =>
             {
                 c.EnableAnnotations();
 
+                c.UseOneOfForPolymorphism();
+
+                c.SelectDiscriminatorNameUsing(type =>
+                   type == typeof(ChannelOptions) ? "type" : null);
+
+                c.SelectSubTypesUsing(baseType =>
+                {
+                    if (baseType == typeof(ChannelOptions))
+                    {
+                        return new[]
+                        {
+                            typeof(IpOptions),
+                            typeof(ComPortOptions)
+                        };
+                    }
+                    return Enumerable.Empty<Type>();
+                });
+
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = Assembly.GetEntryAssembly()!.GetName().Name,
                     Version = "v1",
-                    Description = $"API for {Assembly.GetEntryAssembly()!.GetName().Name}",
+                    Description = $"API for {Assembly.GetEntryAssembly()!.GetName().Name}"
                 });
+
+                // Add schema filter for dynamic default values
+                c.SchemaFilter<SwaggerDefaultValueFilter>();
+
+                // Add X-Forward-To header filter
+                c.OperationFilter<XForwardToHeaderFilter>();
 
                 var basePath = AppContext.BaseDirectory;
                 var mainXml = Path.Combine(basePath, $"{Assembly.GetEntryAssembly()!.GetName().Name}.xml");
@@ -50,8 +71,7 @@ public abstract class StartupBase<TStartup> where TStartup : class
                     c.IncludeXmlComments(mainXml);
                 }
 
-                var asms = Assembly.GetEntryAssembly()!.GetReferencedAssemblies().ToArray();
-                foreach (var referencedAssembly in asms)
+                foreach (var referencedAssembly in Assembly.GetEntryAssembly()!.GetReferencedAssemblies())
                 {
                     var xmlName = $"{referencedAssembly.Name}.xml";
                     var xmlPath = Path.Combine(basePath, xmlName);
@@ -67,17 +87,16 @@ public abstract class StartupBase<TStartup> where TStartup : class
     {
         logger.LogInformation("Environment: {EnvironmentName}", env.EnvironmentName);
 
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
+        app.UseDeveloperExceptionPage();
 
         app.UseRouting();
+
+        app.UseMiddleware<ForwardingMiddleware>();
 
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", Assembly.GetEntryAssembly()!.FullName);
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", Assembly.GetEntryAssembly()!.GetName().Name);
             c.RoutePrefix = "swagger";
         });
 

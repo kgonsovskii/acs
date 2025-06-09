@@ -1,6 +1,6 @@
 ﻿namespace SevenSeals.Tss.Contour;
 
-public partial class Spot
+public partial class Contour
 {
     private byte? _progId;
     private short? _progVer;
@@ -27,8 +27,8 @@ public partial class Spot
 
             byte[] cmd = { 0x16, 0x20, Address };
             Channel.Write(cmd, cmd.Length);
-            byte[] response = new byte[1];
-            int result = Channel.Read(response, 1);
+            var response = new byte[1];
+            var result = Channel.Read(response, 1);
             CheckInput(result);
             _progId = response[0];
 
@@ -43,7 +43,7 @@ public partial class Spot
             if (_progVer != null)
                 return (short)_progVer;
 
-            byte[] buf = new byte[5];
+            var buf = new byte[5];
             if (FourC(0x10, buf, buf.Length, true) != 2)
                 new InvalidOperationException(nameof(GetProgVer));
             _progVer = BitUtils.UnpackShort(buf, false);
@@ -59,7 +59,7 @@ public partial class Spot
             if (_sernum != null)
                 return (int)_sernum;
 
-            byte[] buf = new byte[7];
+            var buf = new byte[7];
             if (FourC(0x20, buf, buf.Length, true) != 4)
                 new InvalidOperationException(nameof(GetSerNum));
             _sernum = BitUtils.UnpackInt(buf);
@@ -86,7 +86,7 @@ public partial class Spot
             }
             else
             {
-                byte[] cmd = new byte[] { 0x16, suppressDoorEvent ? (byte)0x6A : (byte)0x69, Address, (byte)((interval << 3) | (port - 1)) };
+                var cmd = new byte[] { 0x16, suppressDoorEvent ? (byte)0x6A : (byte)0x69, Address, (byte)((interval << 3) | (port - 1)) };
                 Channel.Write(cmd);
                 Channel.Write(cmd); // Send twice
             }
@@ -109,7 +109,7 @@ public partial class Spot
             }
             else
             {
-                byte[] cmd = new byte[] { 0x16, 0x6B, Address, (byte)(1 << (port - 1)) };
+                var cmd = new byte[] { 0x16, 0x6B, Address, (byte)(1 << (port - 1)) };
                 Channel.Write(cmd);
                 Channel.Write(cmd); // Send twice
             }
@@ -188,8 +188,8 @@ public partial class Spot
                 throw new SpotException(this, "Feature", "Unsupported feature");
             }
 
-            byte[] buf = new byte[4];
-            int respLen = Execute4C(0x40, buf, false);
+            var buf = new byte[4];
+            var respLen = Execute4C(0x40, buf, false);
             if (respLen != 1)
             {
                 throw new SpotException(this, "Protocol", "Unexpected response");

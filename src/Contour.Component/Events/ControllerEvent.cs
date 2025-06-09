@@ -55,7 +55,7 @@ public class ControllerEvent : ChannelEvent
 
     public KindEnum GetKind()
     {
-        byte x = (byte)(_data[1] & 7);
+        var x = (byte)(_data[1] & 7);
         if (x == 6 || x == 7)
             return KindEnum.Key;
         if (x == 4 || x == 5)
@@ -94,9 +94,10 @@ public class ControllerEvent : ChannelEvent
 
     private void InitializeControllerTimestamp()
     {
+        return;
         if (HasYear)
         {
-            ushort x = (ushort)((_data[10] << 8) | _data[11]);
+            var x = (ushort)((_data[10] << 8) | _data[11]);
             _controllerTimestamp = new DateTime(
                 ((x >> 9) & 63) + 2000,
                 (x >> 5) & 15,

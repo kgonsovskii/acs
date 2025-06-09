@@ -1,38 +1,29 @@
 ﻿using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 
 public class IpChannel : Channel
 {
-    public string Host { get; }
-    public int Port { get; }
-
+    public new IpOptions ChannelOptions => base.ChannelOptions as IpOptions ?? throw new InvalidOperationException();
     private Socket _comm;
 
-    public IpChannel(SpotOptions options, CancellationToken cancellationToken, string host, int port) : base(options, cancellationToken)
+    public IpChannel(SpotOptions options, IpOptions ipOptions,CancellationToken cancellationToken) : base(options, ipOptions, cancellationToken)
     {
-        Host = host;
-        Port = port;
     }
 
-    public override string Id => $"{Host}:{Port}";
+    public override string Id => $"{ChannelOptions.Host}:{ChannelOptions.Port}";
 
     public override async Task Open()
     {
         _comm = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        var ipAddr = Dns.GetHostAddresses(Host)[0];
-        var endpoint = new IPEndPoint(ipAddr, Port);
+        var ipAddr = Dns.GetHostAddresses(ChannelOptions.Host)[0];
+        var endpoint = new IPEndPoint(ipAddr, ChannelOptions.Port);
         await _comm.ConnectAsync(endpoint);
         _comm.NoDelay = true;
         _setReady(true);
-    }
-
-    public override void Dispose()
-    {
-        _fini();
-        base.Dispose();
     }
 
     public override string ConnInfo()
@@ -40,27 +31,10 @@ public class IpChannel : Channel
         throw new NotImplementedException();
     }
 
-    protected override void _init()
-    {
-        _comm = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        var ipAddr = Dns.GetHostAddresses(Host)[0];
-        var endpoint = new IPEndPoint(ipAddr, Port);
-        _comm.Connect(endpoint);
-        _comm.NoDelay = true;
-        _setReady(true);
-    }
-
-    protected override void _fini()
-    {
-        _setReady(false);
-        _comm?.Close();
-        _comm = null;
-    }
-
     protected internal override int Read(byte[] buffer, int size)
     {
         Debug.Assert(size > 0);
-        int bytesRead = 0;
+        var bytesRead = 0;
 
             if (!_waitInput(Options.ResponseTimeout))
                 return 0;
@@ -80,7 +54,7 @@ public class IpChannel : Channel
     protected internal override int Read(byte[] buf, int offset, int size)
     {
         Debug.Assert(size > 0);
-        int bytesRead = 0;
+        var bytesRead = 0;
 
         if (!_waitInput(Options.ResponseTimeout))
             return 0;

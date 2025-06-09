@@ -1,8 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SevenSeals.Tss.Contour;
 
-namespace Contour.Tests;
+namespace SevenSeals.Tss.Contour;
 
 [TestClass]
 public class DiagnosticTests: ContourTestsBase<DiagnosticClient>

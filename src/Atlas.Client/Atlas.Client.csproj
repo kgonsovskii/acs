@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>SevenSeals.Tss.Atlas</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Atlas.Component\Atlas.Component.csproj" />
+      <ProjectReference Include="..\Atlas.Model\Atlas.Model.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                byte[]? bytes = new byte[20];
+                var bytes = new byte[20];
                 reader.GetBytes(2,0, bytes, 0,10);
                 var evt = new ControllerEvent(reader.GetString(0), bytes, reader.GetDateTime(1));
                 evt.Used = true;

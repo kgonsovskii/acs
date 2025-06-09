@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Diagnostic;
+namespace SevenSeals.Tss.Contour.Diagnostic;
 
 public class MainClientRequest: SpotRequest
 {

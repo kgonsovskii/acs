@@ -1,4 +1,4 @@
-﻿namespace Diagnostic;
+﻿namespace SevenSeals.Tss.Contour.Diagnostic;
 
 public class ValueResponse: SpotResponse
 {

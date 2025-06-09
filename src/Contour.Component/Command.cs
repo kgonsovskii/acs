@@ -3,15 +3,15 @@
 
 internal class Command
 {
-    private readonly Spot _spot;
+    private readonly Contour _contour;
     private readonly byte _op;
     private readonly byte _osize;
     private readonly byte _isize;
     private readonly byte[] _buf;
 
-    public Command(Spot spot, byte op, byte osize, byte isize)
+    public Command(Contour contour, byte op, byte osize, byte isize)
     {
-        _spot = spot;
+        _contour = contour;
         _op = op;
         _osize = osize;
         _isize = isize;

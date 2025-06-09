@@ -7,10 +7,9 @@ public static class Services
 {
     public static void AddContourClients(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<ContourClientOptions>(configuration.GetSection("ContourClient"));
-        services.AddScoped<SpotClient>();
+        services.Configure<ContourClientOptions>(configuration.GetSection("contourClient"));
+        services.AddScoped<ContourClient>();
         services.AddScoped<DiagnosticClient>();
-        services.AddScoped<SnapshotClient>();
-        services.Configure<SpotOptions>(configuration.GetSection("SpotSettings"));
+        services.Configure<SpotOptions>(configuration.GetSection("spotSettings"));
     }
 }

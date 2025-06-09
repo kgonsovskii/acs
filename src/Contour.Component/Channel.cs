@@ -1,11 +1,13 @@
-﻿namespace SevenSeals.Tss.Contour;
+﻿using SevenSeals.Tss.Shared;
+
+namespace SevenSeals.Tss.Contour;
 
 public abstract class Channel: ProtoObject, IDisposable
 {
     public readonly IChannelEvents? events;
 
     public readonly SpotOptions Options;
-
+    public ChannelOptions ChannelOptions { get;  }
 
     private readonly CancellationToken _cts;
 
@@ -27,9 +29,10 @@ public abstract class Channel: ProtoObject, IDisposable
 
     protected IDisposable _writeAllKeysTh;
 
-    protected Channel(SpotOptions options, CancellationToken cancellationToken)
+    protected Channel(SpotOptions options, ChannelOptions channelOptions,  CancellationToken cancellationToken)
     {
         Options = options;
+        ChannelOptions = channelOptions;
         _cts = cancellationToken;
         _speedTimer = new SpeedTimer(this);
     }
@@ -68,7 +71,6 @@ public abstract class Channel: ProtoObject, IDisposable
     public void Deactivate()
     {
         _deactivating = true;
-        _fini();
         _thread?.Join();
         _thread = null;
     }
@@ -78,8 +80,7 @@ public abstract class Channel: ProtoObject, IDisposable
     public (bool Active, bool Ready) ActiveAndReady => (true, true);
     public uint PollSpeed => _speedOld;
 
-    protected abstract void _init();
-    protected abstract void _fini();
+
     protected internal abstract int Read(byte[] buf, int size);
     protected internal abstract int Read(out byte buf);
 
@@ -112,13 +113,13 @@ public abstract class Channel: ProtoObject, IDisposable
     }
 
 
-    protected bool _processController(Spot spot)
+    protected bool _processController(Contour contour)
     {
         // Stubbed logic
         return true;
     }
 
-    protected void _chkAndSetAliveTimer(Spot spot)
+    protected void _chkAndSetAliveTimer(Contour contour)
     {
         // Stubbed logic
     }

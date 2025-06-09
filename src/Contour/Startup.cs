@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 
@@ -17,9 +18,8 @@ public class Startup: Shared.StartupBase<Startup>
     public override void ConfigureServices(IServiceCollection services)
     {
         base.ConfigureServices(services);
-
-        services.Configure<SpotOptions>(_configuration.GetSection("SpotSettings"));
-
+        services.AddExtendedOptions<ContourMap>("map");
+        services.Configure<SpotOptions>(_configuration.GetSection("spotOptions"));
         services.AddSingleton<AppState>();
         services.AddSingleton<AppSnapshot>();
         services.AddHostedService<AppHost>();

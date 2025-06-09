@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>Contour.Tests</RootNamespace>
+    <RootNamespace>SevenSeals.Tss.Contour</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

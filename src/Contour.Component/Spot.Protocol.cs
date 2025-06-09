@@ -1,6 +1,6 @@
 ﻿namespace SevenSeals.Tss.Contour;
 
-public partial class Spot
+public partial class Contour
 {
     private enum MemType
     {
@@ -29,16 +29,16 @@ public partial class Spot
 
     void ReadEvt()
     {
-        byte[] cmd = new byte[] { 0x16, _autonomic ? (byte)0x3B : (byte)0x2B, Address };
-        byte[] buf = new byte[17];
+        var cmd = new byte[] { 0x16, _autonomic ? (byte)0x3B : (byte)0x2B, Address };
+        var buf = new byte[17];
         Channel.Write(cmd, cmd.Length);
        // Channel._lastEvtCo = addr;
-        int read = 0;
-        bool isEvent = false;
+        var read = 0;
+        var isEvent = false;
 
         while (true)
         {
-            int r = Channel.Read(buf, read, buf.Length - read);
+            var r = Channel.Read(buf, read, buf.Length - read);
             CheckInput(r);
             read += r;
 
@@ -89,14 +89,14 @@ public partial class Spot
 
     private void ReadEvt2(bool isAuto)
     {
-        byte[] cmd = new byte[] { 0x16, isAuto ? (byte)0x3A : (byte)0x2A, Address };
-        byte[] buf = new byte[17];
+        var cmd = new byte[] { 0x16, isAuto ? (byte)0x3A : (byte)0x2A, Address };
+        var buf = new byte[17];
         Channel.Write(cmd);
-        int read = 0;
+        var read = 0;
 
         while (true)
         {
-            int r = Channel.Read(buf, read, buf.Length - read);
+            var r = Channel.Read(buf, read, buf.Length - read);
             if (r == 0)
                 break;
 
@@ -123,8 +123,8 @@ public partial class Spot
 
     private void EventsInfoNormal(out int capacity, out int count)
     {
-        byte[] buf = new byte[10];
-        int respLen = Execute4C(1, buf, true);
+        var buf = new byte[10];
+        var respLen = Execute4C(1, buf, true);
         if (!((buf[2] == 2 && respLen == 5) || (buf[2] == 3 && respLen == 7)))
         {
             throw new SpotException(this, "Protocol", "Unexpected response");
@@ -138,10 +138,10 @@ public partial class Spot
 
     private void KeysInfo201(out int capacity, out int count)
     {
-        int offBeg = ReadRpd(0x4E) * 256;
+        var offBeg = ReadRpd(0x4E) * 256;
         short pageCount = ReadRpd(0x4F);
         capacity = pageCount * 31;
-        byte[] buf = new byte[6 + 8];
+        var buf = new byte[6 + 8];
         count = 0;
 
         for (short pageIdx = 0; pageIdx != pageCount; ++pageIdx)
@@ -167,10 +167,10 @@ public partial class Spot
 
     private byte ReadRpd(byte offset)
     {
-        byte[] cmd = new byte[] { 0x16, 0x63, Address, offset };
+        var cmd = new byte[] { 0x16, 0x63, Address, offset };
         Channel.Write(cmd);
         byte ret;
-        int r = Channel.Read(out ret);
+        var r = Channel.Read(out ret);
         CheckInput(r);
         return ret;
     }
@@ -218,7 +218,7 @@ public partial class Spot
         int read = 0, len = 0;
         while (true)
         {
-            int r = Channel.Read(buf, read, size - read);
+            var r = Channel.Read(buf, read, size - read);
             if (r == 0)
                 throw new SpotException(this, "Timeout", $"No response in {Channel.Options.ResponseTimeout} msec");
 
@@ -236,7 +236,7 @@ public partial class Spot
 
     private int CheckPack(byte[] buf, int size, bool checkOp)
     {
-        int len = 0;
+        var len = 0;
 
         if (size > 3)
         {
@@ -246,7 +246,7 @@ public partial class Spot
             len = buf[1] - 1; // packLength
             if ((size - 3) >= len)
             {
-                int x = len + 2;
+                var x = len + 2;
                 if (Cs8(buf, x) != buf[x])
                     throw new SpotException(this, "Error", "Invalid checksum");
 
@@ -276,8 +276,8 @@ public partial class Spot
 
     public static byte Cs8(byte[] buf, int size)
     {
-        byte ret = buf[0];
-        for (int i = 1; i != size; ++i)
+        var ret = buf[0];
+        for (var i = 1; i != size; ++i)
             ret += buf[i];
         return ret;
     }
@@ -305,7 +305,7 @@ public partial class Spot
     public static byte Crc8(byte[] data, int size)
     {
         byte ret = 0;
-        for (int i = 0; i != size; ++i)
+        for (var i = 0; i != size; ++i)
             ret = Tbl[ret ^ data[i]];
         return ret;
     }
@@ -349,8 +349,8 @@ public partial class Spot
     public static void UnpackKey(byte[] @out, byte[] key)
     {
         Array.Copy(key.Reverse().ToArray(), @out, 6);
-        DecodeKeyAttr(key.Skip(6).ToArray(), out byte ports, out byte persCat,
-            out bool suppressDoorEvent, out bool openEvenComplex, out bool isSilent);
+        DecodeKeyAttr(key.Skip(6).ToArray(), out var ports, out var persCat,
+            out var suppressDoorEvent, out var openEvenComplex, out var isSilent);
         ExpandMask(@out.Skip(6).ToArray(), ports);
         @out[14] = persCat;
         @out[15] = (byte)(suppressDoorEvent ? 1 : 0);
@@ -360,7 +360,7 @@ public partial class Spot
 
     public static void ExpandMask(byte[] @out, byte mask)
     {
-        for (int i = 0; i < 8; i++)
+        for (var i = 0; i < 8; i++)
         {
             @out[i] = (byte)((mask & (1 << i)) != 0 ? 1 : 0);
         }
@@ -406,16 +406,16 @@ public partial class Spot
     {
         Array.Copy(key.Reverse().ToArray(), @out, 6);
         byte ports = 0;
-        for (int i = 0; i < 8; i++)
+        for (var i = 0; i < 8; i++)
             ports |= (byte)((key[i + 6] != 0) ? (1 << i) : 0);
         @out[6] = ports;
-        byte persCat = key[14];
+        var persCat = key[14];
         if (persCat < 1 || persCat > 16)
             throw new InvalidOperationException("Personnel category out of range 1..16");
         --persCat;
-        bool suppressDoorEvent = key[15] != 0;
-        bool openEvenComplex = key[16] != 0;
-        bool isSilent = key[17] != 0;
+        var suppressDoorEvent = key[15] != 0;
+        var openEvenComplex = key[16] != 0;
+        var isSilent = key[17] != 0;
         @out[7] = (byte)(persCat | (suppressDoorEvent ? (1 << 5) : 0) |
                          (openEvenComplex ? (1 << 6) : 0) | (isSilent ? (1 << 7) : 0));
     }

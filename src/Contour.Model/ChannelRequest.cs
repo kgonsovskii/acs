@@ -1,18 +1,18 @@
-﻿using SevenSeals.Tss.Shared;
+﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
+using SevenSeals.Tss.Shared;
 
+namespace SevenSeals.Tss.Contour;
+
+[KnownType(typeof(ChannelOptions))]
 public abstract class ChannelRequest: RequestBase
 {
-    /// <summary>
-    /// The hostname or IP address of the spot device to connect to.
-    /// Required if SessionId is not provided.
-    /// </summary>
-    public string Host { get; set; } = string.Empty;
+    [JsonConverter(typeof(ChannelOptionsJsonConverter))]
+    public ChannelOptions Options { get; set; }
 
-    /// <summary>
-    /// The port number on which the spot device is listening.
-    /// Required if SessionId is not provided.
-    /// </summary>
-    public int Port { get; set; }
+    public IpOptions AsIpOptions() => (Options as IpOptions)!;
+
+    public ComPortOptions AsComPortOptions() => (Options as ComPortOptions)!;
 
     /// <summary>
     /// The identifier of an existing session to reuse.

@@ -4,7 +4,7 @@ using SevenSeals.Tss.Shared;
 namespace SevenSeals.Tss.Contour;
 
 
-public class ChannelHub : HubBase<string, IpChannel>
+public class ChannelHub : HubBase<string, Channel>
 {
     private readonly SpotOptions _options;
     private readonly AppState _appState;
@@ -13,11 +13,22 @@ public class ChannelHub : HubBase<string, IpChannel>
         _options = settings.Value;
         _appState = state;
     }
-    public async Task<IpChannel> OpenIpChannel(SpotRequest request)
+
+    public async Task<Channel> OpenChannel(SpotRequest request)
     {
-        var channel = new IpChannel(_options, _appState.CancellationToken, request.Host, request.Port);
+        Channel channel;
+        if (request.Options.Type == ChannelType.ComPort)
+        {
+            channel = new ComPortChannel(_options, request.AsComPortOptions(), _appState.CancellationToken);
+        }
+        else
+        {
+            channel = new IpChannel(_options, request.AsIpOptions(), _appState.CancellationToken);
+        }
+
         if (Map.TryGetValue(channel.Id, out var value))
-            channel = value; else
+            channel = value;
+        else
             Map.TryAdd(channel.Id, channel);
 
         await channel.Open();

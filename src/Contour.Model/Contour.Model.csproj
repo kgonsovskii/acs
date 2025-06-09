@@ -1,4 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup>
+   <RootNamespace>SevenSeals.Tss.Contour</RootNamespace>
+ </PropertyGroup>
  <ItemGroup>
     <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
   </ItemGroup>

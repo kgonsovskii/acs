@@ -9,11 +9,11 @@ public class BaseController: ProtoController<SpotRequest, SpotResponse>
     {
     }
 
-    protected OkObjectResult Ok(Spot spot, SpotRequest request, SpotResponse? response)
+    protected OkObjectResult Ok(Contour contour, SpotRequest request, SpotResponse? response)
     {
         response ??= new SpotResponse()
         {
-            SessionId = spot.Channel.Id
+            SessionId = contour.Channel.Id
         };
         return base.Ok(request, response);
     }

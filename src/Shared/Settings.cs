@@ -12,11 +12,15 @@ public class Settings
 
     public readonly bool IsDevelopment = true;
 
+    public string Agent {get;set;}
+
     public Settings(CommandLineArgs args, IConfiguration configuration)
     {
         ConnectionString = configuration.GetConnectionString("Default")!;
-        IsDevelopment = true;
-
+        var agent = configuration.GetValue<string>("Agent");
+        Agent = MachineCode.GetMachineCode();
+        if (agent != null)
+            Agent += "-" + agent;
         _commandLineArgs = args;
     }
 

@@ -1,7 +1,4 @@
-﻿using System.Dynamic;
-
-namespace SevenSeals.Tss.Contour;
-
+﻿namespace SevenSeals.Tss.Contour;
 
 public class AppState
 {
@@ -9,5 +6,3 @@ public class AppState
 
     public CancellationToken CancellationToken => CancellationTokenSource.Token;
 }
-
-

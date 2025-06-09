@@ -1,12 +1,13 @@
-﻿using Diagnostic;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SevenSeals.Tss.Contour.Diagnostic;
+using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 
 public class DiagnosticClient: ContourBaseClient
 {
-    public DiagnosticClient(HttpClient httpClient, IOptions<ContourClientOptions> options, ILogger<ContourBaseClient> logger) : base(httpClient, options, logger)
+    public DiagnosticClient(HttpClient httpClient, Settings settings, IOptions<ContourClientOptions> options, ILogger<ContourBaseClient> logger) : base(httpClient, settings, options, logger)
     {
     }
 

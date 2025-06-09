@@ -1,6 +1,6 @@
 ﻿namespace SevenSeals.Tss.Contour;
 
-public partial class Spot
+public partial class Contour
 {
     private void OnAliveTimer(object state)
     {

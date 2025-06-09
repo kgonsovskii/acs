@@ -1,6 +1,6 @@
-﻿using Diagnostic;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SevenSeals.Tss.Contour.Diagnostic;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour.Controllers;

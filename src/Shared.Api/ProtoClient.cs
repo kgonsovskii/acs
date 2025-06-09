@@ -10,19 +10,21 @@ public abstract class ProtoClient: IDisposable
 {
     protected virtual string Route =>  GetType().Name.Replace("Client", "");
 
+    private readonly string _agent;
     private readonly HttpClient _httpClient;
     private readonly ILogger? _logger;
     private readonly Action<string>? _loggerAction;
 
-    protected ProtoClient(HttpClient httpClient, ILogger logger)
+    protected ProtoClient(HttpClient httpClient, string agent, ILogger logger)
     {
         _httpClient = httpClient;
-
+        _agent = agent;
         _logger = logger;
     }
 
-    protected ProtoClient(string baseUri, Action<string> logAction)
+    protected ProtoClient(string baseUri, string agent, Action<string> logAction)
     {
+        _agent = agent;
         _httpClient = new HttpClient() { BaseAddress = new Uri(baseUri) };
         _loggerAction = logAction;
     }
@@ -59,6 +61,7 @@ public abstract class ProtoClient: IDisposable
     {
         var url = BuildUrlFromRequest(action, request);
         request.TraceId = Guid.NewGuid().ToString();
+        request.Agent = _agent;
         request.Hash = request.GetHash();
         var response = await PostAsync<TRequest, TResponse>(url, request);
 
@@ -77,9 +80,8 @@ public abstract class ProtoClient: IDisposable
 
     private async Task<TResponse> PostAsync<TRequest, TResponse>(Uri url, TRequest request) where TRequest : RequestBase where TResponse : ResponseBase
     {
-        var json = JsonSerializer.Serialize(request);
+        var json = request.Serialize();
         var content = new StringContent(json, Encoding.UTF8, "application/json");
-
         Log($"POST {url} BODY: {json}");
 
         var response = await _httpClient.PostAsync(url, content);
