@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SevenSeals.Tss.Atlas;
 
-public class Startup: SevenSeals.Tss.Shared.StartupBase<Startup>
+public class Startup : Shared.StartupBase<Startup>
 {
     private readonly IConfiguration _configuration;
     public Startup(IConfiguration configuration) : base(configuration)
@@ -17,11 +17,11 @@ public class Startup: SevenSeals.Tss.Shared.StartupBase<Startup>
     public override void ConfigureServices(IServiceCollection services)
     {
         base.ConfigureServices(services);
+        services.AddAtlasServices(_configuration);
     }
 
     public override void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
     {
-        //
         base.Configure(app, env, logger);
     }
 }

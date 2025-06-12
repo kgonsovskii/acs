@@ -7,4 +7,8 @@
         <RootNamespace>SevenSeals.Tss.Atlas</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
+    </ItemGroup>
+
 </Project>

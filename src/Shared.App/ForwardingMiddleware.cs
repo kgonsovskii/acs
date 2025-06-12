@@ -51,8 +51,6 @@ public class ForwardingMiddleware
                 }
             }
 
-
-
             if (context.Request.Headers.TryGetValue("Agent", out var requestAgent) &&
                 requestAgent.ToString().Equals(_settings.Agent, StringComparison.OrdinalIgnoreCase))
             {
@@ -93,17 +91,13 @@ public class ForwardingMiddleware
                 context.Response.Headers[header.Key] = header.Value.ToArray();
             }
 
-            // Copy response content headers
-            if (response.Content != null)
+            foreach (var header in response.Content.Headers)
             {
-                foreach (var header in response.Content.Headers)
-                {
-                    context.Response.Headers[header.Key] = header.Value.ToArray();
-                }
-
-                var responseBody = await response.Content.ReadAsStreamAsync();
-                await responseBody.CopyToAsync(context.Response.Body);
+                context.Response.Headers[header.Key] = header.Value.ToArray();
             }
+
+            var responseBody = await response.Content.ReadAsStreamAsync();
+            await responseBody.CopyToAsync(context.Response.Body);
         }
         catch (InvalidOperationException ex)
         {
@@ -113,7 +107,7 @@ public class ForwardingMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error forwarding request to {ForwardTo}", forwardTo);
+            _logger.LogError(ex, "Error forwarding request to {ForwardTo}", forwardTo!);
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             await context.Response.WriteAsync($"Error forwarding request: {ex.Message}");
         }

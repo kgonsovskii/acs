@@ -1,7 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace SevenSeals.Tss.Shared;
 
@@ -21,9 +20,9 @@ public abstract class ChannelOptions
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public virtual ChannelType Type { get; set; } = ChannelType.Ip;
 
-    public IpOptions AsIpOptions() => this as IpOptions;
+    public IpOptions AsIpOptions() => (this as IpOptions)!;
 
-    public ComPortOptions AsComPortOptions() => this as ComPortOptions;
+    public ComPortOptions AsComPortOptions() => (this as ComPortOptions)!;
 }
 
 public class ChannelOptionsJsonConverter : JsonConverter<ChannelOptions>

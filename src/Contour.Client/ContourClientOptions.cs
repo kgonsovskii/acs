@@ -1,6 +1,7 @@
-﻿namespace SevenSeals.Tss.Contour;
+﻿using SevenSeals.Tss.Shared;
 
-public class ContourClientOptions
+namespace SevenSeals.Tss.Contour;
+
+public class ContourClientOptions: ClientOptions
 {
-    public string BaseUri { get; set; } = string.Empty;
 }

@@ -1,5 +1,8 @@
-﻿namespace SevenSeals.Tss.Atlas;
+﻿using System.Text.Json.Serialization;
 
+namespace SevenSeals.Tss.Atlas;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum ZoneTypeEnum
 {
     Building,

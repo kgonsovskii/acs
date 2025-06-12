@@ -60,7 +60,7 @@ public class SwaggerDefaultValueFilter : ISchemaFilter
                 (nameof(ComPortOptions.PortName), _) => _map.Spots
                     .FirstOrDefault(a => a.Options.Type == ChannelType.ComPort)?.Options.AsComPortOptions().PortName,
                 ("Address", _) => _map.Spots
-                    .FirstOrDefault(a => a.Options.Type == ChannelType.Ip).Addresses.First(),
+                    .FirstOrDefault(a => a.Options.Type == ChannelType.Ip)!.Addresses.First(),
                 _ => null
             };
         }

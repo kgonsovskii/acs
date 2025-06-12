@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace SevenSeals.Tss.Shared;
 
@@ -14,6 +13,8 @@ public class Settings
 
     public string Agent {get;set;}
 
+    public string DataDir {get;set;}
+
     public Settings(CommandLineArgs args, IConfiguration configuration)
     {
         ConnectionString = configuration.GetConnectionString("Default")!;
@@ -22,8 +23,34 @@ public class Settings
         if (agent != null)
             Agent += "-" + agent;
         _commandLineArgs = args;
+
+        DataDir = GetDataDirectory();
+        if (!Directory.Exists(DataDir))
+            Directory.CreateDirectory(DataDir);
     }
 
-    public string RootDir =>
-        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+    static string GetDataDirectory()
+    {
+        var envDir = Environment.GetEnvironmentVariable("ACS_DATA_DIR");
+        if (!string.IsNullOrWhiteSpace(envDir))
+            return Path.GetFullPath(envDir);
+
+        string baseDir;
+
+        if (OperatingSystem.IsWindows())
+        {
+            baseDir = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData); // C:\ProgramData
+        }
+        else if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+        {
+            baseDir = "/var/lib";
+        }
+        else
+        {
+            baseDir = Directory.GetCurrentDirectory();
+        }
+
+        return Path.Combine(baseDir, "acs");
+    }
+
 }

@@ -51,7 +51,7 @@ public static class CloneExtensions
             visited[source] = cloned;
 
             for (var i = 0; i < array.Length; i++)
-                cloned.SetValue(CloneObject(array.GetValue(i), visited), i);
+                cloned.SetValue(CloneObject(array.GetValue(i)!, visited), i);
 
             return cloned;
         }
@@ -75,7 +75,7 @@ public static class CloneExtensions
             visited[source] = dict;
 
             foreach (DictionaryEntry entry in (IDictionary)source)
-                dict.Add(CloneObject(entry.Key, visited), CloneObject(entry.Value, visited));
+                dict.Add(CloneObject(entry.Key, visited), CloneObject(entry.Value!, visited));
 
             return dict;
         }

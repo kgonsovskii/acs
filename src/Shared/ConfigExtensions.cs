@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json.Nodes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -16,9 +15,9 @@ public static class ConfigurationExtensions
         var json = File.ReadAllText(Path.Combine(System.IO.Path.GetDirectoryName(
             System.Reflection.Assembly.GetExecutingAssembly().Location)!, "appsettings.json"));
 
-        var settings = json.DeserializeSection<T>(sectionName);
+        var settings = json.DeserializeSection<T>(sectionName)!;
 
-        services.AddSingleton(Options.Create(settings));
+        services.AddSingleton(Options.Create<T>(settings));
 
         return services;
     }
