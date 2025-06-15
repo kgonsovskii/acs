@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace SevenSeals.Tss.Codex;
 
 public class AccessLevel : CodexBase

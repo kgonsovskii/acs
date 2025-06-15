@@ -1,27 +1,40 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SevenSeals.Tss.Codex.Services;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SevenSeals.Tss.Codex;
 
-public class Startup: SevenSeals.Tss.Shared.StartupBase<Startup>
+public class Startup: Shared.StartupBase<Startup>
 {
-    private readonly IConfiguration _configuration;
     public Startup(IConfiguration configuration) : base(configuration)
     {
-        _configuration = configuration;
     }
 
-    public override void ConfigureServices(IServiceCollection services)
+    protected override IServiceCollection ConfigureServicesInternal(IServiceCollection services)
     {
-        base.ConfigureServices(services);
+        services.AddScoped<ITimeZoneService, TimeZoneService>();
+        services.AddScoped<IRouteService, RouteService>();
+        services.AddScoped<IAccessLevelService, AccessLevelService>();
+        return services;
     }
 
-    public override void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+    protected override void ConfigureSwaggerInternal(SwaggerGenOptions opts)
     {
         //
-        base.Configure(app, env, logger);
+    }
+
+    protected override void ConfigureJsonInternal(JsonSerializerOptions opts)
+    {
+        //
+    }
+
+    protected override void UseInternal(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+    {
+        //
     }
 }

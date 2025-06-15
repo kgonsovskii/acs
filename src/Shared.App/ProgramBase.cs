@@ -5,7 +5,7 @@ using Serilog;
 
 namespace SevenSeals.Tss.Shared;
 
-public abstract class ProgramBase<TStartup> where TStartup : class
+public abstract class ProgramBase<TStartup> where TStartup : StartupBase<TStartup>
 {
     protected virtual int Run(string[] args)
     {
@@ -45,18 +45,13 @@ public abstract class ProgramBase<TStartup> where TStartup : class
 #else
                 var environmentName = env.EnvironmentName;
 #endif
-
-                config
-                    .AddJsonFile("appsettings.base.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true);
-
                 hostingContext.HostingEnvironment.EnvironmentName = environmentName;
 
                 config
                     .SetBasePath(env.ContentRootPath)
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.base.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{ServiceGroup}.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{ServiceGroup}.{environmentName}.json", optional: true, reloadOnChange: true)
                     .AddEnvironmentVariables();
                 config.AddCommandLine(args);
             })
@@ -64,4 +59,6 @@ public abstract class ProgramBase<TStartup> where TStartup : class
             {
                 webBuilder.UseStartup<TStartup>();
             });
+
+    protected virtual string ServiceGroup => this.ServiceGroup();
 }

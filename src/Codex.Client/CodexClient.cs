@@ -1,112 +1,94 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
-using SevenSeals.Tss.Codex;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using SevenSeals.Tss.Shared;
 
-namespace SevenSeals.Tss.Codex.Client;
+namespace SevenSeals.Tss.Codex;
 
-public class CodexClient
+public class CodexClient : CodexBaseClient
 {
-    private readonly HttpClient _httpClient;
-    private const string BaseUrl = "api/codex";
-
-    public CodexClient(HttpClient httpClient)
+    public CodexClient(HttpClient httpClient, Settings settings, IOptions<CodexClientOptions> options, ILogger<CodexBaseClient> logger) 
+        : base(httpClient, settings, options, logger)
     {
-        _httpClient = httpClient;
     }
 
     #region Routes
     public async Task<List<Route>> GetRoutesAsync()
     {
-        return await _httpClient.GetFromJsonAsync<List<Route>>($"{BaseUrl}/routes") ?? new List<Route>();
+        return await GetAsync<List<Route>>("routes") ?? new List<Route>();
     }
 
     public async Task<Route?> GetRouteAsync(Guid id)
     {
-        return await _httpClient.GetFromJsonAsync<Route>($"{BaseUrl}/routes/{id}");
+        return await GetAsync<Route>($"routes/{id}");
     }
 
     public async Task<Route> CreateRouteAsync(Route route)
     {
-        var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}/routes", route);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<Route>() ?? throw new Exception("Failed to create route");
+        return await PostAsync<Route, Route>("routes", route);
     }
 
     public async Task UpdateRouteAsync(Guid id, Route route)
     {
-        var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/routes/{id}", route);
-        response.EnsureSuccessStatusCode();
+        await PutAsync<Route, Route>($"routes/{id}", route);
     }
 
     public async Task DeleteRouteAsync(Guid id)
     {
-        var response = await _httpClient.DeleteAsync($"{BaseUrl}/routes/{id}");
-        response.EnsureSuccessStatusCode();
+        await DeleteAsync($"routes/{id}");
     }
     #endregion
 
     #region TimeZoneRules
     public async Task<List<TimeZoneRule>> GetTimeZoneRulesAsync()
     {
-        return await _httpClient.GetFromJsonAsync<List<TimeZoneRule>>($"{BaseUrl}/timezonerules") ?? new List<TimeZoneRule>();
+        return await GetAsync<List<TimeZoneRule>>("timezonerules") ?? new List<TimeZoneRule>();
     }
 
     public async Task<TimeZoneRule?> GetTimeZoneRuleAsync(Guid id)
     {
-        return await _httpClient.GetFromJsonAsync<TimeZoneRule>($"{BaseUrl}/timezonerules/{id}");
+        return await GetAsync<TimeZoneRule>($"timezonerules/{id}");
     }
 
     public async Task<TimeZoneRule> CreateTimeZoneRuleAsync(TimeZoneRule rule)
     {
-        var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}/timezonerules", rule);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<TimeZoneRule>() ?? throw new Exception("Failed to create time zone rule");
+        return await PostAsync<TimeZoneRule, TimeZoneRule>("timezonerules", rule);
     }
 
     public async Task UpdateTimeZoneRuleAsync(Guid id, TimeZoneRule rule)
     {
-        var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/timezonerules/{id}", rule);
-        response.EnsureSuccessStatusCode();
+        await PutAsync<TimeZoneRule, TimeZoneRule>($"timezonerules/{id}", rule);
     }
 
     public async Task DeleteTimeZoneRuleAsync(Guid id)
     {
-        var response = await _httpClient.DeleteAsync($"{BaseUrl}/timezonerules/{id}");
-        response.EnsureSuccessStatusCode();
+        await DeleteAsync($"timezonerules/{id}");
     }
     #endregion
 
     #region AccessLevels
     public async Task<List<AccessLevel>> GetAccessLevelsAsync()
     {
-        return await _httpClient.GetFromJsonAsync<List<AccessLevel>>($"{BaseUrl}/accesslevels") ?? new List<AccessLevel>();
+        return await GetAsync<List<AccessLevel>>("accesslevels") ?? new List<AccessLevel>();
     }
 
     public async Task<AccessLevel?> GetAccessLevelAsync(Guid id)
     {
-        return await _httpClient.GetFromJsonAsync<AccessLevel>($"{BaseUrl}/accesslevels/{id}");
+        return await GetAsync<AccessLevel>($"accesslevels/{id}");
     }
 
     public async Task<AccessLevel> CreateAccessLevelAsync(AccessLevel accessLevel)
     {
-        var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}/accesslevels", accessLevel);
-        response.EnsureSuccessStatusCode();
-        return await response.Content.ReadFromJsonAsync<AccessLevel>() ?? throw new Exception("Failed to create access level");
+        return await PostAsync<AccessLevel, AccessLevel>("accesslevels", accessLevel);
     }
 
     public async Task UpdateAccessLevelAsync(Guid id, AccessLevel accessLevel)
     {
-        var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/accesslevels/{id}", accessLevel);
-        response.EnsureSuccessStatusCode();
+        await PutAsync<AccessLevel, AccessLevel>($"accesslevels/{id}", accessLevel);
     }
 
     public async Task DeleteAccessLevelAsync(Guid id)
     {
-        var response = await _httpClient.DeleteAsync($"{BaseUrl}/accesslevels/{id}");
-        response.EnsureSuccessStatusCode();
+        await DeleteAsync($"accesslevels/{id}");
     }
     #endregion
-} 
+}

@@ -1,10 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
+    <RootNamespace>SevenSeals.Tss.Codex</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +21,20 @@
   <ItemGroup>
     <ProjectReference Include="..\Codex.Client\Codex.Client.csproj" />
     <ProjectReference Include="..\Codex.Model\Codex.Model.csproj" />
+    <ProjectReference Include="..\Codex\Codex.csproj" />
+    <ProjectReference Include="..\Shared.Tests\Shared.Tests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.base.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.Test.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

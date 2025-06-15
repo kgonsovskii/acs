@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,7 @@ namespace Shared.Tests;
 
 public abstract class TestWebAppFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
 {
+
     protected override IHostBuilder CreateHostBuilder()
     {
         return Host.CreateDefaultBuilder()
@@ -17,12 +19,14 @@ public abstract class TestWebAppFactory<TStartup> : WebApplicationFactory<TStart
             {
                 configBuilder.Sources.Clear();
 
+                var group = this.ServiceGroup();
+
                 configBuilder
                     .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.base.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile("appsettings.Test.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.base.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{group}.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{group}.Development.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{group}.Test.json", optional: false, reloadOnChange: true)
                     .AddEnvironmentVariables();
             })
             .ConfigureWebHostDefaults(webBuilder =>

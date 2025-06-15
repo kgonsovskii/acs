@@ -1,26 +1,40 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using JetBrains.Annotations;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SevenSeals.Tss.Api;
 
+[UsedImplicitly]
 public class Startup: Shared.StartupBase<Startup>
 {
+    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public Startup(IConfiguration configuration) : base(configuration)
     {
     }
 
-    public override void ConfigureServices(IServiceCollection services)
+    protected override IServiceCollection ConfigureServicesInternal(IServiceCollection services)
     {
-        //
-        base.ConfigureServices(services);
+        return services;
     }
 
-    public override void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+    protected override void ConfigureSwaggerInternal(SwaggerGenOptions opts)
     {
         //
-        base.Configure(app, env, logger);
+    }
+
+    protected override void ConfigureJsonInternal(JsonSerializerOptions opts)
+    {
+        //
+    }
+
+    protected override void UseInternal(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+    {
+        //
     }
 }

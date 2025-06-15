@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace SevenSeals.Tss.Shared;
 
@@ -7,16 +8,20 @@ public abstract class Proto
     /// <summary>
     /// Trace identifier for correlating requests.
     /// </summary>
+    [JsonIgnore]
     public string TraceId { get; set; } = string.Empty;
 
     /// <summary>
     /// Agent with Machine-Code identifier for correlating requests.
     /// </summary>
+    [JsonIgnore]
     public string Agent { get; set; } = string.Empty;
 
+    [JsonIgnore]
     public int Chop { get; set; } = 1;
 
-public virtual int Hash { get; set; } = 0;
+    [JsonIgnore]
+    public virtual int Hash { get; set; } = 0;
 
     public virtual int GetHash()
     {
@@ -25,7 +30,7 @@ public virtual int Hash { get; set; } = 0;
             throw new ArgumentNullException(nameof(obj));
 
         var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(p => p.Name != nameof(Hash) && p.CanRead);
+            .Where(p => p.Name != nameof(Hash) && p.CanRead && !p.GetCustomAttributes<JsonIgnoreAttribute>().Any());
 
         unchecked
         {

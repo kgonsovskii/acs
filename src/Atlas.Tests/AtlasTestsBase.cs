@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using SevenSeals.Tss.Shared;
 using Shared.Tests;
 
 namespace SevenSeals.Tss.Atlas;

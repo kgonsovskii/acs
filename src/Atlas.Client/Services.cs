@@ -9,7 +9,6 @@ public static class Services
     public static IServiceCollection AddAtlasClient(this IServiceCollection services, IConfiguration configuration)
     {
         services.ConfigureClientOptions<AtlasClientOptions>(configuration);
-        services.AddHttpClient<AtlasClient>();
         services.AddScoped<AtlasClient>();
 
         return services;

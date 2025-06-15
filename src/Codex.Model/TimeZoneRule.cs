@@ -1,5 +1,3 @@
-using System;
-
 namespace SevenSeals.Tss.Codex;
 
 public class TimeZoneRule : CodexBase

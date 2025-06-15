@@ -17,7 +17,6 @@ public static class Services
                 WriteIndented = true
             };
             JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-            JsonSerializerOptions.Converters.Add(new ChannelOptionsJsonConverter());
         }
         services.AddSingleton(JsonSerializerOptions);
         return services;
@@ -28,7 +27,7 @@ public static class Services
         jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         jsonSerializerOptions.WriteIndented = true;
         jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-        jsonSerializerOptions.Converters.Add(new ChannelOptionsJsonConverter());
+
         return jsonSerializerOptions;
     }
 }

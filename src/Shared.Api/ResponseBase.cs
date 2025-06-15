@@ -1,6 +1,9 @@
-﻿namespace SevenSeals.Tss.Shared;
+﻿using System.Text.Json.Serialization;
+
+namespace SevenSeals.Tss.Shared;
 
 public abstract class ResponseBase: Proto
 {
-    public virtual long TimeStamp { get; set; } = 0;
+    [JsonIgnore]
+    public long TimeStamp { get; set; } = 0;
 }

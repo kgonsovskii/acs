@@ -1,114 +1,96 @@
-using System;
-using System.Threading.Tasks;
-using SevenSeals.Tss.Codex;
-using SevenSeals.Tss.Codex.Client;
-using SevenSeals.Tss.Shared;
-using Xunit;
+using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace SevenSeals.Tss.Codex.Tests;
+namespace SevenSeals.Tss.Codex;
 
-public class CodexClientTests : TestBase
+[TestClass]
+public class CodexClientTests : CodexTestsBase<CodexClient>
 {
-    private readonly CodexClient _codexClient;
-
-    public CodexClientTests()
-    {
-        _codexClient = GetClient<CodexClient>();
-    }
-
-    [Fact]
+    [TestMethod]
     public async Task GetRoutes_ShouldReturnRoutes()
     {
-        // Arrange
-        var route1 = await _codexClient.CreateRouteAsync(new Route 
-        { 
+        using var client = OpenClient();
+        var route1 = await client.CreateRouteAsync(new Route
+        {
             Name = "Route 1",
             FromZoneId = Guid.NewGuid(),
             ToZoneId = Guid.NewGuid()
         });
-        var route2 = await _codexClient.CreateRouteAsync(new Route 
-        { 
+        var route2 = await client.CreateRouteAsync(new Route
+        {
             Name = "Route 2",
             FromZoneId = Guid.NewGuid(),
             ToZoneId = Guid.NewGuid()
         });
 
-        // Act
-        var result = await _codexClient.GetRoutesAsync();
+        var result = await client.GetRoutesAsync();
 
-        // Assert
-        Assert.Contains(result, r => r.Id == route1.Id && r.Name == route1.Name);
-        Assert.Contains(result, r => r.Id == route2.Id && r.Name == route2.Name);
+        result.Should().Contain(r => r.Id == route1.Id && r.Name == route1.Name);
+        result.Should().Contain(r => r.Id == route2.Id && r.Name == route2.Name);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task CreateRoute_ShouldReturnCreatedRoute()
     {
-        // Arrange
-        var route = new Route 
-        { 
+        using var client = OpenClient();
+        var route = new Route
+        {
             Name = "New Route",
             FromZoneId = Guid.NewGuid(),
             ToZoneId = Guid.NewGuid()
         };
 
-        // Act
-        var result = await _codexClient.CreateRouteAsync(route);
+        var result = await client.CreateRouteAsync(route);
 
-        // Assert
-        Assert.NotEqual(Guid.Empty, result.Id);
-        Assert.Equal(route.Name, result.Name);
-        Assert.Equal(route.FromZoneId, result.FromZoneId);
-        Assert.Equal(route.ToZoneId, result.ToZoneId);
+        result.Id.Should().NotBe(Guid.Empty);
+        result.Name.Should().Be(route.Name);
+        result.FromZoneId.Should().Be(route.FromZoneId);
+        result.ToZoneId.Should().Be(route.ToZoneId);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task GetTimeZoneRules_ShouldReturnRules()
     {
-        // Arrange
-        var rule1 = await _codexClient.CreateTimeZoneRuleAsync(new TimeZoneRule 
-        { 
+        using var client = OpenClient();
+        var rule1 = await client.CreateTimeZoneRuleAsync(new TimeZoneRule
+        {
             Name = "Rule 1",
             DayOfWeek = DayOfWeek.Monday,
             StartTime = TimeSpan.FromHours(9),
             EndTime = TimeSpan.FromHours(17)
         });
-        var rule2 = await _codexClient.CreateTimeZoneRuleAsync(new TimeZoneRule 
-        { 
+        var rule2 = await client.CreateTimeZoneRuleAsync(new TimeZoneRule
+        {
             Name = "Rule 2",
             DayOfWeek = DayOfWeek.Tuesday,
             StartTime = TimeSpan.FromHours(10),
             EndTime = TimeSpan.FromHours(18)
         });
 
-        // Act
-        var result = await _codexClient.GetTimeZoneRulesAsync();
+        var result = await client.GetTimeZoneRulesAsync();
 
-        // Assert
-        Assert.Contains(result, r => r.Id == rule1.Id && r.Name == rule1.Name);
-        Assert.Contains(result, r => r.Id == rule2.Id && r.Name == rule2.Name);
+        result.Should().Contain(r => r.Id == rule1.Id && r.Name == rule1.Name);
+        result.Should().Contain(r => r.Id == rule2.Id && r.Name == rule2.Name);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task GetAccessLevels_ShouldReturnAccessLevels()
     {
-        // Arrange
-        var level1 = await _codexClient.CreateAccessLevelAsync(new AccessLevel 
-        { 
+        using var client = OpenClient();
+        var level1 = await client.CreateAccessLevelAsync(new AccessLevel
+        {
             Name = "Level 1",
             Priority = 1
         });
-        var level2 = await _codexClient.CreateAccessLevelAsync(new AccessLevel 
-        { 
+        var level2 = await client.CreateAccessLevelAsync(new AccessLevel
+        {
             Name = "Level 2",
             Priority = 2
         });
 
-        // Act
-        var result = await _codexClient.GetAccessLevelsAsync();
+        var result = await client.GetAccessLevelsAsync();
 
-        // Assert
-        Assert.Contains(result, l => l.Id == level1.Id && l.Name == level1.Name);
-        Assert.Contains(result, l => l.Id == level2.Id && l.Name == level2.Name);
+        result.Should().Contain(l => l.Id == level1.Id && l.Name == level1.Name);
+        result.Should().Contain(l => l.Id == level2.Id && l.Name == level2.Name);
     }
-} 
+}

@@ -1,14 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <RootNamespace>SevenSeals.Tss.Codex</RootNamespace>
-    </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>SevenSeals.Tss.Codex</RootNamespace>
+  </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Codex.Model\Codex.Model.csproj" />
+      <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
       <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 

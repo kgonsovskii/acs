@@ -9,11 +9,12 @@ public static class ConfigurationExtensions
 {
     public static IServiceCollection AddExtendedOptions<T>(
         this IServiceCollection services,
+        string serviceGroup,
         string sectionName
     ) where T : class, new()
     {
         var json = File.ReadAllText(Path.Combine(System.IO.Path.GetDirectoryName(
-            System.Reflection.Assembly.GetExecutingAssembly().Location)!, "appsettings.json"));
+                System.Reflection.Assembly.GetExecutingAssembly().Location)!, $"appsettings.{serviceGroup}.json"));
 
         var settings = json.DeserializeSection<T>(sectionName)!;
 
@@ -48,5 +49,35 @@ public static class ConfigurationExtensions
         }
 
         return obj;
+    }
+
+    private static string? _serviceGroup;
+
+    public static string ServiceGroup(this object baseObject)
+    {
+        if (_serviceGroup == null)
+        {
+            var baseType = baseObject.GetType();
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            foreach (var asm in assemblies)
+            {
+                if (asm.GetName()!.Name!.StartsWith("Shared"))
+                    continue;
+
+                var derivedType = asm.GetTypes()
+                    .FirstOrDefault(t => t.IsClass && !t.IsAbstract && baseType.IsAssignableFrom(t));
+
+                if (derivedType != null)
+                {
+                    _serviceGroup = derivedType.Assembly.GetName().Name!.Split('.')[0].ToLower();
+                    return _serviceGroup;
+                }
+            }
+
+            throw new Exception("No test service found for this test");
+        }
+
+        return _serviceGroup;
     }
 }

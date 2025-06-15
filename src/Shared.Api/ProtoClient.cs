@@ -85,12 +85,18 @@ public abstract class ProtoClient: IDisposable
         where TRequest : RequestBase where TResponse : ResponseBase
     {
         var url = BuildUrlFromRequest(action, request);
-        request.TraceId = Guid.NewGuid().ToString();
-        request.Agent = _agent;
-        request.Hash = request.GetHash();
+        var traceId = Guid.NewGuid().ToString();
+        var hash = request.GetHash();
 
         var json = request.Serialize();
         var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        // Add Proto headers
+        content.Headers.Add(ProtoHeaders.TraceId, traceId);
+        content.Headers.Add(ProtoHeaders.Agent, _agent);
+        content.Headers.Add(ProtoHeaders.Chop, request.Chop.ToString());
+        content.Headers.Add(ProtoHeaders.Hash, hash.ToString());
+
         Log($"{verb} {url} BODY: {json}");
 
         HttpResponseMessage response;
@@ -133,10 +139,25 @@ public abstract class ProtoClient: IDisposable
 
         response.EnsureSuccessStatusCode();
 
-        return JsonSerializer.Deserialize<TResponse>(content, new JsonSerializerOptions
+        var result = JsonSerializer.Deserialize<TResponse>(content, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         }) ?? throw new InvalidOperationException("Response body is null");
+
+        // Set Proto properties from headers if available
+        if (result is ResponseBase responseBase)
+        {
+            if (response.Headers.TryGetValues(ProtoHeaders.TraceId, out var traceId))
+                responseBase.TraceId = traceId.First();
+            if (response.Headers.TryGetValues(ProtoHeaders.Agent, out var agent))
+                responseBase.Agent = agent.First();
+            if (response.Headers.TryGetValues(ProtoHeaders.Chop, out var chop) && int.TryParse(chop.First(), out var chopValue))
+                responseBase.Chop = chopValue;
+            if (response.Headers.TryGetValues(ProtoHeaders.Hash, out var hash) && int.TryParse(hash.First(), out var hashValue))
+                responseBase.Hash = hashValue;
+        }
+
+        return result;
     }
 
     private static string AppendTrailingSlash(string uri) =>

@@ -1,10 +1,13 @@
 ﻿using System.Reflection;
+using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SevenSeals.Tss.Shared;
 
@@ -17,37 +20,29 @@ public abstract class StartupBase<TStartup> where TStartup : class
         Configuration = configuration;
     }
 
-    public virtual void ConfigureServices(IServiceCollection services)
+    protected abstract IServiceCollection ConfigureServicesInternal(IServiceCollection services);
+    protected abstract void ConfigureSwaggerInternal(SwaggerGenOptions opts);
+    protected abstract void ConfigureJsonInternal(JsonSerializerOptions opts);
+    protected abstract void UseInternal(IApplicationBuilder app, IWebHostEnvironment env, ILogger<TStartup> logger);
+
+    public void ConfigureServices(IServiceCollection services)
     {
         services
             .ConfigureShared()
             .AddSingleton(new CommandLineArgs(Environment.GetCommandLineArgs()))
             .AddSingleton<Settings>()
             .AddHttpClient()
-            .AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.ConfigureJson());
+            .AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ConfigureJson();
+                ConfigureJsonInternal(options.JsonSerializerOptions);
+            });
         services
             .AddEndpointsApiExplorer()
             .AddSwaggerGen(c =>
             {
+                c.ConfigureApiSwagger();
                 c.EnableAnnotations();
-
-                c.UseOneOfForPolymorphism();
-
-                c.SelectDiscriminatorNameUsing(type =>
-                   type == typeof(ChannelOptions) ? "type" : null);
-
-                c.SelectSubTypesUsing(baseType =>
-                {
-                    if (baseType == typeof(ChannelOptions))
-                    {
-                        return new[]
-                        {
-                            typeof(IpOptions),
-                            typeof(ComPortOptions)
-                        };
-                    }
-                    return Enumerable.Empty<Type>();
-                });
 
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
@@ -55,12 +50,6 @@ public abstract class StartupBase<TStartup> where TStartup : class
                     Version = "v1",
                     Description = $"API for {Assembly.GetEntryAssembly()!.GetName().Name}"
                 });
-
-                // Add schema filter for dynamic default values
-                c.SchemaFilter<SwaggerDefaultValueFilter>();
-
-                // Add X-Forward-To header filter
-                c.OperationFilter<XForwardToHeaderFilter>();
 
                 var basePath = AppContext.BaseDirectory;
                 var mainXml = Path.Combine(basePath, $"{Assembly.GetEntryAssembly()!.GetName().Name}.xml");
@@ -78,18 +67,20 @@ public abstract class StartupBase<TStartup> where TStartup : class
                         c.IncludeXmlComments(xmlPath);
                     }
                 }
+                ConfigureSwaggerInternal(c);
             });
+        ConfigureServicesInternal(services);
     }
 
-    public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<TStartup> logger)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<TStartup> logger)
     {
+        app.UseApi();
+
         logger.LogInformation("Environment: {EnvironmentName}", env.EnvironmentName);
 
         app.UseDeveloperExceptionPage();
 
         app.UseRouting();
-
-        app.UseMiddleware<ForwardingMiddleware>();
 
         app.UseSwagger();
         app.UseSwaggerUI(c =>
@@ -102,5 +93,9 @@ public abstract class StartupBase<TStartup> where TStartup : class
         {
             endpoints.MapControllers();
         });
+
+        UseInternal(app, env, logger);
     }
+
+    protected virtual string ServiceGroup => this.ServiceGroup();
 }

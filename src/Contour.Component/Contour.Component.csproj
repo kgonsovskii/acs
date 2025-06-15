@@ -3,6 +3,7 @@
     <RootNamespace>SevenSeals.Tss.Contour</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Contour.Model\Contour.Model.csproj" />
     <ProjectReference Include="..\Shared.Db\Shared.Db.csproj" />
   </ItemGroup>
   <ItemGroup>

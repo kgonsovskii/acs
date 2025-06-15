@@ -1,5 +1,3 @@
-using System;
-
 namespace SevenSeals.Tss.Codex;
 
 public abstract class CodexBase
