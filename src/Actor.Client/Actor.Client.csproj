@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Actor.Model\Actor.Model.csproj" />
+    <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.IO.Ports;
-using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 

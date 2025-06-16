@@ -30,7 +30,7 @@ public partial class Contour: ProtoObject
     private const int StateAutonomicPolling = 2;
     private const int StateComplex = 3;
 
-    private readonly CancellationToken _cts = new CancellationToken();
+    private readonly CancellationToken _cts = new();
 
     public Action<Contour, byte[]>? OnEvent { get; set; }
 

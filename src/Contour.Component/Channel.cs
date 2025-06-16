@@ -1,6 +1,4 @@
-﻿using SevenSeals.Tss.Shared;
-
-namespace SevenSeals.Tss.Contour;
+﻿namespace SevenSeals.Tss.Contour;
 
 public abstract class Channel: ProtoObject, IDisposable
 {
@@ -17,15 +15,15 @@ public abstract class Channel: ProtoObject, IDisposable
     protected volatile bool _deactivating = false;
     protected bool _error = false;
     protected volatile bool _extCmd = false;
-    protected SynchronizationLock _sync = new SynchronizationLock();
+    protected SynchronizationLock _sync = new();
 
     protected SpeedTimer _speedTimer;
-    protected Trigger _fireSpeedEvent = new Trigger();
+    protected Trigger _fireSpeedEvent = new();
     protected bool _speedZeroFired = false;
     protected char _lastEvtCo;
     protected uint _speedOld, _speedCounter, _speedClock;
 
-    protected Timer _timer = new Timer(_ => { });
+    protected Timer _timer = new(_ => { });
 
     protected IDisposable _writeAllKeysTh;
 
@@ -159,7 +157,7 @@ public abstract class Channel: ProtoObject, IDisposable
 
     protected class SynchronizationLock
     {
-        private readonly object _lock = new object();
+        private readonly object _lock = new();
 
         public void Lock() => Monitor.Enter(_lock);
         public void Unlock() => Monitor.Exit(_lock);

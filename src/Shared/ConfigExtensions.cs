@@ -23,6 +23,34 @@ public static class ConfigurationExtensions
         return services;
     }
 
+    public static T GetRootValue<T>(string jsonPath, string filePath = "appsettings.base.json") where T : struct, Enum
+    {
+        if (!File.Exists(filePath))
+            return default;
+        var json = File.ReadAllText(filePath);
+        var root = JsonNode.Parse(json) ?? throw new InvalidOperationException("Invalid JSON.");
+
+        var keys = jsonPath.Split(':', StringSplitOptions.RemoveEmptyEntries);
+        var current = root;
+
+        foreach (var key in keys)
+        {
+            current = current?[key];
+            if (current is null)
+                throw new InvalidOperationException($"Path not found: {jsonPath}");
+        }
+
+        var value = current?.ToString();
+
+        if (string.IsNullOrWhiteSpace(value))
+            throw new InvalidOperationException($"Value at path '{jsonPath}' is null or empty.");
+
+        if (!Enum.TryParse<T>(value, ignoreCase: true, out var result))
+            throw new InvalidOperationException($"Cannot parse '{value}' to enum {typeof(T).Name}.");
+
+        return result;
+    }
+
     private static JsonNode? ConvertSectionToJsonNode(IConfigurationSection section)
     {
         if (section.Value != null)

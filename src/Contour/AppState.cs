@@ -2,7 +2,7 @@
 
 public class AppState
 {
-    public readonly CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
+    public readonly CancellationTokenSource CancellationTokenSource = new();
 
     public CancellationToken CancellationToken => CancellationTokenSource.Token;
 }

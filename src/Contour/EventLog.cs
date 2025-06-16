@@ -1,14 +1,22 @@
-﻿using SevenSeals.Tss.Contour.Events;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 
-public class EventLog: Database
+public interface IEventLogStorage : IBaseStorage<EventLog, int>
 {
-    private readonly ChannelHub _channel;
-    private readonly EventQueue _eventQueue;
 
-    public EventLog(Settings settings): base(settings)
+}
+
+public class EventLogStorage : BaseStorage<EventLog, int>, IEventLogStorage
+{
+
+   // private readonly ChannelHub _channel;
+   // private readonly EventQueue _eventQueue;
+
+    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
+    public EventLogStorage(Settings settings, ILogger<EventLogStorage> logger): base(settings, logger)
     {
        // _channelManager = channelManager;
        // _eventQueue = eventQueue;
@@ -16,7 +24,7 @@ public class EventLog: Database
 
     public bool IsLogging => true;
 
-    protected override void Initialize()
+  /*  protected override void Initialize()
     {
         using var cmd = Connection.CreateCommand();
         cmd.CommandText = @"CREATE TABLE IF NOT EXISTS EventLog (
@@ -78,24 +86,6 @@ public class EventLog: Database
         using var dropCmd = Connection.CreateCommand();
         dropCmd.CommandText = "DROP TABLE IF EXISTS EventLog";
         dropCmd.ExecuteNonQuery();
-    }
-}
-
-public class LogEvent: Event
-{
-    public byte[] Ch { get; set; }
-    public byte[] ControllerTimestamp { get; set; }
-    public byte[] Timestamp { get; set; }
-    public byte Addr { get; set; }
-    public byte[] Data { get; set; }
-
-    public LogEvent(byte[] ch, byte[] data, byte[] timestamp)
-    {
-        Ch = ch;
-        Data = data;
-        Timestamp = timestamp;
-        Addr = 0;
-        ControllerTimestamp = new byte[6];
-    }
+    }*/
 }
 

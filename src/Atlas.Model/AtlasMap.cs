@@ -2,6 +2,6 @@
 
 public class AtlasMap
 {
-    public List<Zone> Zones { get; set; } = new List<Zone>();
-    public List<Transit> Transits { get; set; } = new List<Transit>();
+    public List<Zone> Zones { get; set; } = new();
+    public List<Transit> Transits { get; set; } = new();
 }

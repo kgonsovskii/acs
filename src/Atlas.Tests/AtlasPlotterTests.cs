@@ -55,7 +55,7 @@ public class AtlasPlotterTests
         var sklad = new Zone
         {
             Id = Guid.NewGuid(),
-            Name = "Склад",
+            Name = "Склад 1111",
             Type = ZoneTypeEnum.Room,
             ParentId = floor2.Id,
         };

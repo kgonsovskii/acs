@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SevenSeals.Tss.Contour.Events;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
@@ -121,7 +120,7 @@ public class AppHost : IHostedService
 
         if (channelsChanged)
         {
-            _eventQueue.Push(new ChannelsChangedEvent());
+       //     _eventQueue.Push(new ChannelsChangedEvent());
         }
     }
 }

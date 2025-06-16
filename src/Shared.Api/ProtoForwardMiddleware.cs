@@ -25,7 +25,7 @@ public class ProtoForwardMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (!context.Request.Headers.TryGetValue("X-Forward-To", out var forwardTo))
+        if (!context.Request.Headers.TryGetValue(ProtoHeaders.ForwardTo, out var forwardTo))
         {
             await _next(context);
             return;
@@ -44,13 +44,13 @@ public class ProtoForwardMiddleware
 
             foreach (var header in context.Request.Headers)
             {
-                if (!header.Key.Equals("X-Forward-To", StringComparison.OrdinalIgnoreCase))
+                if (!header.Key.Equals(ProtoHeaders.ForwardTo, StringComparison.OrdinalIgnoreCase))
                 {
                     request.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
                 }
             }
 
-            if (context.Request.Headers.TryGetValue("Agent", out var requestAgent) &&
+            if (context.Request.Headers.TryGetValue(ProtoHeaders.Agent, out var requestAgent) &&
                 requestAgent.ToString().Equals(_settings.Agent, StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException($"Recursive forwarding detected. I'm {_settings.Agent}'");

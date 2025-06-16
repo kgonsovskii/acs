@@ -6,7 +6,7 @@
   </PropertyGroup>
 
     <ItemGroup>
-      <None Update="appsettings.json">
+      <None Update="appsettings.atlas.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="appsettings.Development.json">
@@ -29,6 +29,10 @@
       <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
       <ProjectReference Include="..\Shared.App\Shared.App.csproj" />
       <ProjectReference Include="..\Shared\Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
     </ItemGroup>
 
 </Project>

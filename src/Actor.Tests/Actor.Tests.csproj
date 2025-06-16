@@ -21,7 +21,14 @@
   <ItemGroup>
     <ProjectReference Include="..\Actor.Client\Actor.Client.csproj" />
     <ProjectReference Include="..\Actor.Model\Actor.Model.csproj" />
+    <ProjectReference Include="..\Actor\Actor.csproj" />
     <ProjectReference Include="..\Shared.Tests\Shared.Tests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.Test.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project> 

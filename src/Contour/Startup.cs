@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -25,10 +24,12 @@ public class Startup: Shared.StartupBase<Startup>
         services.AddSingleton<AppState>();
         services.AddSingleton<AppSnapshot>();
         services.AddHostedService<AppHost>();
-        services.AddSingleton<EventQueue>();
-        services.AddSingleton<EventLog>();
+
         services.AddSingleton<ChannelHub>();
         services.AddSingleton<SpotHub>();
+
+        services.AddSingleton<IEventLogStorage, EventLogStorage>();
+        services.AddSingleton<EventQueue>();
         return services;
     }
 

@@ -1,24 +1,30 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SevenSeals.Tss.Atlas.Services;
+using SevenSeals.Tss.Atlas.Storage;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SevenSeals.Tss.Atlas;
 
+[UsedImplicitly]
 public class Startup : Shared.StartupBase<Startup>
 {
-    private readonly IConfiguration _configuration;
+    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public Startup(IConfiguration configuration) : base(configuration)
     {
-        _configuration = configuration;
     }
 
     protected override IServiceCollection ConfigureServicesInternal(IServiceCollection services)
     {
-        services.AddScoped<AtlasStorage>();
+        services.AddSingleton<ITransitStorage, TransitStorage>();
+        services.AddSingleton<IZoneStorage, ZoneStorage>();
+        services.AddSingleton<IAtlasService, AtlasService>();
         return services;
     }
 

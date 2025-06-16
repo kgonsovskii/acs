@@ -4,6 +4,8 @@ namespace SevenSeals.Tss.Shared;
 
 public class Settings
 {
+    public StorageType StorageType { get; }
+
     private readonly CommandLineArgs _commandLineArgs;
     public string[] Args => _commandLineArgs.Args;
 
@@ -18,6 +20,7 @@ public class Settings
     public Settings(CommandLineArgs args, IConfiguration configuration)
     {
         ConnectionString = configuration.GetConnectionString("Default")!;
+        StorageType = configuration.GetSection("storageType").Get<StorageType>();
         var agent = configuration.GetValue<string>("Agent");
         Agent = MachineCode.GetMachineCode();
         if (agent != null)
@@ -52,5 +55,4 @@ public class Settings
 
         return Path.Combine(baseDir, "acs");
     }
-
 }

@@ -1,29 +1,33 @@
 using Microsoft.AspNetCore.Mvc;
+using SevenSeals.Tss.Actor.Storage;
 
 namespace SevenSeals.Tss.Actor.Controllers;
 
 [ApiController]
-[Route("api/person/keys")]
+[Route("api/[controller]")]
 public class KeyController : ControllerBase
 {
-    private readonly IKeyService _keyService;
+    private readonly IKeyStorage _storage;
+    private readonly IActorStorage _actorStorage;
+    private readonly ILogger<KeyController> _logger;
 
-    public KeyController(IKeyService keyService)
+    public KeyController(IKeyStorage storage, IActorStorage personStorage, ILogger<KeyController> logger)
     {
-        _keyService = keyService;
+        _storage = storage;
+        _actorStorage = personStorage;
+        _logger = logger;
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Key>>> GetKeys()
+    public ActionResult<IEnumerable<Key>> GetAll()
     {
-        var keys = await _keyService.GetKeysAsync();
-        return Ok(keys);
+        return Ok(_storage.GetAll());
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Key>> GetKey(Guid id)
+    public ActionResult<Key> GetById(Guid id)
     {
-        var key = await _keyService.GetKeyAsync(id);
+        var key = _storage.GetById(id);
         if (key == null)
         {
             return NotFound();
@@ -31,70 +35,79 @@ public class KeyController : ControllerBase
         return Ok(key);
     }
 
-    [HttpGet("person/{personId}")]
-    public async Task<ActionResult<IEnumerable<Key>>> GetKeysByPerson(Guid personId)
-    {
-        var keys = await _keyService.GetKeysByPersonAsync(personId);
-        return Ok(keys);
-    }
-
     [HttpPost]
-    public async Task<ActionResult<Key>> CreateKey(Key key)
+    public ActionResult<Key> Create(Key key)
     {
-        var createdKey = await _keyService.CreateKeyAsync(key);
-        return CreatedAtAction(nameof(GetKey), new { id = createdKey.Id }, createdKey);
+        _storage.Create(key);
+        return CreatedAtAction(nameof(GetById), new { id = key.Id }, key);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateKey(Guid id, Key key)
+    public IActionResult Update(Guid id, Key key)
     {
         if (id != key.Id)
         {
             return BadRequest();
         }
 
-        var result = await _keyService.UpdateKeyAsync(id, key);
-        if (!result)
+        var existingKey = _storage.GetById(id);
+        if (existingKey == null)
         {
             return NotFound();
         }
 
+        _storage.Update(key);
         return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteKey(Guid id)
+    public IActionResult Delete(Guid id)
     {
-        var result = await _keyService.DeleteKeyAsync(id);
-        if (!result)
+        var key = _storage.GetById(id);
+        if (key == null)
         {
             return NotFound();
         }
 
+        _storage.Delete(id);
         return NoContent();
     }
 
-    [HttpPost("{keyId}/assign/{personId}")]
-    public async Task<IActionResult> AssignKeyToPerson(Guid keyId, Guid personId)
+    [HttpGet("person/{personId}")]
+    public ActionResult<IEnumerable<Key>> GetByPerson(Guid personId)
     {
-        var result = await _keyService.AssignKeyToPersonAsync(keyId, personId);
-        if (!result)
+        return Ok(_storage.GetByPerson(personId));
+    }
+
+    [HttpPost("{keyId}/assign/{personId}")]
+    public IActionResult AssignKey(Guid keyId, Guid personId)
+    {
+        var key = _storage.GetById(keyId);
+        if (key == null)
         {
-            return NotFound();
+            return NotFound("Key not found");
         }
 
+        var person = _personStorage.GetById(personId);
+        if (person == null)
+        {
+            return NotFound("Person not found");
+        }
+
+        _storage.AssignToPerson(keyId, personId);
         return NoContent();
     }
 
     [HttpPost("{keyId}/deactivate")]
-    public async Task<IActionResult> DeactivateKey(Guid keyId, [FromBody] KeyStatus status)
+    public IActionResult DeactivateKey(Guid keyId, [FromBody] KeyStatus status)
     {
-        var result = await _keyService.DeactivateKeyAsync(keyId, status);
-        if (!result)
+        var key = _storage.GetById(keyId);
+        if (key == null)
         {
             return NotFound();
         }
 
+        _storage.Deactivate(keyId, status);
         return NoContent();
     }
-} 
+}

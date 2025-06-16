@@ -62,7 +62,7 @@ public class AtlasPlotter
         var plantUmlText = GeneratePlantUml();
 
         // Convert to UTF-8 bytes
-        byte[] bytes = Encoding.UTF8.GetBytes(plantUmlText);
+        var bytes = Encoding.UTF8.GetBytes(plantUmlText);
 
         // Compress using DEFLATE
         using var output = new MemoryStream();
@@ -72,7 +72,7 @@ public class AtlasPlotter
         }
 
         // Convert to custom PlantUML Base64
-        string base64 = Encode64(output.ToArray());
+        var base64 = Encode64(output.ToArray());
 
         return $"https://www.plantuml.com/plantuml/uml/{base64}";
     }
@@ -107,12 +107,12 @@ public class AtlasPlotter
 
     private static string Append3Bytes(byte b1, byte b2, byte b3)
     {
-        byte c1 = (byte)(b1 >> 2);
-        byte c2 = (byte)(((b1 & 0x3) << 4) | (b2 >> 4));
-        byte c3 = (byte)(((b2 & 0xF) << 2) | (b3 >> 6));
-        byte c4 = (byte)(b3 & 0x3F);
+        var c1 = (byte)(b1 >> 2);
+        var c2 = (byte)(((b1 & 0x3) << 4) | (b2 >> 4));
+        var c3 = (byte)(((b2 & 0xF) << 2) | (b3 >> 6));
+        var c4 = (byte)(b3 & 0x3F);
 
-        StringBuilder r = new StringBuilder();
+        var r = new StringBuilder();
         r.Append(Encode6Bit((byte)(c1 & 0x3F)));
         r.Append(Encode6Bit((byte)(c2 & 0x3F)));
         r.Append(Encode6Bit((byte)(c3 & 0x3F)));
@@ -122,9 +122,9 @@ public class AtlasPlotter
 
     private static string Encode64(byte[] data)
     {
-        StringBuilder str = new StringBuilder();
-        int len = data.Length;
-        for (int i = 0; i < len; i += 3)
+        var str = new StringBuilder();
+        var len = data.Length;
+        for (var i = 0; i < len; i += 3)
         {
             if (i + 2 == len)
             {

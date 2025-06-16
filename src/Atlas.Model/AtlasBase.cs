@@ -1,8 +1,14 @@
-﻿namespace SevenSeals.Tss.Atlas;
+﻿using SevenSeals.Tss.Shared;
 
-public abstract class AtlasBase
+namespace SevenSeals.Tss.Atlas;
+
+public abstract class AtlasBase: IItem<Guid>
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;
     public string Hint { get; set; } = string.Empty;
+    public Guid GetId()
+    {
+        return Id;
+    }
 }

@@ -20,7 +20,7 @@ public class SpotHub : HubBase<string, Contour>
         public string message{ get; set; }
     }
 
-    public List<Evt> Events { get; } = new List<Evt>();
+    public List<Evt> Events { get; } = new();
 
     public void OnEvent(Contour contour, byte[] buf)
     {

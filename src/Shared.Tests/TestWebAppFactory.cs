@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +10,6 @@ namespace Shared.Tests;
 
 public abstract class TestWebAppFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
 {
-
     protected override IHostBuilder CreateHostBuilder()
     {
         return Host.CreateDefaultBuilder()

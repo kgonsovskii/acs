@@ -5,7 +5,7 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 
-public class EventQueue : Database, IHostedService, IDisposable
+public class EventQueue : IHostedService, IDisposable
 {
     private readonly ConcurrentQueue<Event> _queue = new();
     private readonly CancellationTokenSource _cts = new();
@@ -16,21 +16,21 @@ public class EventQueue : Database, IHostedService, IDisposable
 
     private readonly object _lock = new();
 
-    public EventQueue(Settings settings, AppState state): base(settings)
+    public EventQueue(Settings settings, AppState state): base()
     {
         _state = state;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        Load();
-        _ = Task.Run(SenderLoopAsync, cancellationToken);
+      //  Load();
+       // _ = Task.Run(SenderLoopAsync, cancellationToken);
         await Task.CompletedTask;
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        Save();
+     //   Save();
         await _cts.CancelAsync();
     }
 
@@ -40,18 +40,18 @@ public class EventQueue : Database, IHostedService, IDisposable
         _cts.Dispose();
     }
 
-    protected override void Initialize()
+/*    protected override void Initialize()
     {
-        Execute(@"
+       /* Execute(@"
 
 CREATE TABLE IF NOT EXISTS ControllerEventQueue (
     ch TEXT,
     t2 TIMESTAMP,
     evt TEXT
 
-);");
+);");*/
     }
-
+/*
     public void Push(Event evt)
     {
         lock (_lock)
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
 
     private void Save()
     {
-        lock (_lock)
+    /*    lock (_lock)
         {
             if (_queue.IsEmpty) return;
 
@@ -102,12 +102,12 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
                 }
             }
             tx.Commit();
-        }
-    }
+        }*/
+/*   }
 
     private void Load()
     {
-        lock (_lock)
+     /*   lock (_lock)
         {
             using var cmd = Connection.CreateCommand();
             cmd.CommandText = "SELECT ch, t2, evt FROM ControllerEventQueue";
@@ -122,8 +122,8 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
             }
             Execute("DROP TABLE IF EXISTS ControllerEventQueue");
             Execute("VACUUM");
-        }
-    }
+        }*/
+/*    }
 
 
     private async Task SenderLoopAsync()
@@ -172,5 +172,4 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
         }
 
         return null;
-    }
-}
+    }*/
