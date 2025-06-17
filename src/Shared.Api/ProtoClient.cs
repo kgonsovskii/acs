@@ -7,7 +7,12 @@ using Microsoft.Extensions.Options;
 
 namespace SevenSeals.Tss.Shared;
 
-public abstract class ProtoClient : ProtoClient<ClientOptions>
+public interface IProtoClient: IDisposable
+{
+
+}
+
+public abstract class ProtoClient : ProtoClient<ClientOptions>, IProtoClient
 {
     public ProtoClient(HttpClient httpClient, Settings settings, IOptions<ClientOptions> options, ILogger<ProtoClient<ClientOptions>> logger) : base(httpClient, settings, options, logger)
     {
@@ -22,7 +27,11 @@ public abstract class ProtoClient : ProtoClient<ClientOptions>
     }
 }
 
-public abstract class ProtoClient<TOptions>: IDisposable where TOptions : ClientOptions
+public interface IProtoClient<TOptions> : IDisposable where TOptions : ClientOptions
+{
+}
+
+public abstract class ProtoClient<TOptions>: IProtoClient<TOptions>, IDisposable where TOptions : ClientOptions
 {
     protected virtual string Route =>  GetType().Name.Replace("Client", "");
 
@@ -79,6 +88,16 @@ public abstract class ProtoClient<TOptions>: IDisposable where TOptions : Client
         return await HandleResponse<TResponse>(response);
     }
 
+    protected async Task<IMany<TResponse>> GetManyAsync<TResponse>(string action)  where TResponse : IProtoResponse
+    {
+        var url = BuildUrl(action);
+        Log($"GET {url}");
+
+        var response = await _httpClient.GetAsync(url);
+        var result = await HandleResponse<Many<TResponse>>(response);
+        return result;
+    }
+
     protected async Task<TResponse> PostAsync<TRequest, TResponse>(string action, TRequest request)
         where TRequest : IProtoRequest where TResponse : IProtoResponse
     {
@@ -109,6 +128,7 @@ public abstract class ProtoClient<TOptions>: IDisposable where TOptions : Client
     private async Task<TResponse> RequestAsync<TRequest, TResponse>(string verb, string action, TRequest request)
         where TRequest : IProtoRequest where TResponse : IProtoResponse
     {
+        request.Headers = new ProtoHeader();
         var url = BuildUrlFromRequest(action, request);
         var traceId = Guid.NewGuid().ToString();
         var hash = request.GetProtoHash();
@@ -118,7 +138,7 @@ public abstract class ProtoClient<TOptions>: IDisposable where TOptions : Client
 
         content.Headers.Add(ProtoHeaders.TraceId, traceId);
         content.Headers.Add(ProtoHeaders.Agent, _agent);
-        content.Headers.Add(ProtoHeaders.Chop, request.Headers.Chop.ToString());
+        content.Headers.Add(ProtoHeaders.Chop, 1.ToString());
         content.Headers.Add(ProtoHeaders.Hash, hash.ToString());
 
         Log($"{verb} {url} BODY: {json}");
@@ -163,11 +183,8 @@ public abstract class ProtoClient<TOptions>: IDisposable where TOptions : Client
 
         response.EnsureSuccessStatusCode();
 
-        var result = JsonSerializer.Deserialize<TResponse>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        }) ?? throw new InvalidOperationException("Response body is null");
-
+        var result = content.Deserialize<TResponse>()!;
+        result.Headers = new ProtoHeader();
         if (response.Headers.TryGetValues(ProtoHeaders.TraceId, out var traceId))
             result.Headers.TraceId = traceId.First();
         if (response.Headers.TryGetValues(ProtoHeaders.Agent, out var agent))

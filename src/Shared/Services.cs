@@ -11,12 +11,8 @@ public static class Services
     {
         if (JsonSerializerOptions == null)
         {
-            JsonSerializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            };
-            JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            JsonSerializerOptions = new JsonSerializerOptions();
+            JsonSerializerOptions.ConfigureJson();
         }
         services.AddSingleton(JsonSerializerOptions);
         return services;
@@ -26,6 +22,7 @@ public static class Services
     {
         jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         jsonSerializerOptions.WriteIndented = true;
+        jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 
         return jsonSerializerOptions;

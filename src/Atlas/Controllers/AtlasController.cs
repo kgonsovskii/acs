@@ -5,7 +5,7 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Atlas.Controllers;
 
-public class AtlasController : ProtoController<AtlasRequestBase, AtlasResponseBase>
+public class AtlasController : ProtoController<Map, Map>
 {
     private readonly IAtlasService _atlasService;
 
@@ -16,13 +16,13 @@ public class AtlasController : ProtoController<AtlasRequestBase, AtlasResponseBa
     }
 
     [HttpGet(nameof(Schema))]
-    public ActionResult<AtlasMap> Schema()
+    public ActionResult<Map> Schema()
     {
         return Ok(_atlasService.Schema());
     }
 
     [HttpPut(nameof(Schema))]
-    public ActionResult Schema(AtlasMap schema)
+    public ActionResult Schema(Map schema)
     {
         _atlasService.Schema(schema);
         return NoContent();

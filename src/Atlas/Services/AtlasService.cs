@@ -4,9 +4,9 @@ namespace SevenSeals.Tss.Atlas.Services;
 
 public interface IAtlasService
 {
-    public AtlasMap Schema();
+    public Map Schema();
 
-    public void Schema(AtlasMap atlasMap);
+    public void Schema(Map map);
 }
 
 public class AtlasService: IAtlasService
@@ -20,19 +20,19 @@ public class AtlasService: IAtlasService
         _zoneStorage = zoneStorage;
     }
 
-    public AtlasMap Schema()
+    public Map Schema()
     {
-        return new AtlasMap()
+        return new Map()
         {
             Zones = _zoneStorage.GetAll().ToList(),
             Transits = _transitStorage.GetAll().ToList()
         };
     }
 
-    public void Schema(AtlasMap atlasMap)
+    public void Schema(Map map)
     {
-        _zoneStorage.SetAll(atlasMap.Zones);
-        _transitStorage.SetAll(atlasMap.Transits);
+        _zoneStorage.SetAll(map.Zones);
+        _transitStorage.SetAll(map.Transits);
     }
 }
 

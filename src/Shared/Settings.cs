@@ -53,6 +53,6 @@ public class Settings
             baseDir = Directory.GetCurrentDirectory();
         }
 
-        return Path.Combine(baseDir, "acs");
+        return Path.Combine(baseDir, ".acs");
     }
 }

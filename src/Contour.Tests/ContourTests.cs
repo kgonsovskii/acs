@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace SevenSeals.Tss.Contour;
 
 [TestClass]
-public class ContourTests: ContourTestsBase<ContourClient>
+public class ContourTests: ContourTestsBase<IContourClient>
 {
     [TestMethod] public async Task Link()
     {

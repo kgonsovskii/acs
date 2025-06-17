@@ -4,9 +4,9 @@ using Shared.Tests;
 namespace SevenSeals.Tss.Atlas;
 
 [TestClass]
-public class ZonesTests : TestStorageBase<ZoneRequest, ZoneResponse, Guid,  ZoneClient, AtlasTestFactory, Startup>
+public class ZonesTests : TestStorageBase<Zone, Zone, Guid,  IZoneClient, AtlasTestFactory, Startup>
 {
-   protected override Guid GetId(ZoneResponse response)
+   protected override Guid GetId(Zone response)
    {
        return response.Id;
    }

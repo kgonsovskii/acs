@@ -5,7 +5,7 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Atlas.Controllers;
 
-public class TransitController : ProtoStorageController<Transit, Guid, ITransitStorage, AtlasRequestBase, AtlasResponseBase>
+public class TransitController : ProtoStorageController<Transit, Guid, ITransitStorage, Transit, Transit>
 {
     [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public TransitController(ITransitStorage storage, Settings settings) : base(storage, settings)

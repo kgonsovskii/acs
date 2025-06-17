@@ -6,9 +6,9 @@ namespace SevenSeals.Tss.Atlas;
 
 public class AtlasPlotter
 {
-    private readonly AtlasMap _map;
+    private readonly Map _map;
 
-    public AtlasPlotter(AtlasMap map)
+    public AtlasPlotter(Map map)
     {
         _map = map;
     }

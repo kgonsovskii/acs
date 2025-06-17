@@ -3,7 +3,21 @@ using Microsoft.Extensions.Options;
 
 namespace SevenSeals.Tss.Shared;
 
-public abstract class ProtoStorageClient<TRequest, TResponse, TId>: ProtoClient where TRequest : IProtoRequest where TResponse : IProtoResponse
+public interface IProtoStorageClient<in TRequest, TResponse, in TId> : IProtoClient
+    where TRequest : IProtoRequest where TResponse : IProtoResponse
+{
+    public Task<IMany<TResponse>> GetAll();
+
+    public Task<TResponse> GetById(TId id);
+
+    public Task<TResponse> Add(TRequest request);
+
+    public Task<TResponse> Update(TId id, TRequest request);
+
+    public Task Delete(TId id);
+}
+
+public abstract class ProtoStorageClient<TRequest, TResponse, TId>: ProtoClient, IProtoStorageClient<TRequest, TResponse, TId> where TRequest : IProtoRequest where TResponse : IProtoResponse
 {
     protected ProtoStorageClient(HttpClient httpClient, Settings settings, IOptions<ClientOptions> options, ILogger<ProtoClient<ClientOptions>> logger) : base(httpClient, settings, options, logger)
     {
@@ -17,10 +31,8 @@ public abstract class ProtoStorageClient<TRequest, TResponse, TId>: ProtoClient 
     {
     }
 
-    public async Task<IEnumerable<TResponse>> GetAll()
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<IMany<TResponse>> GetAll()
+        => await GetManyAsync<TResponse>("");
 
     public async Task<TResponse> GetById(TId id)
         => await GetAsync<TResponse>($"{id}");

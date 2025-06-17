@@ -7,7 +7,7 @@ namespace Shared.Tests;
 
 public abstract class TestStorageBase<TRequest, TResponse, TId, TClient, TFactory, TStartup> : TestBase<TClient, TFactory, TStartup>
 
-    where TClient: ProtoStorageClient<TRequest, TResponse, TId>
+    where TClient: IProtoStorageClient<TRequest, TResponse, TId>
     where TFactory: TestWebAppFactory<TStartup>, new()
     where TStartup: class
     where TRequest: IProtoRequest, new()
@@ -25,7 +25,14 @@ public abstract class TestStorageBase<TRequest, TResponse, TId, TClient, TFactor
     [TestMethod]
     public async Task GetAll()
     {
+        using var client = OpenClient();
+        var request = CreateRequest();
+        var response = await client.Add(request);
+        var id = GetId(response);
 
+        var all = await client.GetAll();
+        var added = all.FirstOrDefault(a => GetId(a).Equals(id))!;
+        GetId(added).Should().Be(id);
     }
 
     [TestMethod]
@@ -43,9 +50,8 @@ public abstract class TestStorageBase<TRequest, TResponse, TId, TClient, TFactor
     {
         using var client = OpenClient();
         var request = CreateRequest();
-       // var response = await client.Add(request);
-        //var id = GetId(response);
-        var id = HashExtensions.NewId<TId>("63655943-a024-4488-85a9-b12ddd64fc5a");
+        var response = await client.Add(request);
+        var id = GetId(response);
         var updateResponse = await client.Update(id, request);
         updateResponse.Should().NotBeNull();
         var id2 = GetId(updateResponse);
@@ -55,5 +61,10 @@ public abstract class TestStorageBase<TRequest, TResponse, TId, TClient, TFactor
     [TestMethod]
     public virtual async Task Delete()
     {
+        using var client = OpenClient();
+        var request = CreateRequest();
+        var response = await client.Add(request);
+        var id = GetId(response);
+        await client.Delete(id);
     }
 }

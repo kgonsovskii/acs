@@ -4,7 +4,7 @@ namespace SevenSeals.Tss.Shared;
 
 public interface IProto
 {
-    public ProtoHeader Headers { get; set; }
+    [JsonIgnore] public ProtoHeader Headers { get; set; }
 }
 
 public interface IProtoRequest: IProto
@@ -30,6 +30,18 @@ public class ProtoResponse: Proto, IProtoResponse
 {
 
 }
+
+public interface IMany<T> : IEnumerable<T>, IProtoResponse
+{
+
+}
+
+public class Many<T> : List<T>, IMany<T>
+{
+    public ProtoHeader Headers { get; set; }
+}
+
+
 
 public class ProtoHeader
 {

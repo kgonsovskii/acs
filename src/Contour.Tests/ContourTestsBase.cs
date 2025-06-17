@@ -7,7 +7,7 @@ using Shared.Tests;
 namespace SevenSeals.Tss.Contour;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-public abstract class ContourTestsBase<TClient>: TestBase<TClient, ContourTestFactory, Startup> where TClient : ProtoClient
+public abstract class ContourTestsBase<TClient>: TestBase<TClient, ContourTestFactory, Startup> where TClient : IProtoClient
 {
     protected readonly ContourMap ContourMap;
 

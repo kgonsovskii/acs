@@ -15,7 +15,7 @@ protected void Log(string message)
 }
 
 public abstract class TestBase<TClient, TFactory, TStartup> : TestBase
-    where TClient: ProtoClient
+    where TClient: IProtoClient
     where TFactory: TestWebAppFactory<TStartup>, new()
     where TStartup: class
 {

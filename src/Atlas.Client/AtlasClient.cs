@@ -5,16 +5,23 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Atlas;
 
-public class AtlasClient: ProtoClient
+public interface IAtlasClient: IProtoClient
+{
+    public Task<Map> Schema();
+
+    public Task Schema(Map schema);
+}
+
+public class AtlasClient: ProtoClient, IAtlasClient
 {
     [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public AtlasClient(HttpClient httpClient, Settings settings, IOptions<AtlasClientOptions> options, ILogger<ProtoClient<ClientOptions>> logger) : base(httpClient, settings, options, logger)
     {
     }
 
-    public async Task<MapResponse> Schema()
-        => await GetAsync<MapResponse>(nameof(Schema));
+    public async Task<Map> Schema()
+        => await GetAsync<Map>(nameof(Schema));
 
-    public async Task Schema(MapRequest schema)
-        => await PutAsync<MapRequest, MapResponse>(nameof(Schema), schema);
+    public async Task Schema(Map schema)
+        => await PutAsync<Map, Map>(nameof(Schema), schema);
 }

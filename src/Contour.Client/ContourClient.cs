@@ -1,11 +1,26 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 
-public class ContourClient: ProtoClient
+public interface IContourClient: IProtoClient
 {
+    public Task<StateResponse> State(StateRequest request);
+
+    public Task<EventsResponse> Events(EventsRequest request);
+
+    public Task<SpotResponse> Link(SpotRequest request);
+
+    public Task<SpotResponse> RelayOn(RelayOnRequest request);
+
+    public Task<SpotResponse> RelayOff(RelayOffRequest request);
+}
+
+public class ContourClient: ProtoClient, IContourClient
+{
+    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public ContourClient(HttpClient httpClient, Settings settings, IOptions<ContourClientOptions> options, ILogger<ContourClient> logger) : base(httpClient, settings, options, logger)
     {
 

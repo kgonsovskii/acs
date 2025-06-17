@@ -5,7 +5,12 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Atlas;
 
-public class ZoneClient : ProtoStorageClient<ZoneRequest, ZoneResponse, Guid>
+public interface IZoneClient: IProtoStorageClient<Zone, Zone, Guid>
+{
+
+}
+
+public class ZoneClient : ProtoStorageClient<Zone, Zone, Guid>, IZoneClient
 {
     [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public ZoneClient(HttpClient httpClient, Settings settings, IOptions<AtlasClientOptions> options, ILogger<TransitClient> logger) : base(httpClient, settings, options, logger)

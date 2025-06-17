@@ -44,7 +44,7 @@ public abstract class ProtoStorageController<TItem, TId, TStorage, TRequest, TRe
     }
 
     [HttpPut("{id}")]
-    public virtual IActionResult Update([FromRoute] TId id, [FromBody] TItem item)
+    public virtual ActionResult<TItem> Update([FromRoute] TId id, [FromBody] TItem item)
     {
         var existingItem = Storage.GetById(id);
         if (existingItem == null)
@@ -53,7 +53,7 @@ public abstract class ProtoStorageController<TItem, TId, TStorage, TRequest, TRe
         }
 
         Storage.Update(id, item);
-        return NoContent();
+        return GetById(id);
     }
 
     [HttpDelete("{id}")]
