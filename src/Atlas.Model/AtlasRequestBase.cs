@@ -2,10 +2,10 @@
 
 namespace SevenSeals.Tss.Atlas;
 
-public abstract class AtlasRequestBase: RequestBase
+public abstract class AtlasRequestBase: ProtoRequest
 {
 }
 
-public abstract class AtlasResponseBase: ResponseBase
+public abstract class AtlasResponseBase: ProtoResponse
 {
 }

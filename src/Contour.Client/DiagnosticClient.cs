@@ -5,9 +5,9 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 
-public class DiagnosticClient: ContourBaseClient
+public class DiagnosticClient: ProtoClient
 {
-    public DiagnosticClient(HttpClient httpClient, Settings settings, IOptions<ContourClientOptions> options, ILogger<ContourBaseClient> logger) : base(httpClient, settings, options, logger)
+    public DiagnosticClient(HttpClient httpClient, Settings settings, IOptions<ContourClientOptions> options, ILogger<DiagnosticClient> logger) : base(httpClient, settings, options, logger)
     {
     }
 

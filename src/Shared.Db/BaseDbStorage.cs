@@ -5,7 +5,7 @@ using Npgsql;
 
 namespace SevenSeals.Tss.Shared;
 
-public class BaseDbStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId>  where TItem : IItem<TId>
+internal class BaseDbStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId>  where TItem : IItem<TId>
 {
     [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public BaseDbStorage(Settings settings, ILogger logger) : base(settings, logger)
@@ -45,7 +45,7 @@ public class BaseDbStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId
         throw new NotImplementedException();
     }
 
-    public virtual void Update(TItem item)
+    public virtual void Update(TId id, TItem item)
     {
         throw new NotImplementedException();
     }

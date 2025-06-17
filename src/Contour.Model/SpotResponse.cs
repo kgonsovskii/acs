@@ -2,7 +2,7 @@
 
 namespace SevenSeals.Tss.Contour;
 
-public class SpotResponse : ResponseBase
+public class SpotResponse : ProtoResponse
 {
     /// <summary>
     /// The unique identifier for the current or reused session.

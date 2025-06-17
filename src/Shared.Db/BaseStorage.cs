@@ -21,7 +21,7 @@ public interface IBaseStorage<TItem, in TId> where TItem : IItem<TId>
     public void SetAll(IEnumerable<TItem> all);
     public TItem? GetById(TId id);
     public void Create(TItem item);
-    public void Update(TItem item);
+    public void Update(TId id, TItem item);
     public void Delete(TId id);
 }
 
@@ -56,12 +56,16 @@ public class BaseStorage<TItem, TId> : BaseStorageBase, IBaseStorage<TItem, TId>
 
     public virtual void Create(TItem item)
     {
+        item.Id = HashExtensions.NewId<TId>();
         _storage.Create(item);
     }
 
-    public virtual void Update(TItem item)
+    public virtual void Update(TId id, TItem item)
     {
-        _storage.Update(item);
+        item.Id = id;
+        var existingItem = _storage.GetById(id)!;
+        existingItem.AssignFrom(item);
+        _storage.Update(id, existingItem);
     }
 
     public virtual void Delete(TId id)

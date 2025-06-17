@@ -1,9 +1,37 @@
-﻿using System.Reflection;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace SevenSeals.Tss.Shared;
 
-public abstract class Proto
+public interface IProto
+{
+    public ProtoHeader Headers { get; set; }
+}
+
+public interface IProtoRequest: IProto
+{
+}
+
+public interface IProtoResponse: IProto
+{
+}
+
+public abstract class Proto: IProto
+{
+    [JsonIgnore] public ProtoHeader Headers { get; set; } = new ProtoHeader();
+}
+
+
+public class ProtoRequest: Proto, IProtoRequest
+{
+
+}
+
+public class ProtoResponse: Proto, IProtoResponse
+{
+
+}
+
+public class ProtoHeader
 {
     /// <summary>
     /// Trace identifier for correlating requests.
@@ -21,26 +49,9 @@ public abstract class Proto
     public int Chop { get; set; } = 1;
 
     [JsonIgnore]
-    public virtual int Hash { get; set; } = 0;
+    public int Hash { get; set; } = 0;
 
-    public virtual int GetHash()
-    {
-        var obj = this;
-        if (obj == null)
-            throw new ArgumentNullException(nameof(obj));
-
-        var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(p => p.Name != nameof(Hash) && p.CanRead && !p.GetCustomAttributes<JsonIgnoreAttribute>().Any());
-
-        unchecked
-        {
-            var hash = 17;
-            foreach (var prop in properties)
-            {
-                var value = prop.GetValue(obj);
-                hash = hash * 31 + (value?.GetHashCode() ?? 0);
-            }
-            return hash;
-        }
-    }
+    [JsonIgnore]
+    public long TimeStamp { get; set; }
 }
+

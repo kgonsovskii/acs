@@ -8,7 +8,7 @@ public class AppHost : IHostedService
 {
     private readonly EventQueue _eventQueue;
 
-    private readonly EventLog _eventLog;
+    private readonly IEventLogStorage _eventLog;
 
     private readonly ChannelHub _channels;
 
@@ -19,7 +19,7 @@ public class AppHost : IHostedService
     private readonly Settings _settings;
     private readonly AppState _appState;
 
-    public AppHost(Settings settings, AppState appState, EventQueue eventQueue, EventLog eventLog, ChannelHub channelHub,ILogger<AppHost> logger)
+    public AppHost(Settings settings, AppState appState, EventQueue eventQueue, IEventLogStorage eventLog, ChannelHub channelHub,ILogger<AppHost> logger)
     {
         _appState = appState;
         _eventQueue = eventQueue;

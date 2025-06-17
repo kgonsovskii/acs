@@ -10,7 +10,8 @@ public static class Services
     {
         services.ConfigureClientOptions<AtlasClientOptions>(configuration);
         services.AddScoped<AtlasClient>();
-
+        services.AddScoped<TransitClient>();
+        services.AddScoped<ZoneClient>();
         return services;
     }
 }

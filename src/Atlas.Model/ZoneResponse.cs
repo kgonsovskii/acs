@@ -1,7 +1,5 @@
-using SevenSeals.Tss.Shared;
-
 namespace SevenSeals.Tss.Atlas;
-public class ZoneResponse : ResponseBase
+public class ZoneResponse : AtlasResponseBase
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;

@@ -2,5 +2,5 @@
 
 public interface IItem<TId>
 {
-    public TId Id {get;}
+    public TId Id {get; set; }
 }

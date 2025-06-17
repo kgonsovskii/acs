@@ -5,7 +5,7 @@ using SevenSeals.Tss.Shared;
 namespace SevenSeals.Tss.Contour;
 
 [KnownType(typeof(ChannelOptions))]
-public abstract class ChannelRequest: RequestBase
+public abstract class ChannelRequest: ProtoRequest
 {
     [JsonConverter(typeof(ChannelOptionsJsonConverter))]
     public ChannelOptions Options { get; set; }

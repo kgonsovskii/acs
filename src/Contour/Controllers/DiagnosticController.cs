@@ -21,7 +21,7 @@ public class DiagnosticController: BaseController
     public async Task<ActionResult<SpotResponse>> MainClient([FromBody] MainClientRequest request)
     {
         var spot = await _spotHub.GetSpot(request);
-        return Ok(spot, request, null);
+        return OkSpot(spot, request, null);
     }
 
     [HttpPost(nameof(ProgId))]
@@ -36,7 +36,7 @@ public class DiagnosticController: BaseController
             Name = nameof(ProgId),
             Value = spot.ProgId.ToString()
         };
-        return Ok(spot, request, response);
+        return OkSpot(spot, request, response);
     }
 
     [HttpPost(nameof(ProgVer))]
@@ -51,7 +51,7 @@ public class DiagnosticController: BaseController
             Name = nameof(ProgVer),
             Value = spot.ProgVer.ToString()
         };
-        return Ok(spot, request, response);
+        return OkSpot(spot, request, response);
     }
 
     [HttpPost(nameof(SerNum))]
@@ -66,6 +66,6 @@ public class DiagnosticController: BaseController
             Name = nameof(SerNum),
             Value = spot.SerNum.ToString()
         };
-        return Ok(spot, request, response);
+        return OkSpot(spot, request, response);
     }
 }

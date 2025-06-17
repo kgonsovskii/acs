@@ -5,8 +5,6 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Atlas.Controllers;
 
-[ApiController]
-[Route("api/atlas/[controller]")]
 public class ZoneController : ProtoStorageController<Zone, Guid, IZoneStorage, AtlasRequestBase, AtlasResponseBase>
 {
     [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]

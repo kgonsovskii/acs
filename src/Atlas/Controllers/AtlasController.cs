@@ -5,8 +5,6 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Atlas.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
 public class AtlasController : ProtoController<AtlasRequestBase, AtlasResponseBase>
 {
     private readonly IAtlasService _atlasService;

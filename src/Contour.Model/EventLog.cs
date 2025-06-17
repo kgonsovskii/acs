@@ -19,5 +19,5 @@ public class EventLog: IItem<int>
         ControllerTimestamp = new byte[6];
     }
 
-    public int Id { get; }
+    public int Id { get; set; }
 }

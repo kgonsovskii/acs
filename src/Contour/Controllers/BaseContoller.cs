@@ -3,18 +3,18 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour.Controllers;
 
-public class BaseController: ProtoController<SpotRequest, SpotResponse>
+public class BaseController: ProtoController<IProtoRequest, IProtoResponse>
 {
     public BaseController(Settings settings) : base(settings)
     {
     }
 
-    protected OkObjectResult Ok(Contour contour, SpotRequest request, SpotResponse? response)
+    protected OkObjectResult OkSpot(Contour contour, SpotRequest request, SpotResponse? response)
     {
         response ??= new SpotResponse()
         {
             SessionId = contour.Channel.Id
         };
-        return base.Ok(request, response);
+        return base.OkProto(request, response);
     }
 }

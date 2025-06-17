@@ -2,15 +2,15 @@
 
 namespace SevenSeals.Tss.Shared;
 
-public abstract class ProtoController: ProtoController<RequestBase, ResponseBase>
+public abstract class ProtoController: ProtoController<IProtoRequest, IProtoResponse>
 {
     protected ProtoController(Settings settings) : base(settings)
     {
     }
 }
 
-[ApiController][Route("api/[controller]")]
-public abstract class ProtoController<TRequest, TResponse>: ControllerBase where TRequest : RequestBase where TResponse : ResponseBase
+[ApiController] [Route("api/[controller]")]
+public abstract class ProtoController<TRequest, TResponse>: ControllerBase where TRequest : IProtoRequest where TResponse : IProtoResponse
 {
     protected Settings Settings { get; }
     protected  ProtoController(Settings settings)
@@ -18,22 +18,17 @@ public abstract class ProtoController<TRequest, TResponse>: ControllerBase where
         Settings = settings;
     }
 
-    protected virtual OkObjectResult Ok(TRequest request, TResponse response)
+    protected OkObjectResult OkProto(TRequest request, TResponse response)
     {
-        return OkBase(request, response);
-    }
-
-    protected OkObjectResult OkBase(RequestBase request, ResponseBase response)
-    {
-        var newHash = request.GetHash();
+        //var newHash = request.GetHash();
         // if (!Settings.IsDevelopment && newHash != request.Hash)
         // {
         //     throw new ApiException($"Invalid request hash on  server side, TraceId: {request.TraceId}");
         // }
-        response.Agent = Settings.Agent;
-        response.TraceId = request.TraceId;
-        response.TimeStamp = DateTime.UtcNow.Ticks;
-        response.Hash = response.GetHash();
+        response.Headers.Agent = Settings.Agent;
+        response.Headers.TraceId = request.Headers.TraceId;
+        response.Headers.TimeStamp = DateTime.UtcNow.Ticks;
+        response.Headers.Hash = response.GetProtoHash();
         return base.Ok(response);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace SevenSeals.Tss.Shared;
 
-public class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId> where TItem : IItem<TId>
+internal class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId> where TItem : IItem<TId>
 {
     public BaseJsonStorage(Settings settings, ILogger logger) : base(settings, logger)
     {
@@ -65,10 +65,10 @@ public class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, T
         SaveData();
     }
 
-    public virtual void Update(TItem item)
+    public virtual void Update(TId id, TItem item)
     {
         LoadData();
-        var index = Items.IndexOf(item);
+        var index = Items.FindIndex(x => x.Id!.Equals(id));
         Items[index] = item;
         SaveData();
     }

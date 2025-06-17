@@ -2,7 +2,7 @@
 
 namespace SevenSeals.Tss.Contour;
 
-public class EventsRequest: RequestBase
+public class EventsRequest: ProtoRequest
 {
 
 }

@@ -33,7 +33,7 @@ public class ContourController : BaseController
     public async Task<ActionResult<SpotResponse>> Link([FromBody] SpotRequest request)
     {
         var spot = await _spotHub.GetSpot(request, true);
-        return Ok(spot, request, null);
+        return OkSpot(spot, request, null);
     }
 
     [HttpPost(nameof(RelayOn))]
@@ -44,7 +44,7 @@ public class ContourController : BaseController
     {
         var spot = await _spotHub.GetSpot(request);
         spot.RelayOn(request.RelayPort, request.Interval, request.SuppressDoorEvent);
-        return Ok(spot, request, null);
+        return OkSpot(spot, request, null);
     }
 
     [HttpPost(nameof(RelayOff))]
@@ -55,7 +55,7 @@ public class ContourController : BaseController
     {
         var spot = await _spotHub.GetSpot(request);
         spot.RelayOff(request.RelayPort);
-        return Ok(spot, request, null);
+        return OkSpot(spot, request, null);
     }
 
     [HttpPost(nameof(State))]
@@ -68,7 +68,7 @@ public class ContourController : BaseController
         {
             State = _snapshot.State
         };
-        return OkBase(request, response);
+        return OkProto(request, response);
     }
 
     [HttpPost(nameof(Events))]
@@ -82,6 +82,6 @@ public class ContourController : BaseController
             Events = _snapshot.Events
         };
         _snapshot.Clean();
-        return OkBase(request, response);
+        return OkProto(request, response);
     }
 }

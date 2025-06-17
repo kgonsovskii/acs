@@ -1,4 +1,3 @@
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -24,8 +23,7 @@ public class ProtoSwaggerFilter : IOperationFilter
             }
         });
 
-        // Add Proto headers as parameters
-        operation.Parameters.Add(new OpenApiParameter
+        /*operation.Parameters.Add(new OpenApiParameter
         {
             Name = ProtoHeaders.TraceId,
             In = ParameterLocation.Header,
@@ -59,6 +57,6 @@ public class ProtoSwaggerFilter : IOperationFilter
             Description = "Hash value for request validation",
             Required = false,
             Schema = new OpenApiSchema { Type = "integer", Default = new OpenApiInteger(0) }
-        });
+        });*/
     }
 }
