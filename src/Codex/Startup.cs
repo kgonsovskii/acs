@@ -1,25 +1,27 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SevenSeals.Tss.Codex.Services;
+using SevenSeals.Tss.Codex.Storage;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SevenSeals.Tss.Codex;
 
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class Startup: Shared.StartupBase<Startup>
 {
+    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public Startup(IConfiguration configuration) : base(configuration)
     {
     }
 
     protected override IServiceCollection ConfigureServicesInternal(IServiceCollection services)
     {
-        services.AddScoped<ITimeZoneService, TimeZoneService>();
-        services.AddScoped<IRouteService, RouteService>();
-        services.AddScoped<IAccessLevelService, AccessLevelService>();
+        services.AddSingleton<ITimeZoneStorage, TimeZoneStorage>();
+        services.AddSingleton<IRouteStorage, RouteStorage>();
         return services;
     }
 

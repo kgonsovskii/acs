@@ -9,7 +9,6 @@ public static class Services
     public static IServiceCollection AddCodexClient(this IServiceCollection services, IConfiguration configuration)
     {
         services.ConfigureClientOptions<CodexClientOptions>(configuration);
-        services.AddScoped<CodexClient>();
         return services;
     }
 }

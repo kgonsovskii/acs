@@ -2,10 +2,7 @@
 
 namespace SevenSeals.Tss.Atlas;
 
-public abstract class AtlasBase: IItem<Guid>, IProtoRequest, IProtoResponse
+public abstract class AtlasBase: StructuralItem<Guid>, IProtoRequest, IProtoResponse
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Hint { get; set; } = string.Empty;
     public ProtoHeader Headers { get; set; }
 }

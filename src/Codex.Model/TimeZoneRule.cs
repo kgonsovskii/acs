@@ -6,6 +6,4 @@ public class TimeZoneRule : CodexBase
     public TimeSpan StartTime { get; set; }
     public TimeSpan EndTime { get; set; }
     public bool IsActive { get; set; } = true;
-    public List<Guid> AllowedAccessLevels { get; set; } = new();
-    public List<Guid> ExcludedAccessLevels { get; set; } = new();
-} 
+}

@@ -6,12 +6,16 @@
   </PropertyGroup>
 
     <ItemGroup>
-      <None Update="appsettings.json">
+      <None Update="appsettings.codex.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="appsettings.codex.Development.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Codex.Model\Codex.Model.csproj" />
       <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
       <ProjectReference Include="..\Shared.App\Shared.App.csproj" />
       <ProjectReference Include="..\Shared\Shared.csproj" />

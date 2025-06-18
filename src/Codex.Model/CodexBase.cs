@@ -1,8 +1,8 @@
+using SevenSeals.Tss.Shared;
+
 namespace SevenSeals.Tss.Codex;
 
-public abstract class CodexBase
+public abstract class CodexBase: StructuralItem<Guid>, IProtoRequest, IProtoResponse
 {
-    public Guid Id { get; set; }
-    public string? Name { get; set; }
-    public string? Hint { get; set; }
-} 
+    public required ProtoHeader Headers { get; set; }
+}

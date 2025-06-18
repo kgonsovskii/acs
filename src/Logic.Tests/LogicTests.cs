@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Logic.Tests;
+namespace SevenSeals.Tss.Logic;
 
 [TestClass]
 public class LogicTests
