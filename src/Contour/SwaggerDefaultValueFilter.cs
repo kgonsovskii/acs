@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -14,6 +15,7 @@ public class ContourSwaggerDefaultValueFilter : ISchemaFilter
 
     private readonly ContourMap? _map;
 
+    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public ContourSwaggerDefaultValueFilter(Settings settings, IServiceProvider serviceProvider)
     {
         _settings = settings;
