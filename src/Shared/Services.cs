@@ -21,6 +21,7 @@ public static class Services
     public static JsonSerializerOptions ConfigureJson(this JsonSerializerOptions jsonSerializerOptions)
     {
         jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        jsonSerializerOptions.PropertyNameCaseInsensitive = true;
         jsonSerializerOptions.WriteIndented = true;
         jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
         jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));

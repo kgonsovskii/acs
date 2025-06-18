@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SevenSeals.Tss.Shared;
+﻿using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Chronicle.Controllers;
 

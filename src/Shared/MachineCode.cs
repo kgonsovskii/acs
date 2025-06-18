@@ -56,16 +56,19 @@ public static class MachineCode
         {
             return null;
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            var path = "/sys/class/dmi/id/product_serial";
-            if (File.Exists(path))
+            const string path = "/sys/class/dmi/id/product_serial";
+            if (!File.Exists(path))
+                return null;
+            try
             {
-                try
-                {
-                    return File.ReadAllText(path).Trim();
-                }
-                catch { }
+                return File.ReadAllText(path).Trim();
+            }
+            catch
+            {
+                // ignored
             }
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
@@ -78,17 +81,18 @@ public static class MachineCode
 
     private static string? GetMotherboardSerialNumber()
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            return null;
+        const string path = "/sys/class/dmi/id/board_serial";
+
+        if (!File.Exists(path)) return null;
+        try
         {
-            var path = "/sys/class/dmi/id/board_serial";
-            if (File.Exists(path))
-            {
-                try
-                {
-                    return File.ReadAllText(path).Trim();
-                }
-                catch { }
-            }
+            return File.ReadAllText(path).Trim();
+        }
+        catch
+        {
+            // ignored
         }
         return null;
     }
@@ -97,7 +101,7 @@ public static class MachineCode
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            string[] paths = { "/etc/machine-id", "/var/lib/dbus/machine-id" };
+            string[] paths = ["/etc/machine-id", "/var/lib/dbus/machine-id"];
             foreach (var path in paths)
             {
                 if (File.Exists(path))
@@ -108,26 +112,25 @@ public static class MachineCode
                         if (!string.IsNullOrEmpty(id))
                             return id;
                     }
-                    catch { }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
             }
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             try
             {
                 return Environment.MachineName;
             }
-            catch { }
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            try
+            catch
             {
-                return Environment.MachineName;
+                // ignored
             }
-            catch { }
         }
+
         return null;
     }
 }

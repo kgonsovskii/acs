@@ -6,10 +6,10 @@
   </PropertyGroup>
 
     <ItemGroup>
-      <None Update="appsettings.atlas.json">
+      <None Update="appsettings.Atlas.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="appsettings.atlas.Development.json">
+      <None Update="appsettings.Atlas.Development.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
@@ -33,6 +33,10 @@
 
     <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="appsettings.base.json" />
     </ItemGroup>
 
 </Project>

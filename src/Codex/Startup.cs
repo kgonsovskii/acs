@@ -13,7 +13,6 @@ namespace SevenSeals.Tss.Codex;
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class Startup: Shared.StartupBase<Startup>
 {
-    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public Startup(IConfiguration configuration) : base(configuration)
     {
     }

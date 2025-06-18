@@ -1,10 +1,15 @@
-﻿namespace SevenSeals.Tss.Atlas;
+﻿using Infra.Db;
 
+namespace SevenSeals.Tss.Atlas;
+
+[DbTable]
 public class Zone:AtlasBase
 {
-    public ZoneTypeEnum Type { get; set; }
+    [DbEnumTable]
+    public ZoneType Type { get; set; }
 
     public Guid? ParentId { get; set; }
 
-    public List<Zone> Children { get; set; } = new();
+    [DbChildTable]
+    public List<Zone> Children { get; set; } = [];
 }

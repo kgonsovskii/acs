@@ -1,6 +1,5 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Shared.Tests;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Actor;
 

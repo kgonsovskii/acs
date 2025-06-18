@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
+﻿using System.Text.Json;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,7 +14,6 @@ namespace SevenSeals.Tss.Atlas;
 [UsedImplicitly]
 public class Startup : Shared.StartupBase<Startup>
 {
-    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public Startup(IConfiguration configuration) : base(configuration)
     {
     }

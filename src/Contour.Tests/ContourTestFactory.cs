@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Tests;
+using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 

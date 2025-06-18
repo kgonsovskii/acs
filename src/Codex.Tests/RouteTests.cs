@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Shared.Tests;
+using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Codex;
 

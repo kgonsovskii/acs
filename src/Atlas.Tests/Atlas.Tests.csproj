@@ -18,13 +18,17 @@
     <ProjectReference Include="..\Atlas.Client\Atlas.Client.csproj" />
     <ProjectReference Include="..\Atlas\Atlas.csproj" />
     <ProjectReference Include="..\Atlas.Model\Atlas.Model.csproj" />
-    <ProjectReference Include="..\Shared.Tests\Shared.Tests.csproj" />
+    <ProjectReference Include="..\Shared.Tests.Base\Shared.Tests.Base.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.atlas.Test.json">
+    <None Update="appsettings.Atlas.Test.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="appsettings.base.json" />
   </ItemGroup>
 
 </Project>

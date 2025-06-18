@@ -1,32 +1,26 @@
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using SevenSeals.Tss.Shared;
+using SevenSeals.Tss.Contour.Storage;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SevenSeals.Tss.Contour;
 
 public class ContourSwaggerDefaultValueFilter : ISchemaFilter
 {
-    private readonly Settings _settings;
+    private readonly List<Spot>? _map;
 
-    private readonly ContourMap? _map;
-
-    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
-    public ContourSwaggerDefaultValueFilter(Settings settings, IServiceProvider serviceProvider)
+    public ContourSwaggerDefaultValueFilter(IServiceProvider serviceProvider)
     {
-        _settings = settings;
-        _map = serviceProvider.GetService<IOptions<ContourMap>>()?.Value;
+        _map = serviceProvider.GetRequiredService<ISpotStorage>().GetAll().ToList();
     }
 
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
         if (_map == null)
             return;
-        if (schema?.Properties == null || context.Type == null)
+        if (schema.Properties == null || context.Type == null)
             return;
 
         var properties = context.Type.GetProperties();
@@ -53,13 +47,12 @@ public class ContourSwaggerDefaultValueFilter : ISchemaFilter
         {
             return (propertyName, classType.Name) switch
             {
-                (nameof(IpOptions.Port), _) => _map.Spots.FirstOrDefault(a => a.Options.Type == ChannelType.Ip)?.Options
+                (nameof(IpOptions.Port), _) => _map.FirstOrDefault(a => a.Options.Type == ChannelType.Ip)?.Options
                     .AsIpOptions().Port,
-                (nameof(IpOptions.Host), _) => _map.Spots.FirstOrDefault(a => a.Options.Type == ChannelType.Ip)?.Options
+                (nameof(IpOptions.Host), _) => _map.FirstOrDefault(a => a.Options.Type == ChannelType.Ip)?.Options
                     .AsIpOptions().Host,
-                (nameof(ComPortOptions.PortName), _) => _map.Spots
-                    .FirstOrDefault(a => a.Options.Type == ChannelType.ComPort)?.Options.AsComPortOptions().PortName,
-                ("Address", _) => _map.Spots
+                (nameof(ComPortOptions.PortName), _) => _map.FirstOrDefault(a => a.Options.Type == ChannelType.ComPort)?.Options.AsComPortOptions().PortName,
+                ("Address", _) => _map
                     .FirstOrDefault(a => a.Options.Type == ChannelType.Ip)!.Addresses.First(),
                 _ => null
             };

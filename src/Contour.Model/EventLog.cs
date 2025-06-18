@@ -1,7 +1,9 @@
-﻿using SevenSeals.Tss.Shared;
+﻿using Infra.Db;
+using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 
+[DbTable]
 public class EventLog: IItem<int>
 {
     public byte[] Ch { get; set; }
@@ -19,5 +21,6 @@ public class EventLog: IItem<int>
         ControllerTimestamp = new byte[6];
     }
 
+    [DbPrimaryKey]
     public int Id { get; set; }
 }

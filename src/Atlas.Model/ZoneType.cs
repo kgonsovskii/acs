@@ -3,7 +3,7 @@
 namespace SevenSeals.Tss.Atlas;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum ZoneTypeEnum
+public enum ZoneType
 {
     Building,
     Floor,

@@ -8,6 +8,7 @@
         <ProjectReference Include="..\Atlas.Component\Atlas.Component.csproj" />
         <ProjectReference Include="..\Atlas.Model\Atlas.Model.csproj" />
         <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
+        <ProjectReference Include="..\Shared.Client\Shared.Client.csproj" />
     </ItemGroup>
 
     <ItemGroup>

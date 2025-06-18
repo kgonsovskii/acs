@@ -25,7 +25,7 @@ public partial class Contour
             if (_progId != null)
                 return (byte)_progId;
 
-            byte[] cmd = { 0x16, 0x20, Address };
+            byte[] cmd = [0x16, 0x20, Address];
             Channel.Write(cmd, cmd.Length);
             var response = new byte[1];
             var result = Channel.Read(response, 1);

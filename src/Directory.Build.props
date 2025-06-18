@@ -6,6 +6,17 @@
     <AnalysisLevel>latest</AnalysisLevel>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1591</NoWarn>
+    <!-- Disable ReSharper ConvertToPrimaryConstructor inspection globally -->
+    <NoWarn>$(NoWarn);RSRP1201</NoWarn>
+
+    <!-- Simple, manually incremented versioning -->
+    <MajorVersion>1</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    <BuildNumber>0</BuildNumber> <!-- Increment this manually for each release -->
+    <RevisionNumber>0</RevisionNumber> <!-- Increment this manually for hotfixes/patches -->
+    <AssemblyVersion>$(MajorVersion).$(MinorVersion).$(BuildNumber).$(RevisionNumber)</AssemblyVersion>
+    <FileVersion>$(AssemblyVersion)</FileVersion>
+    <InformationalVersion>$(AssemblyVersion)</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -17,19 +28,21 @@
     )
     And
     '$([System.String]::new($(MSBuildProjectName)).Contains(`Shared`))' == 'false'
+    And
+    '$(MSBuildProjectName)' != 'Monolith'
   ">true</AppSettingsExists>
   </PropertyGroup>
 
   <Target Name="CopyBaseAppSettings" BeforeTargets="BeforeBuild" Condition="'$(AppSettingsExists)' == 'true'">
     <Copy
       SourceFiles="$(MSBuildThisFileDirectory)\Shared\appsettings.base.json"
-      DestinationFiles="$(MSBuildProjectDirectory)\appsettings.base.json"
+      DestinationFiles="$(MSBuildProjectDirectory)\appsettings.$(MSBuildProjectName).base.json"
       SkipUnchangedFiles="true"
     />
   </Target>
 
   <ItemGroup Condition="'$(AppSettingsExists)' == 'true'">
-    <Content Include="appsettings.base.json">
+    <Content Include="appsettings.$(MSBuildProjectName).base.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

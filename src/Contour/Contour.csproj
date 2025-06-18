@@ -19,12 +19,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.contour.json">
+    <None Update="appsettings.Contour.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="appsettings.contour.Development.json">
+    <None Update="appsettings.Contour.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="appsettings.base.json" />
   </ItemGroup>
 
 </Project>

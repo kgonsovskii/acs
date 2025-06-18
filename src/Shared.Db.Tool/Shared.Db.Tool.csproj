@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SevenSeals.Tss.Shared</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Infra.Db.Firebird\Infra.Db.Firebird.csproj" />
+    <ProjectReference Include="..\Infra.Db.Postgres\Infra.Db.Postgres.csproj" />
+    <ProjectReference Include="..\Shared.Db\Shared.Db.csproj" />
+    <ProjectReference Include="..\Actor.Model\Actor.Model.csproj" />
+    <ProjectReference Include="..\Atlas.Model\Atlas.Model.csproj" />
+    <ProjectReference Include="..\Codex.Model\Codex.Model.csproj" />
+    <ProjectReference Include="..\Contour.Model\Contour.Model.csproj" />
+    <ProjectReference Include="..\Logic.Model\Logic.Model.csproj" />
+    <ProjectReference Include="..\Chronicle.Model\Chronicle.Model.csproj" />
+  </ItemGroup>
+</Project> 

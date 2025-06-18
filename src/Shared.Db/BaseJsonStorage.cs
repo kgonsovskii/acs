@@ -8,7 +8,7 @@ internal class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem,
     {
     }
 
-    protected List<TItem> Items { get; set; } = new();
+    protected List<TItem> Items { get; set; } = [];
     protected virtual string DataFile => Path.Combine(Settings.DataDir, $"{typeof(TItem).Name}.json");
 
     protected virtual void LoadData()

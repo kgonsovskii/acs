@@ -12,16 +12,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.api.json">
+    <None Update="appsettings.Api.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="appsettings.api.Development.json">
+    <None Update="appsettings.Api.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="appsettings.base.json" />
   </ItemGroup>
 
 

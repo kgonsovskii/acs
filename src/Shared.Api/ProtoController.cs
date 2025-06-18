@@ -18,17 +18,13 @@ public abstract class ProtoController<TRequest, TResponse>: ControllerBase where
         Settings = settings;
     }
 
-    protected OkObjectResult OkProto(TRequest request, TResponse response)
+    protected OkObjectResult OkProto(object response)
     {
-        //var newHash = request.GetHash();
-        // if (!Settings.IsDevelopment && newHash != request.Hash)
-        // {
-        //     throw new ApiException($"Invalid request hash on  server side, TraceId: {request.TraceId}");
-        // }
-        response.Headers.Agent = Settings.Agent;
-        response.Headers.TraceId = request.Headers.TraceId;
-        response.Headers.TimeStamp = DateTime.UtcNow.Ticks;
-        response.Headers.Hash = response.GetProtoHash();
+        HttpContext.Response.Headers[ProtoHeaders.Agent] = Settings.Agent;
+        HttpContext.Response.Headers[ProtoHeaders.TraceId] = HttpContext.Items[ProtoHeaders.TraceId]?.ToString();
+        HttpContext.Response.Headers[ProtoHeaders.Version] = AppVersion.Version;
+        HttpContext.Response.Headers[ProtoHeaders.Chop] = HttpContext.Items[ProtoHeaders.TraceId]?.ToString();
+        HttpContext.Response.Headers[ProtoHeaders.Hash] = "";
         return base.Ok(response);
     }
 }

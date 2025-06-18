@@ -64,6 +64,7 @@ public static class HashExtensions
                 var value = prop.GetValue(obj);
                 hash = hash * 31 + (value?.GetHashCode() ?? 0);
             }
+
             return hash;
         }
     }

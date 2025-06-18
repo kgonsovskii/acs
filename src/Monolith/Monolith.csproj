@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>SevenSeals.Tss.Monolith</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Actor\Actor.csproj" />
+        <ProjectReference Include="..\Api\Api.csproj" />
+        <ProjectReference Include="..\Atlas\Atlas.csproj" />
+        <ProjectReference Include="..\Chronicle\Chronicle.csproj" />
+        <ProjectReference Include="..\Codex\Codex.csproj" />
+        <ProjectReference Include="..\Contour\Contour.csproj" />
+        <ProjectReference Include="..\Logic\Logic.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="appsettings.base.json" />
+    </ItemGroup>
+
+</Project> 

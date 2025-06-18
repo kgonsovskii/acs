@@ -1,2 +1,3 @@
 /publish/
 docker-compose.gen.yml
+/deploy/output/

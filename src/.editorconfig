@@ -3,6 +3,9 @@
 # top-most EditorConfig file
 root = true
 
+# Disable ReSharper 'Convert to primary constructor' inspection globally
+
+
 # Don't use tabs for indentation.
 [*]
 indent_style = space
@@ -14,6 +17,20 @@ charset = utf-8
 indent_size = 4
 insert_final_newline = true
 trim_trailing_whitespace = true
+# Disable ReSharper 'Convert to primary constructor' inspection for C# files
+resharper_convert_to_primary_constructor_highlighting = none
+# Disable ReSharper 'Loop can be converted into LINQ-expression' inspection for C# files
+resharper_loop_can_be_converted_to_query_highlighting = none
+# Disable Rider/ReSharper LINQ conversion suggestions
+resharper_csharp_style_convert_to_linq_highlighting = none
+resharper_csharp_style_convert_to_linq_use_var = false
+# Disable .NET analyzers LINQ conversion suggestions
+dotnet_style_prefer_foreach = false
+dotnet_style_prefer_linq = false
+# Disable SQL data source configuration warnings
+resharper_sql_no_data_sources_configured_highlighting = none
+resharper_sql_no_data_sources_configured_for_advanced_code_assistance_highlighting = none
+resharper_sql_no_data_sources_configured_for_code_assistance_highlighting = none
 
 # XML project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]

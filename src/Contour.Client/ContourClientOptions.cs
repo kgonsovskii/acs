@@ -2,6 +2,4 @@
 
 namespace SevenSeals.Tss.Contour;
 
-public class ContourClientOptions: ClientOptions
-{
-}
+public class ContourClientOptions: ClientOptions;

@@ -1,16 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
         <RootNamespace>SevenSeals.Tss.Chronicle</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <None Update="appsettings.chronicle.Test.json">
+      <None Update="appsettings.Chronicle.Test.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="appsettings.base.json" />
     </ItemGroup>
 
 </Project>

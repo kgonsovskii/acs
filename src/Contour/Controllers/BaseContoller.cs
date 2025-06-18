@@ -15,6 +15,6 @@ public class BaseController: ProtoController<IProtoRequest, IProtoResponse>
         {
             SessionId = contour.Channel.Id
         };
-        return base.OkProto(request, response);
+        return OkProto(response);
     }
 }

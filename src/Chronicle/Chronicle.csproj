@@ -12,12 +12,16 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Update="appsettings.chronicle.json">
+    <None Update="appsettings.Chronicle.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="appsettings.chronicle.Development.json">
+    <None Update="appsettings.Chronicle.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Remove="appsettings.base.json" />
   </ItemGroup>
 
 

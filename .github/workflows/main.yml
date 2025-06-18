@@ -1,0 +1,114 @@
+name: Build and Test
+
+on:
+  push:
+    branches: ['*']  # Trigger on any branch
+  pull_request:
+    branches: ['main', 'develop']  # Only trigger PR checks on main and develop
+
+env:
+  SOLUTION_FILE: src/SevenSeals.Tss.sln
+  DOTNET_CLI_HOME: /tmp/DOTNET_CLI_HOME
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+          
+      - name: Build, Test and Publish
+        run: |
+          dotnet build $SOLUTION_FILE --configuration Release
+          dotnet test $SOLUTION_FILE --configuration Release --no-build --collect:"XPlat Code Coverage" --logger:"trx;LogFileName=test-results.trx"
+          dotnet publish $SOLUTION_FILE --configuration Release --output publish
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            **/*.trx
+            **/coverage.cobertura.xml
+          retention-days: 7
+
+      - name: Publish Test Results
+        uses: mikepenz/action-junit-report@v4
+        if: always()
+        with:
+          report_paths: '**/*.trx'
+          fail_on_failure: true
+
+  package:
+    name: Package
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          
+      - name: Publish projects
+        run: |
+          echo "Publishing projects..."
+          for project in src/*/; do
+            if [ -f "$project"*.csproj ]; then
+              projectName=$(basename "$project")
+              echo "Publishing $projectName..."
+              dotnet publish "$project" -c Release -o "publish/$projectName" --verbosity detailed
+              if [ $? -ne 0 ]; then exit 1; fi
+            fi
+          done
+          
+      - name: Build Docker image
+        run: |
+          echo "Building Docker image..."
+          docker build -t sevenseals:${GITHUB_SHA} . --progress=plain
+          if [ $? -ne 0 ]; then exit 1; fi
+        
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-artifacts
+          path: publish/
+          retention-days: 7
+
+  deploy:
+    name: Deploy
+    needs: package
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Download package artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: package-artifacts
+          
+      - name: Save Docker image
+        run: |
+          echo "Saving Docker image..."
+          docker save sevenseals:${GITHUB_SHA} > sevenseals.tar
+          if [ $? -ne 0 ]; then exit 1; fi
+          
+      - name: Upload Docker image
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: sevenseals.tar
+          retention-days: 7 

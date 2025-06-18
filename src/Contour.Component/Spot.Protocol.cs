@@ -48,11 +48,12 @@ public partial class Contour
                 isEvent = true;
                 break;
             }
-            else if (read == 3 && buf[0] == Address && buf[1] == 0)
+
+            if (read == 3 && buf[0] == Address && buf[1] == 0)
             {
                 if (buf[2] == Address)
                     break; // No events
-                else if (buf[2] == (byte)~Address)
+                if (buf[2] == (byte)~Address)
                     break; // Busy (silent)
             }
             else if (read == 4 && buf[1] == Address && buf[2] == 0 && buf[3] == Address)
@@ -103,11 +104,11 @@ public partial class Contour
             read += r;
             if (read == buf.Length)
                 break;
-            else if (read == 3 && buf[0] == Address && buf[1] == 0)
+            if (read == 3 && buf[0] == Address && buf[1] == 0)
             {
                 if (buf[2] == Address) // No events?
                     break;
-                else if (buf[2] == (byte)~Address) // Busy?
+                if (buf[2] == (byte)~Address) // Busy?
                     break;
             }
             else if (read == 4 && buf[1] == Address && buf[2] == 0 && buf[3] == Address)
@@ -283,7 +284,7 @@ public partial class Contour
     }
 
     private static readonly byte[] Tbl =
-    {
+    [
         0x00, 0x5E, 0xBC, 0xE2, 0x61, 0x3F, 0xDD, 0x83, 0xC2, 0x9C, 0x7E, 0x20, 0xA3, 0xFD, 0x1F, 0x41,
         0x9D, 0xC3, 0x21, 0x7F, 0xFC, 0xA2, 0x40, 0x1E, 0x5F, 0x01, 0xE3, 0xBD, 0x3E, 0x60, 0x82, 0xDC,
         0x23, 0x7D, 0x9F, 0xC1, 0x42, 0x1C, 0xFE, 0xA0, 0xE1, 0xBF, 0x5D, 0x03, 0x80, 0xDE, 0x3C, 0x62,
@@ -300,7 +301,7 @@ public partial class Contour
         0x57, 0x09, 0xEB, 0xB5, 0x36, 0x68, 0x8A, 0xD4, 0x95, 0xCB, 0x29, 0x77, 0xF4, 0xAA, 0x48, 0x16,
         0xE9, 0xB7, 0x55, 0x0B, 0x88, 0xD6, 0x34, 0x6A, 0x2B, 0x75, 0x97, 0xC9, 0x4A, 0x14, 0xF6, 0xA8,
         0x74, 0x2A, 0xC8, 0x96, 0x15, 0x4B, 0xA9, 0xF7, 0xB6, 0xE8, 0x0A, 0x54, 0xD7, 0x89, 0x6B, 0x35
-    };
+    ];
 
     public static byte Crc8(byte[] data, int size)
     {

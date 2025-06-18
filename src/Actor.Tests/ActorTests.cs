@@ -1,6 +1,5 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Shared.Tests;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Actor;
 
@@ -14,6 +13,6 @@ public class ActorTests : TestStorageBase<Actor, Actor, Guid, IActorClient, Acto
 
     protected override Actor CreateRequest()
     {
-        return new Person();
+        return new Actor() { Card = new Person() };
     }
 }

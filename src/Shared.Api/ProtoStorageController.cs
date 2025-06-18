@@ -22,7 +22,7 @@ public abstract class ProtoStorageController<TItem, TId, TStorage, TRequest, TRe
     [HttpGet]
     public virtual ActionResult<IEnumerable<TItem>> GetAll()
     {
-        return Ok(Storage.GetAll());
+        return OkProto(Storage.GetAll());
     }
 
     [HttpGet("{id}")]
@@ -33,7 +33,7 @@ public abstract class ProtoStorageController<TItem, TId, TStorage, TRequest, TRe
         {
             return NotFound();
         }
-        return Ok(item);
+        return OkProto(item);
     }
 
     [HttpPost]

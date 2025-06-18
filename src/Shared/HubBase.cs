@@ -36,7 +36,7 @@ public abstract class HubBase<TKey, T> : IEnumerable<T> where TKey : notnull
 
 public abstract class HubBase<T> : IEnumerable<T>
 {
-    protected List<T> Items { get; } = new();
+    protected List<T> Items { get; } = [];
     protected readonly object Lock = new();
 
     public T Add(T item)

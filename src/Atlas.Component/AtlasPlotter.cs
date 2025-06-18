@@ -157,7 +157,7 @@ public class AtlasPlotter
         var zoneId = GetZoneId(zone);
         var zoneDisplayName = GetZoneDisplayName(zone);
 
-        if (zone.Type == ZoneTypeEnum.Building || zone.Type == ZoneTypeEnum.Floor)
+        if (zone.Type == ZoneType.Building || zone.Type == ZoneType.Floor)
         {
             sb.AppendLine($@"{indent}package ""{zoneDisplayName}"" as {zoneId} {color} {{");
             var children = _map.Zones.Where(z => z.ParentId == zone.Id).ToList();
@@ -220,19 +220,19 @@ public class AtlasPlotter
         return $"zone_{sanitizedName}_{uniqueSuffix}";
     }
 
-    private static string GetZoneColor(ZoneTypeEnum type)
+    private static string GetZoneColor(ZoneType type)
     {
         return type switch
         {
-            ZoneTypeEnum.Building => "#FFE4E1", // Misty Rose
-            ZoneTypeEnum.Floor => "#E6E6FA",    // Lavender
-            ZoneTypeEnum.Room => "#F0FFF0",     // Honeydew
-            ZoneTypeEnum.Corridor => "#F5F5DC", // Beige
-            ZoneTypeEnum.Lobby => "#FFDAB9",    // Peach Puff
-            ZoneTypeEnum.Elevator => "#D8BFD8", // Thistle
-            ZoneTypeEnum.Staircase => "#F0F8FF",// Alice Blue
-            ZoneTypeEnum.Parking => "#E0FFFF",  // Light Cyan
-            ZoneTypeEnum.ExternalArea => "#F5F5F5", // White Smoke
+            ZoneType.Building => "#FFE4E1", // Misty Rose
+            ZoneType.Floor => "#E6E6FA",    // Lavender
+            ZoneType.Room => "#F0FFF0",     // Honeydew
+            ZoneType.Corridor => "#F5F5DC", // Beige
+            ZoneType.Lobby => "#FFDAB9",    // Peach Puff
+            ZoneType.Elevator => "#D8BFD8", // Thistle
+            ZoneType.Staircase => "#F0F8FF",// Alice Blue
+            ZoneType.Parking => "#E0FFFF",  // Light Cyan
+            ZoneType.ExternalArea => "#F5F5F5", // White Smoke
             _ => "#FFFFFF"                      // White
         };
     }

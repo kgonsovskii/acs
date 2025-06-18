@@ -1,0 +1,29 @@
+# Branch protection rules for main and develop branches
+branches:
+  - name: main
+    protection:
+      required_status_checks:
+        strict: true  # Require branches to be up to date before merging
+        contexts:
+          - "Build and Test / Build"
+          - "Build and Test / Test"
+      enforce_admins: true  # Apply these rules to administrators
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: false
+      restrictions: null  # No restrictions on who can push
+      
+  - name: develop
+    protection:
+      required_status_checks:
+        strict: true
+        contexts:
+          - "Build and Test / Build"
+          - "Build and Test / Test"
+      enforce_admins: true
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: false
+      restrictions: null 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Infra.Extensions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -23,6 +24,6 @@ public static class Services
     public static IApplicationBuilder UseApi(this IApplicationBuilder builder)
     {
         builder = builder.UseMiddleware<ProtoForwardMiddleware>();
-        return builder.UseMiddleware<ProtoMiddleware>();
+        return builder;
     }
 }

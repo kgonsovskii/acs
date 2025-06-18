@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
-using System.Text.Json;
 using System.Text.Json.Serialization;
+using Infra.Db;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
@@ -18,7 +18,7 @@ public enum ChannelType
 [JsonConverter(typeof(ChannelOptionsJsonConverter))]
 public abstract class ChannelOptions
 {
-    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [DbEnumTable]
     public virtual ChannelType Type { get; set; } = ChannelType.Ip;
 
     public IpOptions AsIpOptions() => (this as IpOptions)!;
@@ -26,41 +26,11 @@ public abstract class ChannelOptions
     public ComPortOptions AsComPortOptions() => (this as ComPortOptions)!;
 }
 
-public class ChannelOptionsJsonConverter : JsonConverter<ChannelOptions>
+public class ChannelOptionsJsonConverter : GenericDiscriminantConverter<ChannelType, ChannelOptions>
 {
-    public override ChannelOptions Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public ChannelOptionsJsonConverter() : base(new Dictionary<Enum, Type>()
     {
-        using var doc = JsonDocument.ParseValue(ref reader);
-
-      if (!doc.RootElement.TryGetProperty("type", out var typeProp))
-            throw new JsonException("Missing 'Type' discriminator for ChannelOptions.");
-
-        var typeP = typeProp.GetString();
-        var type = Enum.TryParse<ChannelType>(typeP, true, out var parsedType)
-            ? parsedType
-            : throw new JsonException($"Unknown channel type: {typeP}");
-
-        var x = doc.RootElement.GetRawText();
-        return type switch
-        {
-            ChannelType.ComPort => x.Deserialize<ComPortOptions>(options)!,
-            ChannelType.Ip => x.Deserialize<IpOptions>(options)!,
-            _ => throw new JsonException($"Unhandled channel type: {type}")
-        };
-    }
-
-    public override void Write(Utf8JsonWriter writer, ChannelOptions value, JsonSerializerOptions options)
-    {
-        switch (value)
-        {
-            case ComPortOptions com:
-                com.Serialize(writer, options);
-                break;
-            case IpOptions ip:
-                ip.Serialize(writer, options);
-                break;
-            default:
-                throw new JsonException($"Unsupported ChannelOptions type: {value.GetType().Name}");
-        }
-    }
+        { ChannelType.Ip, typeof(IpOptions) },
+        { ChannelType.ComPort, typeof(ComPortOptions) }
+    }) { }
 }

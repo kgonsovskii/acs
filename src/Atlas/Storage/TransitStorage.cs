@@ -3,10 +3,7 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Atlas.Storage;
 
-public interface ITransitStorage : IBaseStorage<Transit, Guid>
-{
-
-}
+public interface ITransitStorage : IBaseStorage<Transit, Guid>;
 
 public class TransitStorage: BaseStorage<Transit, Guid>, ITransitStorage
 {

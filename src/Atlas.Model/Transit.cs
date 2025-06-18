@@ -1,5 +1,8 @@
-﻿namespace SevenSeals.Tss.Atlas;
+﻿using Infra.Db;
 
+namespace SevenSeals.Tss.Atlas;
+
+[DbTable]
 public class Transit: AtlasBase
 {
     public Guid FromZoneId { get; set; }

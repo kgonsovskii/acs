@@ -1,13 +1,18 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Infra.Extensions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace SevenSeals.Tss.Shared;
 
-public abstract class ProgramBase<TStartup> where TStartup : StartupBase<TStartup>
+public abstract class ProgramBase
 {
-    protected virtual int Run(string[] args)
+    public abstract int Run(string[] args);
+}
+public abstract class ProgramBase<TStartup>: ProgramBase where TStartup : StartupBase<TStartup>
+{
+    public override int Run(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
@@ -49,7 +54,7 @@ public abstract class ProgramBase<TStartup> where TStartup : StartupBase<TStartu
 
                 config
                     .SetBasePath(env.ContentRootPath)
-                    .AddJsonFile($"appsettings.base.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{ServiceGroup}.base.json", optional: false, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{ServiceGroup}.json", optional: false, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{ServiceGroup}.{environmentName}.json", optional: true, reloadOnChange: true)
                     .AddEnvironmentVariables();
@@ -60,5 +65,5 @@ public abstract class ProgramBase<TStartup> where TStartup : StartupBase<TStartu
                 webBuilder.UseStartup<TStartup>();
             });
 
-    protected virtual string ServiceGroup => this.ServiceGroup();
+    protected virtual string ServiceGroup => this.GetServiceGroup();
 }

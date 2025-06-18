@@ -1,9 +1,11 @@
 ﻿using System.Reflection;
 using System.Text.Json;
+using Infra.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -31,11 +33,16 @@ public abstract class StartupBase<TStartup> where TStartup : class
             .AddSingleton(new CommandLineArgs(Environment.GetCommandLineArgs()))
             .AddSingleton<Settings>()
             .AddHttpClient()
-            .AddControllers().AddJsonOptions(options =>
+            .AddControllers(options =>
+            {
+                options.EnableEndpointRouting = true;
+            })
+            .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ConfigureJson();
                 ConfigureJsonInternal(options.JsonSerializerOptions);
             });
+
         services
             .AddEndpointsApiExplorer()
             .AddSwaggerGen(c =>
@@ -43,11 +50,13 @@ public abstract class StartupBase<TStartup> where TStartup : class
                 c.ConfigureApiSwagger();
                 c.EnableAnnotations();
 
+                var name = this.GetServiceGroup();
+
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = Assembly.GetEntryAssembly()!.GetName().Name,
+                    Title = name,
                     Version = "v1",
-                    Description = $"API for {Assembly.GetEntryAssembly()!.GetName().Name}"
+                    Description = $"API for {name}"
                 });
 
                 var basePath = AppContext.BaseDirectory;
@@ -77,7 +86,10 @@ public abstract class StartupBase<TStartup> where TStartup : class
 
         logger.LogInformation("Environment: {EnvironmentName}", env.EnvironmentName);
 
-        app.UseDeveloperExceptionPage();
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
 
         app.UseRouting();
 
@@ -96,5 +108,5 @@ public abstract class StartupBase<TStartup> where TStartup : class
         UseInternal(app, env, logger);
     }
 
-    protected virtual string ServiceGroup => this.ServiceGroup();
+    protected virtual string ServiceGroup => this.GetServiceGroup();
 }

@@ -25,14 +25,14 @@ public class AtlasPlotterTests
         {
             Id = Guid.NewGuid(),
             Name = "Внешний мир",
- Type = ZoneTypeEnum.ExternalArea
+ Type = ZoneType.ExternalArea
         };
 
         var building = new Zone
         {
             Id = Guid.NewGuid(),
             Name = "Семь Печатей HQ",
-            Type = ZoneTypeEnum.Building,
+            Type = ZoneType.Building,
             Hint = "Феодосийская, дом 1"
         };
 
@@ -40,7 +40,7 @@ public class AtlasPlotterTests
         {
             Id = Guid.NewGuid(),
             Name = "Второй этаж",
-            Type = ZoneTypeEnum.Floor,
+            Type = ZoneType.Floor,
             ParentId = building.Id,
         };
 
@@ -48,7 +48,7 @@ public class AtlasPlotterTests
         {
             Id = Guid.NewGuid(),
             Name = "Коридор",
-            Type = ZoneTypeEnum.Corridor,
+            Type = ZoneType.Corridor,
             ParentId = floor2.Id,
         };
 
@@ -56,7 +56,7 @@ public class AtlasPlotterTests
         {
             Id = Guid.NewGuid(),
             Name = "Склад 1111",
-            Type = ZoneTypeEnum.Room,
+            Type = ZoneType.Room,
             ParentId = floor2.Id,
         };
 
@@ -64,7 +64,7 @@ public class AtlasPlotterTests
         {
             Id = Guid.NewGuid(),
             Name = "Главный бухгалтер",
-            Type = ZoneTypeEnum.Room,
+            Type = ZoneType.Room,
             ParentId = floor2.Id,
         };
 
@@ -72,7 +72,7 @@ public class AtlasPlotterTests
         {
             Id = Guid.NewGuid(),
             Name = "Учительская",
-            Type = ZoneTypeEnum.Room,
+            Type = ZoneType.Room,
             ParentId = floor2.Id,
         };
 
@@ -80,7 +80,7 @@ public class AtlasPlotterTests
         {
             Id = Guid.NewGuid(),
             Name = "Программисты",
-            Type = ZoneTypeEnum.Room,
+            Type = ZoneType.Room,
             ParentId = floor2.Id,
         };
 
@@ -149,7 +149,7 @@ public class AtlasPlotterTests
     private static string GetZoneId(Zone zone)
     {
         // Sanitize zone name to create a valid PlantUML ID, allowing Unicode letters and numbers
-        var sanitizedName = Regex.Replace(zone.Name, @"[^\p{L}\p{N}_]", "_");
+        var sanitizedName = Regex.Replace(zone.Name!, @"[^\p{L}\p{N}_]", "_");
         var uniqueSuffix = zone.Id.ToString().Replace("-", "_").Substring(0, 8); // Use a portion of GUID for uniqueness
 
         // If sanitized name is empty or very generic, ensure uniqueness with the GUID suffix
@@ -160,19 +160,19 @@ public class AtlasPlotterTests
         return $"zone_{sanitizedName}_{uniqueSuffix}";
     }
 
-    private static string GetZoneColor(ZoneTypeEnum type)
+    private static string GetZoneColor(ZoneType type)
     {
         return type switch
         {
-            ZoneTypeEnum.Building => "#FFE4E1", // Misty Rose
-            ZoneTypeEnum.Floor => "#E6E6FA",    // Lavender
-            ZoneTypeEnum.Room => "#F0FFF0",     // Honeydew
-            ZoneTypeEnum.Corridor => "#F5F5DC", // Beige
-            ZoneTypeEnum.Lobby => "#FFDAB9",    // Peach Puff
-            ZoneTypeEnum.Elevator => "#D8BFD8", // Thistle
-            ZoneTypeEnum.Staircase => "#F0F8FF",// Alice Blue
-            ZoneTypeEnum.Parking => "#E0FFFF",  // Light Cyan
-            ZoneTypeEnum.ExternalArea => "#F5F5F5", // White Smoke
+            ZoneType.Building => "#FFE4E1", // Misty Rose
+            ZoneType.Floor => "#E6E6FA",    // Lavender
+            ZoneType.Room => "#F0FFF0",     // Honeydew
+            ZoneType.Corridor => "#F5F5DC", // Beige
+            ZoneType.Lobby => "#FFDAB9",    // Peach Puff
+            ZoneType.Elevator => "#D8BFD8", // Thistle
+            ZoneType.Staircase => "#F0F8FF",// Alice Blue
+            ZoneType.Parking => "#E0FFFF",  // Light Cyan
+            ZoneType.ExternalArea => "#F5F5F5", // White Smoke
             _ => "#FFFFFF"                      // White
         };
     }
@@ -201,7 +201,7 @@ public class AtlasPlotterTests
     {
         // Act
         var plantUml = _plotter.GeneratePlantUml();
-        System.IO.File.WriteAllText(Path.Combine(_testOutputPath, "plant.plantuml"), plantUml);
+        File.WriteAllText(Path.Combine(_testOutputPath, "plant.plantuml"), plantUml);
     }
 
     private static string GetTransitLabel(Transit transit)
@@ -247,15 +247,15 @@ public class AtlasPlotterTests
         // Arrange
         var singleZoneMap = new Map
         {
-            Zones = new List<Zone>
-            {
+            Zones =
+            [
                 new()
                 {
                     Id = Guid.NewGuid(),
                     Name = "Test Zone",
-                    Type = ZoneTypeEnum.Room
+                    Type = ZoneType.Room
                 }
-            }
+            ]
         };
         var plotter = new AtlasPlotter(singleZoneMap);
 
@@ -272,14 +272,14 @@ public class AtlasPlotterTests
     public void GeneratePlantUml_ShouldHandleUnidirectionalTransit()
     {
         // Arrange
-        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone A", Type = ZoneTypeEnum.Room };
-        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone B", Type = ZoneTypeEnum.Room };
+        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone A", Type = ZoneType.Room };
+        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone B", Type = ZoneType.Room };
         var transit = new Transit { Id = Guid.NewGuid(), FromZoneId = fromZone.Id, ToZoneId = toZone.Id, IsBidirectional = false };
 
         var map = new Map
         {
-            Zones = new List<Zone> { fromZone, toZone },
-            Transits = new List<Transit> { transit }
+            Zones = [fromZone, toZone],
+            Transits = [transit]
         };
         var plotter = new AtlasPlotter(map);
 
@@ -295,14 +295,14 @@ public class AtlasPlotterTests
     public void GeneratePlantUml_ShouldHandleBidirectionalTransit()
     {
         // Arrange
-        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone C", Type = ZoneTypeEnum.Room };
-        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone D", Type = ZoneTypeEnum.Room };
+        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone C", Type = ZoneType.Room };
+        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone D", Type = ZoneType.Room };
         var transit = new Transit { Id = Guid.NewGuid(), FromZoneId = fromZone.Id, ToZoneId = toZone.Id, IsBidirectional = true };
 
         var map = new Map
         {
-            Zones = new List<Zone> { fromZone, toZone },
-            Transits = new List<Transit> { transit }
+            Zones = [fromZone, toZone],
+            Transits = [transit]
         };
         var plotter = new AtlasPlotter(map);
 
@@ -319,7 +319,7 @@ public class AtlasPlotterTests
     {
         // Arrange
         var allZones = new List<Zone>();
-        foreach (ZoneTypeEnum type in Enum.GetValues(typeof(ZoneTypeEnum)))
+        foreach (ZoneType type in Enum.GetValues(typeof(ZoneType)))
         {
             allZones.Add(new Zone { Id = Guid.NewGuid(), Name = $"Zone {type}", Type = type });
         }
@@ -336,7 +336,7 @@ public class AtlasPlotterTests
             var zoneDisplayName = GetZoneDisplayName(zone);
 
             var expectedDefinition = "";
-            if (zone.Type == ZoneTypeEnum.Building || zone.Type == ZoneTypeEnum.Floor)
+            if (zone.Type == ZoneType.Building || zone.Type == ZoneType.Floor)
             {
                 expectedDefinition = $"package \"{zoneDisplayName}\" as {zoneId}";
             }
@@ -356,10 +356,10 @@ public class AtlasPlotterTests
         {
             Id = Guid.NewGuid(),
             Name = "Zone with Spaces & Symbols!@#",
-            Type = ZoneTypeEnum.Room,
+            Type = ZoneType.Room,
             Hint = "A zone with a hint and special characters."
         };
-        var map = new Map { Zones = new List<Zone> { zoneWithSpecialChars } };
+        var map = new Map { Zones = [zoneWithSpecialChars] };
         var plotter = new AtlasPlotter(map);
 
         // Act
@@ -379,10 +379,10 @@ public class AtlasPlotterTests
         {
             Id = Guid.NewGuid(),
             Name = "",
-            Type = ZoneTypeEnum.Room,
+            Type = ZoneType.Room,
             Hint = "This is a hint only zone."
         };
-        var map = new Map { Zones = new List<Zone> { hintOnlyZone } };
+        var map = new Map { Zones = [hintOnlyZone] };
         var plotter = new AtlasPlotter(map);
 
         // Act
@@ -402,10 +402,10 @@ public class AtlasPlotterTests
         {
             Id = Guid.NewGuid(),
             Name = "",
-            Type = ZoneTypeEnum.Room,
+            Type = ZoneType.Room,
             Hint = ""
         };
-        var map = new Map { Zones = new List<Zone> { fallbackZone } };
+        var map = new Map { Zones = [fallbackZone] };
         var plotter = new AtlasPlotter(map);
 
         // Act
@@ -420,14 +420,14 @@ public class AtlasPlotterTests
     public void GeneratePlantUml_ShouldHandleTransitWithHint()
     {
         // Arrange
-        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone A", Type = ZoneTypeEnum.Room };
-        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone B", Type = ZoneTypeEnum.Room };
+        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone A", Type = ZoneType.Room };
+        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone B", Type = ZoneType.Room };
         var transit = new Transit { Id = Guid.NewGuid(), FromZoneId = fromZone.Id, ToZoneId = toZone.Id, Hint = "Custom Transit Hint", IsBidirectional = false };
 
         var map = new Map
         {
-            Zones = new List<Zone> { fromZone, toZone },
-            Transits = new List<Transit> { transit }
+            Zones = [fromZone, toZone],
+            Transits = [transit]
         };
         var plotter = new AtlasPlotter(map);
 
@@ -443,14 +443,14 @@ public class AtlasPlotterTests
     public void GeneratePlantUml_ShouldHandleTransitWithName()
     {
         // Arrange
-        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone X", Type = ZoneTypeEnum.Room };
-        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone Y", Type = ZoneTypeEnum.Room };
+        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone X", Type = ZoneType.Room };
+        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone Y", Type = ZoneType.Room };
         var transit = new Transit { Id = Guid.NewGuid(), FromZoneId = fromZone.Id, ToZoneId = toZone.Id, Name = "Named Transit", IsBidirectional = false };
 
         var map = new Map
         {
-            Zones = new List<Zone> { fromZone, toZone },
-            Transits = new List<Transit> { transit }
+            Zones = [fromZone, toZone],
+            Transits = [transit]
         };
         var plotter = new AtlasPlotter(map);
 
@@ -466,14 +466,14 @@ public class AtlasPlotterTests
     public void GeneratePlantUml_ShouldHandleTransitFallbackLabel()
     {
         // Arrange
-        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone M", Type = ZoneTypeEnum.Room };
-        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone N", Type = ZoneTypeEnum.Room };
+        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone M", Type = ZoneType.Room };
+        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone N", Type = ZoneType.Room };
         var transit = new Transit { Id = Guid.NewGuid(), FromZoneId = fromZone.Id, ToZoneId = toZone.Id, Name = "", Hint = "", IsBidirectional = false };
 
         var map = new Map
         {
-            Zones = new List<Zone> { fromZone, toZone },
-            Transits = new List<Transit> { transit }
+            Zones = [fromZone, toZone],
+            Transits = [transit]
         };
         var plotter = new AtlasPlotter(map);
 
@@ -489,14 +489,14 @@ public class AtlasPlotterTests
     public void GeneratePlantUml_ShouldHandleBidirectionalTransitWithHint()
     {
         // Arrange
-        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone P", Type = ZoneTypeEnum.Room };
-        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone Q", Type = ZoneTypeEnum.Room };
+        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone P", Type = ZoneType.Room };
+        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone Q", Type = ZoneType.Room };
         var transit = new Transit { Id = Guid.NewGuid(), FromZoneId = fromZone.Id, ToZoneId = toZone.Id, Hint = "Bidirectional Hint", IsBidirectional = true };
 
         var map = new Map
         {
-            Zones = new List<Zone> { fromZone, toZone },
-            Transits = new List<Transit> { transit }
+            Zones = [fromZone, toZone],
+            Transits = [transit]
         };
         var plotter = new AtlasPlotter(map);
 
@@ -512,14 +512,14 @@ public class AtlasPlotterTests
     public void GeneratePlantUml_ShouldHandleBidirectionalTransitWithName()
     {
         // Arrange
-        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone R", Type = ZoneTypeEnum.Room };
-        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone S", Type = ZoneTypeEnum.Room };
+        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone R", Type = ZoneType.Room };
+        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone S", Type = ZoneType.Room };
         var transit = new Transit { Id = Guid.NewGuid(), FromZoneId = fromZone.Id, ToZoneId = toZone.Id, Name = "Bidirectional Name", IsBidirectional = true };
 
         var map = new Map
         {
-            Zones = new List<Zone> { fromZone, toZone },
-            Transits = new List<Transit> { transit }
+            Zones = [fromZone, toZone],
+            Transits = [transit]
         };
         var plotter = new AtlasPlotter(map);
 
@@ -535,14 +535,14 @@ public class AtlasPlotterTests
     public void GeneratePlantUml_ShouldHandleBidirectionalTransitFallbackLabel()
     {
         // Arrange
-        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone U", Type = ZoneTypeEnum.Room };
-        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone V", Type = ZoneTypeEnum.Room };
+        var fromZone = new Zone { Id = Guid.NewGuid(), Name = "Zone U", Type = ZoneType.Room };
+        var toZone = new Zone { Id = Guid.NewGuid(), Name = "Zone V", Type = ZoneType.Room };
         var transit = new Transit { Id = Guid.NewGuid(), FromZoneId = fromZone.Id, ToZoneId = toZone.Id, Name = "", Hint = "", IsBidirectional = true };
 
         var map = new Map
         {
-            Zones = new List<Zone> { fromZone, toZone },
-            Transits = new List<Transit> { transit }
+            Zones = [fromZone, toZone],
+            Transits = [transit]
         };
         var plotter = new AtlasPlotter(map);
 

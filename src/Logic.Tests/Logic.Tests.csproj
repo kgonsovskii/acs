@@ -22,9 +22,13 @@
     </ItemGroup>
   
     <ItemGroup>
-      <None Update="appsettings.logic.Test.json">
+      <None Update="appsettings.Logic.Test.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+  
+    <ItemGroup>
+      <Content Remove="appsettings.base.json" />
     </ItemGroup>
 
 </Project>

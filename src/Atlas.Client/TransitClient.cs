@@ -4,10 +4,7 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Atlas;
 
-public interface ITransitClient: IProtoStorageClient<Transit, Transit, Guid>
-{
-
-}
+public interface ITransitClient: IProtoStorageClient<Transit, Transit, Guid>;
 
 public class TransitClient : ProtoStorageClient<Transit, Transit, Guid>, ITransitClient
 {

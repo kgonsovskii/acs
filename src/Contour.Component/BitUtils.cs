@@ -63,13 +63,13 @@ public static class BitUtils
 
     public static byte[] PackInt(uint x)
     {
-        return new byte[]
-        {
+        return
+        [
             (byte)x,
             (byte)(x >> 8),
             (byte)(x >> 16),
             (byte)(x >> 24)
-        };
+        ];
     }
 
     public static int UnpackInt(byte[] buf)

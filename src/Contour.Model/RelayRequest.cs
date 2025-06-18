@@ -16,6 +16,4 @@ public class RelayOnRequest: RelayRequest
     public bool RelayOnAnyKey { get; set; }
 }
 
-public class RelayOffRequest: RelayRequest
-{
-}
+public class RelayOffRequest: RelayRequest;

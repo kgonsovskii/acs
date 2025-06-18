@@ -51,7 +51,7 @@ public abstract class Channel: ProtoObject, IDisposable
     public List<char> FindControllers()
     {
         // Stubbed logic
-        return new List<char>();
+        return [];
     }
 
     //public ControllerManager Controllers => new ControllerManager();

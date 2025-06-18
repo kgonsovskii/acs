@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SevenSeals.Tss.Shared;
+using SevenSeals.Tss.Contour.Storage;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SevenSeals.Tss.Contour;
@@ -19,7 +19,7 @@ public class Startup: Shared.StartupBase<Startup>
 
     protected override IServiceCollection ConfigureServicesInternal(IServiceCollection services)
     {
-        services.AddExtendedOptions<ContourMap>(ServiceGroup, "map");
+        services.AddSingleton<ISpotStorage, SpotStorage>();
         services.Configure<SpotOptions>(_configuration.GetSection("spotOptions"));
         services.AddSingleton<AppState>();
         services.AddSingleton<AppSnapshot>();
@@ -41,13 +41,13 @@ public class Startup: Shared.StartupBase<Startup>
         {
             if (baseType == typeof(ChannelOptions))
             {
-                return new[]
-                {
+                return
+                [
                     typeof(IpOptions),
                     typeof(ComPortOptions)
-                };
+                ];
             }
-            return Enumerable.Empty<Type>();
+            return [];
         });
     }
 

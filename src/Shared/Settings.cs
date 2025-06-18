@@ -4,7 +4,9 @@ namespace SevenSeals.Tss.Shared;
 
 public class Settings
 {
-    public StorageType StorageType { get; }
+    public StorageType StorageType { get; set; }
+
+    public SqlDialect SqlDialect { get; set; }
 
     private readonly CommandLineArgs _commandLineArgs;
     public string[] Args => _commandLineArgs.Args;
@@ -21,6 +23,7 @@ public class Settings
     {
         ConnectionString = configuration.GetConnectionString("Default")!;
         StorageType = configuration.GetSection("storageType").Get<StorageType>();
+        SqlDialect = configuration.GetSection("sqlDialect").Get<SqlDialect>();
         var agent = configuration.GetValue<string>("Agent");
         Agent = MachineCode.GetMachineCode();
         if (agent != null)

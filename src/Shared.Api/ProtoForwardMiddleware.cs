@@ -25,6 +25,16 @@ public class ProtoForwardMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        if (context.Request.Headers.TryGetValue(ProtoHeaders.TraceId, out var traceId))
+        {
+            context.Items[ProtoHeaders.TraceId] = traceId;
+        }
+
+        if (context.Request.Headers.TryGetValue(ProtoHeaders.Chop, out var chopId))
+        {
+            context.Items[ProtoHeaders.Chop] = (int.Parse(chopId!)+1).ToString();
+        }
+
         if (!context.Request.Headers.TryGetValue(ProtoHeaders.ForwardTo, out var forwardTo))
         {
             await _next(context);
@@ -78,13 +88,10 @@ public class ProtoForwardMiddleware
                 }
             }
 
-            // Send request
             var response = await client.SendAsync(request);
 
-            // Copy response
             context.Response.StatusCode = (int)response.StatusCode;
 
-            // Copy response headers
             foreach (var header in response.Headers)
             {
                 context.Response.Headers[header.Key] = header.Value.ToArray();

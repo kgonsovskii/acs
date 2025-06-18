@@ -68,7 +68,7 @@ public class ContourController : BaseController
         {
             State = _snapshot.State
         };
-        return OkProto(request, response);
+        return OkProto(response);
     }
 
     [HttpPost(nameof(Events))]
@@ -82,6 +82,6 @@ public class ContourController : BaseController
             Events = _snapshot.Events
         };
         _snapshot.Clean();
-        return OkProto(request, response);
+        return OkProto(response);
     }
 }

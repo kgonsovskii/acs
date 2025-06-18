@@ -40,7 +40,7 @@ public partial class Contour: ProtoObject
          Channel = channel;
          Address = addr;
         _polling = false;
-        _chipsActivated = new HashSet<ulong>();
+        _chipsActivated = [];
         _recoverState = RecoverNone;
         _state = StateStateless;
 

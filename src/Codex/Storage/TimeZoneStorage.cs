@@ -1,17 +1,12 @@
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Codex.Storage;
 
-public interface ITimeZoneStorage : IBaseStorage<TimeZoneRule, Guid>
-{
-
-}
+public interface ITimeZoneStorage : IBaseStorage<TimeZoneRule, Guid>;
 
 public class TimeZoneStorage: BaseStorage<TimeZoneRule, Guid>, ITimeZoneStorage
 {
-    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public TimeZoneStorage(Settings settings, ILogger<TimeZoneStorage> logger) : base(settings, logger)
     {
     }

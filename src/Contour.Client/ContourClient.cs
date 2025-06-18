@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SevenSeals.Tss.Shared;
 
@@ -20,7 +19,6 @@ public interface IContourClient: IProtoClient
 
 public class ContourClient: ProtoClient, IContourClient
 {
-    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public ContourClient(HttpClient httpClient, Settings settings, IOptions<ContourClientOptions> options, ILogger<ContourClient> logger) : base(httpClient, settings, options, logger)
     {
 

@@ -1,0 +1,42 @@
+version: 1.0
+
+pipeline:
+  enabled: true
+  triggers:
+    push: true
+    pull_request: true
+    merge_request: true
+    branch_creation: true
+    branch_deletion: true
+  timeout: 60  # Global timeout in minutes
+
+runners:
+  ubuntu:
+    image: ubuntu-latest
+    tools:
+      - dotnet-sdk-8.0
+      - docker
+      - git
+    resources:
+      cpu: 2
+      memory: 4GB
+    concurrency: 2  # Maximum number of concurrent jobs
+
+environments:
+  staging:
+    url: https://staging.sevenseals.example.com
+    variables:
+      ASPNETCORE_ENVIRONMENT: Staging
+  production:
+    url: https://sevenseals.example.com
+    variables:
+      ASPNETCORE_ENVIRONMENT: Production
+
+branch_protection:
+  main:
+    require_pipeline: true
+    require_review: true
+    require_approval: true
+  develop:
+    require_pipeline: true
+    require_review: true 

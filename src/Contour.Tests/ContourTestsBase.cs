@@ -1,24 +1,26 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.DependencyInjection;
+using SevenSeals.Tss.Contour.Storage;
 using SevenSeals.Tss.Shared;
-using Shared.Tests;
 
 namespace SevenSeals.Tss.Contour;
 
-[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public abstract class ContourTestsBase<TClient>: TestBase<TClient, ContourTestFactory, Startup> where TClient : IProtoClient
 {
-    protected readonly ContourMap ContourMap;
+    private readonly IList<Spot> _spots;
 
     protected ContourTestsBase()
     {
-        ContourMap = Factory.Services.GetRequiredService<IOptions<ContourMap>>().Value;
+        var settings = Factory.Services.GetRequiredService<Settings>();
+        settings.DataDir = ".\\";
+        settings.StorageType = StorageType.Json;
+        var storage = Factory.Services.GetRequiredService<ISpotStorage>();
+        var map = storage.GetAll();
+        _spots = map.ToList();
     }
 
     protected new TRequest NewRequest<TRequest>() where TRequest : SpotRequest, new()
     {
-        var map = ContourMap.Spots.First(a=>a.Options.Type == ChannelType.Ip);
+        var map = _spots.First(a=>a.Options.Type == ChannelType.Ip);
         var request = new TRequest
         {
             Options = map.Options.DeepBurn<IpOptions>(),
@@ -29,7 +31,7 @@ public abstract class ContourTestsBase<TClient>: TestBase<TClient, ContourTestFa
 
     protected virtual TRequest NewRequestComPort<TRequest>() where TRequest : SpotRequest, new()
     {
-        var map = ContourMap.Spots.First(a=>a.Options.Type == ChannelType.ComPort);
+        var map = _spots.First(a=>a.Options.Type == ChannelType.ComPort);
         var request = new TRequest
         {
             Options = map.Options.DeepBurn<ComPortOptions>(),

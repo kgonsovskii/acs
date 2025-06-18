@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SevenSeals.Tss.Shared;
@@ -14,7 +13,6 @@ public interface IAtlasClient: IProtoClient
 
 public class AtlasClient: ProtoClient, IAtlasClient
 {
-    [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public AtlasClient(HttpClient httpClient, Settings settings, IOptions<AtlasClientOptions> options, ILogger<ProtoClient<ClientOptions>> logger) : base(httpClient, settings, options, logger)
     {
     }

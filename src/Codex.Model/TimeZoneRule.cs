@@ -1,9 +1,11 @@
+using Infra.Db;
+
 namespace SevenSeals.Tss.Codex;
 
+[DbTable]
 public class TimeZoneRule : CodexBase
 {
-    public DayOfWeek DayOfWeek { get; set; }
+    [DbEnumTable(Schema = "codex")] public DayOfWeek DayOfWeek { get; set; }
     public TimeSpan StartTime { get; set; }
     public TimeSpan EndTime { get; set; }
-    public bool IsActive { get; set; } = true;
 }

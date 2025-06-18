@@ -18,13 +18,17 @@
     <ProjectReference Include="..\Actor.Client\Actor.Client.csproj" />
     <ProjectReference Include="..\Actor.Model\Actor.Model.csproj" />
     <ProjectReference Include="..\Actor\Actor.csproj" />
-    <ProjectReference Include="..\Shared.Tests\Shared.Tests.csproj" />
+    <ProjectReference Include="..\Shared.Tests.Base\Shared.Tests.Base.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.actor.Test.json">
+    <None Update="appsettings.Actor.Test.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="appsettings.base.json" />
   </ItemGroup>
 
 </Project>

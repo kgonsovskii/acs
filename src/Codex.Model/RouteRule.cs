@@ -1,5 +1,8 @@
+using Infra.Db;
+
 namespace SevenSeals.Tss.Codex;
 
+[DbTable]
 public class RouteRule : CodexBase
 {
     public Guid FromZoneId { get; set; }

@@ -3,10 +3,7 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Atlas.Storage;
 
-public interface IZoneStorage : IBaseStorage<Zone, Guid>
-{
-
-}
+public interface IZoneStorage : IBaseStorage<Zone, Guid>;
 
 public class ZoneStorage: BaseStorage<Zone, Guid>, IZoneStorage
 {
