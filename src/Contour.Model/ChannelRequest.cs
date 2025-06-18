@@ -8,7 +8,7 @@ namespace SevenSeals.Tss.Contour;
 public abstract class ChannelRequest: ProtoRequest
 {
     [JsonConverter(typeof(ChannelOptionsJsonConverter))]
-    public ChannelOptions Options { get; set; }
+    public ChannelOptions Options { get; init; } = null!;
 
     public IpOptions AsIpOptions() => (Options as IpOptions)!;
 

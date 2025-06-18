@@ -1,6 +1,6 @@
 namespace SevenSeals.Tss.Actor;
 
-public class Key
+public class Key: ActorBase
 {
     public string? KeyNumber { get; set; }
     public KeyType Type { get; set; }

@@ -16,10 +16,8 @@ public enum ActorType
 [JsonDerivedType(typeof(Person))]
 [JsonDerivedType(typeof(Drone))]
 [JsonConverter(typeof(ActorJsonConverter))]
-public class Actor
+public abstract class Actor: ActorBase
 {
-    public string Id { get; set; }
-
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public virtual ActorType Type { get; set; } = ActorType.Person;
 
@@ -55,11 +53,11 @@ public class ActorJsonConverter : JsonConverter<Actor>
     {
         switch (value)
         {
-            case Person com:
-                com.Serialize(writer, options);
+            case Person person:
+                person.Serialize(writer, options);
                 break;
-            case Drone ip:
-                ip.Serialize(writer, options);
+            case Drone drone:
+                drone.Serialize(writer, options);
                 break;
             default:
                 throw new JsonException($"Unsupported Actor type: {value.GetType().Name}");

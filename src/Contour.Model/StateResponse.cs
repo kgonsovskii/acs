@@ -4,5 +4,5 @@ namespace SevenSeals.Tss.Contour;
 
 public class StateResponse: ProtoResponse
 {
-    public object State { get; set; }
+    public required object State { get; init; }
 }

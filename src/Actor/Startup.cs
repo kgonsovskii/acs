@@ -14,17 +14,8 @@ public class Startup : Shared.StartupBase<Startup>
     public Startup(IConfiguration configuration) : base(configuration){}
     protected override IServiceCollection ConfigureServicesInternal(IServiceCollection services)
     {
-        if (Settings.StorageType == StorageType.Json)
-        {
-            services.AddSingleton<IActorStorage, ActorStorage>();
-            services.AddSingleton<IKeyStorage, KeyStorage>();
-        }
-        else
-        {
-            services.AddScoped<IActorStorage, ActorStorage>();
-            services.AddScoped<IKeyStorage, KeyStorage>();
-        }
-
+        services.AddSingleton<IActorStorage, ActorStorage>();
+        services.AddSingleton<IKeyStorage, KeyStorage>();
         return services;
     }
 

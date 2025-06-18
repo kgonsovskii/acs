@@ -5,11 +5,16 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Actor;
 
-public class ActorClient : ActorBaseClient
+public interface IActorClient: IProtoStorageClient<Actor, Actor, Guid>
+{
+
+}
+
+public class ActorClient : ProtoStorageClient<Actor, Actor, Guid>, IActorClient
 {
     [SuppressMessage("ReSharper", "ConvertToPrimaryConstructor")]
     public ActorClient(HttpClient httpClient, Settings settings, IOptions<ActorClientOptions> options,
-        ILogger<ActorBaseClient> logger) : base(httpClient, settings, options, logger)
+        ILogger<ActorClient> logger) : base(httpClient, settings, options, logger)
     {
 
     }

@@ -1,17 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Exe</OutputType>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <RootNamespace>SevenSeals.Tss.Actor</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Actor.Model\Actor.Model.csproj" />
-    <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
-  </ItemGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
@@ -19,22 +13,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Actor.Model\Actor.Model.csproj" />
     <ProjectReference Include="..\Shared.App\Shared.App.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
     <ProjectReference Include="..\Shared.Db\Shared.Db.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="appsettings.actor.json">
+    <None Update="appsettings.actor.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="appsettings.Development.json">
+    <None Update="appsettings.actor.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
+  
 </Project> 

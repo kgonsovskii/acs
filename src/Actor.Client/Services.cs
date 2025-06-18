@@ -9,6 +9,7 @@ public static class Services
     public static void AddActorClient(this IServiceCollection services, IConfiguration configuration)
     {
         services.ConfigureClientOptions<ActorClientOptions>(configuration);
-        services.AddScoped<ActorClient>();
+        services.AddScoped<IActorClient, ActorClient>();
+        services.AddScoped<IKeyClient, KeyClient>();
     }
 }

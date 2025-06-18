@@ -7,4 +7,10 @@
         <RootNamespace>SevenSeals.Tss.Chronicle</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <None Update="appsettings.chronicle.Test.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

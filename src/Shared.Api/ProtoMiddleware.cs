@@ -29,12 +29,12 @@ public class ProtoMiddleware
 
         var response = context.Response;
         if (context.Items.TryGetValue(ProtoHeaders.TraceId, out var responseTraceId))
-            response.Headers.Add(ProtoHeaders.TraceId, responseTraceId.ToString());
+            response.Headers.Add(ProtoHeaders.TraceId, responseTraceId!.ToString());
         if (context.Items.TryGetValue(ProtoHeaders.Agent, out var responseAgent))
-            response.Headers.Add(ProtoHeaders.Agent, responseAgent.ToString());
+            response.Headers.Add(ProtoHeaders.Agent, responseAgent!.ToString());
         if (context.Items.TryGetValue(ProtoHeaders.Chop, out var responseChop))
-            response.Headers.Add(ProtoHeaders.Chop, responseChop.ToString());
+            response.Headers.Add(ProtoHeaders.Chop, responseChop!.ToString());
         if (context.Items.TryGetValue(ProtoHeaders.Hash, out var responseHash))
-            response.Headers.Add(ProtoHeaders.Hash, responseHash.ToString());
+            response.Headers.Add(ProtoHeaders.Hash, responseHash!.ToString());
     }
 }

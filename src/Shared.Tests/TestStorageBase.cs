@@ -10,14 +10,14 @@ public abstract class TestStorageBase<TRequest, TResponse, TId, TClient, TFactor
     where TClient: IProtoStorageClient<TRequest, TResponse, TId>
     where TFactory: TestWebAppFactory<TStartup>, new()
     where TStartup: class
-    where TRequest: IProtoRequest, new()
+    where TRequest: IProtoRequest
     where TResponse: IProtoResponse
 {
-    protected TRequest CreateRequest()
+    protected virtual TRequest CreateRequest()
     {
-        var request = new TRequest();
+        var request = Activator.CreateInstance(typeof(TRequest));
         request.FillWithRandomValues();
-        return request;
+        return ((TRequest)request!)!;
     }
 
     protected abstract TId GetId(TResponse response);

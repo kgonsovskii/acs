@@ -38,7 +38,7 @@ public interface IMany<T> : IEnumerable<T>, IProtoResponse
 
 public class Many<T> : List<T>, IMany<T>
 {
-    public ProtoHeader Headers { get; set; }
+    public ProtoHeader Headers { get; set; } = null!;
 }
 
 

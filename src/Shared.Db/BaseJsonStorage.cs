@@ -55,7 +55,7 @@ internal class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem,
     public virtual TItem? GetById(TId id)
     {
         LoadData();
-        return Items.FirstOrDefault(x => x.Id.Equals(id));
+        return Items.FirstOrDefault(x => x.Id!.Equals(id));
     }
 
     public virtual void Create(TItem item)
@@ -76,7 +76,7 @@ internal class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem,
     public virtual void Delete(TId id)
     {
         LoadData();
-        Items.RemoveAll(x => x.Id.Equals(id));
+        Items.RemoveAll(x => x.Id!.Equals(id));
         SaveData();
     }
 }
