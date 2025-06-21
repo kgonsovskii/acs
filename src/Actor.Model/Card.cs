@@ -1,11 +1,12 @@
 ﻿using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using Infra.Db;
+using Infra.Db.Attributes;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Actor;
 
-public enum CardType
+public enum MemberType
 {
     Person,
     Drone
@@ -16,17 +17,17 @@ public enum CardType
 [KnownType(typeof(Drone))]
 [JsonDerivedType(typeof(Person))]
 [JsonDerivedType(typeof(Drone))]
-public abstract class Card
+public abstract class MemberBase
 {
     [DbEnumTable]
-    public virtual CardType Type { get; set; } = CardType.Person;
+    public virtual MemberType Type { get; set; } = MemberType.Person;
 }
 
-public class CardJsonConverter : GenericDiscriminantConverter<CardType, Card>
+public class CardJsonConverter : GenericDiscriminantConverter<MemberType, MemberBase>
 {
     public CardJsonConverter() : base(new Dictionary<Enum, Type>()
     {
-        { CardType.Person, typeof(Person) },
-        { CardType.Drone, typeof(Drone) }
+        { MemberType.Person, typeof(Person) },
+        { MemberType.Drone, typeof(Drone) }
     }) { }
 }

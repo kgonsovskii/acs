@@ -31,18 +31,18 @@ public abstract class ProtoStorageClient<TRequest, TResponse, TId>: ProtoClient,
     {
     }
 
-    public async Task<IMany<TResponse>> GetAll()
+    public virtual async Task<IMany<TResponse>> GetAll()
         => await GetManyAsync<TResponse>("");
 
-    public async Task<TResponse> GetById(TId id)
+    public virtual async Task<TResponse> GetById(TId id)
         => await GetAsync<TResponse>($"{id}");
 
-    public async Task<TResponse> Add(TRequest request)
+    public virtual async Task<TResponse> Add(TRequest request)
         => await PostAsync<TRequest, TResponse>("", request);
 
-    public async Task<TResponse> Update(TId id, TRequest request)
+    public virtual async Task<TResponse> Update(TId id, TRequest request)
         => await PutAsync<TRequest, TResponse>($"{id}", request);
 
-    public async Task Delete(TId id)
+    public virtual async Task Delete(TId id)
         => await DeleteAsync($"{id}");
 }

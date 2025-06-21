@@ -1,4 +1,5 @@
 ﻿using Infra.Db;
+using Infra.Db.Attributes;
 
 namespace SevenSeals.Tss.Atlas;
 
@@ -9,7 +10,4 @@ public class Zone:AtlasBase
     public ZoneType Type { get; set; }
 
     public Guid? ParentId { get; set; }
-
-    [DbChildTable]
-    public List<Zone> Children { get; set; } = [];
 }

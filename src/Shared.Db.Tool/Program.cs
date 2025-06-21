@@ -4,11 +4,10 @@ namespace SevenSeals.Tss.Shared;
 
 internal static class Program
 {
-    private static void Main()
+    private static void Main(string[] args)
     {
         var outputDir = AppContext.BaseDirectory;
-        var schemaGenerator = new PostgresSchemaGenerator();
-        var dbGenerator = new PostgresDatabaseGenerator(schemaGenerator);
+        var dbGenerator = new PostgresDatabaseGenerator();
         var sql = dbGenerator.GenerateDatabaseSql(outputDir);
 
         var srcDir = FindSrcDirectory(outputDir);
@@ -17,12 +16,20 @@ internal static class Program
             Console.WriteLine("Could not locate /src directory from: " + outputDir);
             return;
         }
+
         var solutionRoot = Directory.GetParent(srcDir)!.FullName;
         var migrationsDir = Path.Combine(solutionRoot, "migrations");
         Directory.CreateDirectory(migrationsDir);
         var outFile = Path.Combine(migrationsDir, "schema.generated.sql");
         File.WriteAllText(outFile, sql);
         Console.WriteLine($"SQL schema generated to: {outFile}");
+
+
+        var fakeGen = new PostgresFakeGenerator();
+        var sqlFake = Path.Combine(migrationsDir, "schema.fake.sql");
+        var sqlFakeData = fakeGen.GenerateFakeDataSql(outputDir);
+        File.WriteAllText(sqlFake, sqlFakeData);
+        Console.WriteLine($"Fake data SQL generated: {sqlFake}");
     }
 
     private static string? FindSrcDirectory(string startDir)

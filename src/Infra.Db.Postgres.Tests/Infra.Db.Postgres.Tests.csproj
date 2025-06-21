@@ -14,11 +14,10 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Infra.Db.Common\Infra.Db.Common.csproj" />
-    <ProjectReference Include="..\Infra.Db.Firebird\Infra.Db.Firebird.csproj" />
     <ProjectReference Include="..\Infra.Db.Postgres\Infra.Db.Postgres.csproj" />
     <ProjectReference Include="..\Infra.Db.Tests.Base\Infra.Db.Tests.Base.csproj" />
     <ProjectReference Include="..\Shared.Db\Shared.Db.csproj" />
+    <ProjectReference Include="..\Shared.Tests.Base\Shared.Tests.Base.csproj" />
   </ItemGroup>
   
   <ItemGroup>

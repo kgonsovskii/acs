@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Infra.Db\Infra.Db.csproj" />
       <ProjectReference Include="..\Infra.Extensions\Infra.Extensions.csproj" />
     </ItemGroup>
 

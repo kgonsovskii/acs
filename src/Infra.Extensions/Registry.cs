@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Infra.Extensions;
+namespace Infra;
 
 public static class RegistryExtensions
 {
@@ -14,30 +14,16 @@ public static class RegistryExtensions
 
     private static string ServiceGroupByType(this Type baseType, string? defaultValue = null)
     {
+        if (!string.IsNullOrEmpty(defaultValue))
+            return defaultValue;
         return ServiceGroupCache.GetOrAdd(baseType, t =>
         {
-            if (t.FullName!.Contains("SevenSeals"))
-                return t.FullName!.Split('.')[2].ToLowerInvariant();
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var asm in assemblies)
-            {
-                if (asm.GetName().Name!.StartsWith("Shared"))
-                    continue;
-
-                var derivedType = asm.GetTypes()
-                    .FirstOrDefault(tt => tt is { IsClass: true, IsAbstract: false } && t.IsAssignableFrom(tt));
-
-                if (derivedType != null)
-                {
-                    return derivedType.Assembly.GetName().Name!.Split('.')[0];
-                }
-            }
-
-            if (defaultValue== null)
-                throw new Exception("No test service found for this test");
-            return defaultValue;
+            var x = t.FullName!.Split('.');
+            if (x.Length <= 1)
+                return defaultValue ?? throw new ArgumentNullException(nameof(defaultValue));
+            return x[^2];
         });
     }
 
-    public static string GetSchemaName(this Type type, string? defVal) => type.ServiceGroupByType(defVal);
+    public static string GetSchemaName(this Type type, string? defVal) => type.ServiceGroupByType(defVal).ToSnakeCase();
 }

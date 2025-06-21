@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using SevenSeals.Tss.Contour.Api;
 
 namespace SevenSeals.Tss.Contour.Diagnostic;
 

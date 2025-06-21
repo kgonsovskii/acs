@@ -1,4 +1,5 @@
 ﻿using Infra.Db;
+using Infra.Db.Attributes;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;

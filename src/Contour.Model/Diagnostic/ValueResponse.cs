@@ -1,4 +1,6 @@
-﻿namespace SevenSeals.Tss.Contour.Diagnostic;
+﻿using SevenSeals.Tss.Contour.Api;
+
+namespace SevenSeals.Tss.Contour.Diagnostic;
 
 public class ValueResponse: SpotResponse
 {

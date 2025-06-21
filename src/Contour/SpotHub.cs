@@ -1,4 +1,5 @@
-﻿using SevenSeals.Tss.Contour.Events;
+﻿using SevenSeals.Tss.Contour.Api;
+using SevenSeals.Tss.Contour.Events;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;

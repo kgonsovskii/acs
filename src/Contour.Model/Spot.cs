@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Infra.Db;
+using Infra.Db.Attributes;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
@@ -11,6 +12,6 @@ public class Spot: StructuralItem<Guid>, IProtoRequest, IProtoResponse
     [DbPolymorphicTable(typeof(IpOptions), typeof(ComPortOptions))]
     public ChannelOptions Options { get; set; } = new IpOptions();
 
-    [DbCsvString]
+    [DbChildTable]
     public string[] Addresses { get; set; } = [];
 }

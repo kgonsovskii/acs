@@ -30,6 +30,9 @@
 
   <ItemGroup>
     <Content Remove="appsettings.base.json" />
+    <Content Update="appsettings.Codex.Tests.base.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

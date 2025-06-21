@@ -3,7 +3,7 @@
 namespace SevenSeals.Tss.Shared;
 
 public abstract class ProtoStorageController<TItem, TId, TStorage>: ProtoStorageController<TItem, TId, TStorage, IProtoRequest, IProtoResponse>
-    where TStorage : IBaseStorage<TItem, TId> where TItem : IItem<TId>
+    where TStorage : IBaseStorage<TItem, TId> where TItem : IItem<TId> where TId : struct
 {
     protected ProtoStorageController(Settings settings, TStorage storage) : base(storage, settings)
     {
@@ -11,7 +11,7 @@ public abstract class ProtoStorageController<TItem, TId, TStorage>: ProtoStorage
 }
 
 public abstract class ProtoStorageController<TItem, TId, TStorage, TRequest, TResponse>: ProtoController where TRequest : IProtoRequest where TResponse : IProtoResponse
-    where TStorage : IBaseStorage<TItem, TId> where TItem : IItem<TId>
+    where TStorage : IBaseStorage<TItem, TId> where TItem : IItem<TId> where TId : struct
 {
     protected TStorage Storage { get; }
     protected ProtoStorageController(TStorage storage, Settings settings) : base(settings)

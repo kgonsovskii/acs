@@ -13,8 +13,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
       <ProjectReference Include="..\Shared.Client\Shared.Client.csproj" />
-      <ProjectReference Include="..\Shared\Shared.csproj" />
-      <ProjectReference Include="..\Shared.Db\Shared.Db.csproj" />
+
     </ItemGroup>
 
 </Project>

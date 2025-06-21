@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SevenSeals.Tss.Contour.Api;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;

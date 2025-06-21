@@ -1,5 +1,6 @@
 ﻿using System.IO.Ports;
 using Infra.Db;
+using Infra.Db.Attributes;
 
 namespace SevenSeals.Tss.Contour;
 
@@ -9,9 +10,9 @@ public class ComPortOptions: ChannelOptions
     public string PortName { get; set; } = "COM1";
     public int BaudRate { get; set; } = 9600;
 
-    [DbEnumTable(Schema = "contour")] public Parity Parity { get; set; } = Parity.None;
+    [DbEnumTable(Schema = "contour", TableName = "com_port_parity")] public Parity Parity { get; set; } = Parity.None;
     public int DataBits { get; set; } = 8;
-    [DbEnumTable(Schema = "contour")] public StopBits StopBits { get; set; } = StopBits.One;
+    [DbEnumTable(Schema = "contour", TableName = "com_port_stop_bits")] public StopBits StopBits { get; set; } = StopBits.One;
 
     public int ReadTimeoutMs { get; set; } = 1000;
     public int WriteTimeoutMs { get; set; } = 1000;

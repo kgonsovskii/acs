@@ -1,8 +1,10 @@
+using Infra.Db.Attributes;
+
 namespace SevenSeals.Tss.Actor;
 
-public class Person: Card
+public class Person: MemberBase
 {
-    public override CardType Type { get; set; } = CardType.Person;
-    public string? Email { get; set; }
-    public string? Phone { get; set; }
+    public override MemberType Type { get; set; } = MemberType.Person;
+    [DbNull] public string? Email { get; set; }
+    [DbNull] public string? Phone { get; set; }
 }

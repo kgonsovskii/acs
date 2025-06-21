@@ -1,3 +1,5 @@
+using Infra.Db.Attributes;
+
 namespace Infra.Db;
 
 // Simple base class for Atlas entities
@@ -208,7 +210,7 @@ public class Department : AtlasBase
 {
     public string Name { get; set; } = string.Empty;
 
-    [DbChildTable]
+    [DbChildTable(TableName = "department_employee")]
     public List<Employee> Employees { get; set; } = [];
 }
 
@@ -237,14 +239,14 @@ public class Project : AtlasBase
     public string Description { get; set; } = string.Empty;
 
     [DbChildTable]
-    public List<Task> Tasks { get; set; } = [];
+    public List<Zena> Zenas { get; set; } = [];
 
     [DbChildTable]
     public List<TeamMember> TeamMembers { get; set; } = [];
 }
 
 [DbTable]
-public class TaskX : AtlasBase
+public class Zena : AtlasBase
 {
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;

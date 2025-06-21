@@ -26,4 +26,12 @@ if exist "%SCHEMA_FILE%" (
 ) else (
     echo schema.generated.sql not found in %~dp0!
 )
+
+set FAKE_FILE=%~dp0schema.fake.sql
+if exist "%FAKE_FILE%" (
+    echo Applying schema.fake.sql to acs database...
+    psql -U tss -d acs -f "%FAKE_FILE%"
+) else (
+    echo schema.fake.sql not found in %~dp0!
+)
 endlocal 

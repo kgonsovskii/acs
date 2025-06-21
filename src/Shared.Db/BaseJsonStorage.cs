@@ -2,7 +2,7 @@
 
 namespace SevenSeals.Tss.Shared;
 
-internal class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId> where TItem : IItem<TId>
+internal class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId> where TItem : IItem<TId> where TId : struct
 {
     public BaseJsonStorage(Settings settings, ILogger logger) : base(settings, logger)
     {

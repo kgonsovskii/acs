@@ -1,55 +1,45 @@
-﻿using System.Data.Common;
+﻿using Infra.Db;
+using Infra.Db.AllAdapters;
 using Microsoft.Extensions.Logging;
-using Npgsql;
 
 namespace SevenSeals.Tss.Shared;
 
-internal class BaseDbStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId>  where TItem : IItem<TId>
+internal class BaseDbStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId> where TItem : class, IItem<TId> where TId : struct
 {
+    private readonly IDbAdapter<TItem, TId> _adapter;
+
     public BaseDbStorage(Settings settings, ILogger logger) : base(settings, logger)
     {
-    }
-
-    private DbConnection OpenConnection()
-    {
-        return new NpgsqlConnection(Settings.ConnectionString);
-    }
-
-    protected void Execute(string cmdText)
-    {
-        using var conn = OpenConnection();
-        using var cmd = conn.CreateCommand();
-        cmd.CommandText = cmdText;
-        cmd.ExecuteNonQuery();
+        _adapter = Adapters.GetAdapter<TItem, TId>(settings.SqlDialect, settings.ConnectionString);
     }
 
     public virtual IEnumerable<TItem> GetAll()
     {
-        throw new NotImplementedException();
+        return _adapter.GetAll();
     }
 
     public void SetAll(IEnumerable<TItem> all)
     {
-        throw new NotImplementedException();
+        _adapter.SetAll(all);
     }
 
     public virtual TItem? GetById(TId id)
     {
-        throw new NotImplementedException();
+        return _adapter.GetById(id);
     }
 
     public virtual void Create(TItem item)
     {
-        throw new NotImplementedException();
+        _adapter.Create(item);
     }
 
     public virtual void Update(TId id, TItem item)
     {
-        throw new NotImplementedException();
+        _adapter.Update(id, item);
     }
 
     public virtual void Delete(TId id)
     {
-        throw new NotImplementedException();
+        _adapter.Delete(id);
     }
 }

@@ -1,16 +1,159 @@
 using System.Reflection;
 using System.Text;
-using Infra.Extensions;
+using Infra.Db.Attributes;
 
 namespace Infra.Db;
 
 public class PostgresDatabaseGenerator : IDatabaseGenerator
 {
-    private readonly ISchemaGenerator _schemaGenerator;
-
-    public PostgresDatabaseGenerator(ISchemaGenerator schemaGenerator)
+   public string GenerateCreateTableSql(Type type)
     {
-        _schemaGenerator = schemaGenerator;
+        var tableAttr = type.GetCustomAttribute<DbTableAttribute>();
+        if (tableAttr == null)
+            throw new InvalidOperationException($"Type {type.Name} does not have TableAttribute");
+        var tableName = tableAttr.GetTableName(type);
+        var schema = tableAttr.GetSchemaName(type);
+        var sb = new StringBuilder();
+        sb.Append($"CREATE TABLE ");
+        if (!string.IsNullOrEmpty(schema))
+            sb.Append($"\"{schema}\".");
+        sb.Append($"\"{tableName}\" (\n");
+
+        // Get all properties from the type and its base types
+        var allProperties = GetAllPropertiesInHierarchy(type);
+        var props = allProperties
+            .Where(p => p.GetCustomAttribute<DbPolymorphicTableAttribute>() == null &&
+                       p.GetCustomAttribute<DbChildTableAttribute>() == null)
+            .GroupBy(p => p.Name)
+            .Select(g => GetMostDerivedProperty(g)) // Get the most derived property
+            .ToArray();
+
+        var columns = props.Select(p => GenerateColumnSql(p)).ToList();
+        sb.Append(string.Join(",\n", columns));
+        sb.Append("\n);");
+        return sb.ToString();
+    }
+
+    private static IEnumerable<PropertyInfo> GetAllPropertiesInHierarchy(Type type)
+    {
+        var properties = new List<PropertyInfo>();
+        var currentType = type;
+
+        while (currentType != null && currentType != typeof(object))
+        {
+            var typeProperties = currentType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            properties.AddRange(typeProperties);
+            currentType = currentType.BaseType;
+        }
+
+        return properties;
+    }
+
+    private static PropertyInfo GetMostDerivedProperty(IGrouping<string, PropertyInfo> group)
+    {
+        // Sort by declaring type hierarchy (most derived first)
+        var sortedProperties = group.OrderByDescending(p => GetTypeDepth(p.DeclaringType!)).ToList();
+        return sortedProperties.First();
+    }
+
+    private static int GetTypeDepth(Type type)
+    {
+        int depth = 0;
+        var currentType = type;
+
+        while (currentType != null && currentType != typeof(object))
+        {
+            depth++;
+            currentType = currentType.BaseType;
+        }
+
+        return depth;
+    }
+
+    public string GenerateColumnSql(PropertyInfo prop)
+    {
+        var name = prop.Name.ToSnakeCase();
+        var isPrimaryKey = prop.GetCustomAttribute<DbPrimaryKeyAttribute>() != null;
+        var isNullable = IsNullableType(prop);
+        var type = GetSqlType(prop.PropertyType, prop, isPrimaryKey);
+        var pk = isPrimaryKey ? " PRIMARY KEY" : string.Empty;
+        var nullable = isNullable ? " NULL" : " NOT NULL";
+        var fkAttr = prop.GetCustomAttribute<DbForeignKeyAttribute>();
+        var fk = fkAttr != null ? $" REFERENCES \"{fkAttr.ReferenceTable.ToSnakeCase()}\"(\"{fkAttr.ReferenceColumn.ToSnakeCase()}\")" : string.Empty;
+        return $"    \"{name}\" {type}{pk}{nullable}{fk}";
+    }
+
+    public bool IsNullableType(PropertyInfo prop)
+    {
+        // Check for nullable value types (int?, Guid?, etc.)
+        if (Nullable.GetUnderlyingType(prop.PropertyType) != null)
+            return true;
+
+        // Check for explicit DbNull attribute
+        if (prop.GetCustomAttribute<DbNullAttribute>() != null)
+            return true;
+
+        // All other fields are NOT NULL by default
+        return false;
+    }
+
+    public string GetSqlType(Type type, PropertyInfo? prop = null, bool isPrimaryKey = false)
+    {
+        var underlyingType = Nullable.GetUnderlyingType(type) ?? type;
+
+        if ((underlyingType == typeof(string[]) ||
+             (underlyingType.IsGenericType && underlyingType.GetGenericTypeDefinition() == typeof(List<>) && underlyingType.GetGenericArguments()[0] == typeof(string))))
+        {
+            if (prop != null && prop.GetCustomAttribute<DbCsvStringAttribute>() != null)
+                return "TEXT";
+            throw new NotSupportedException($"Type {type.Name} is not supported unless CsvStringAttribute is present");
+        }
+
+        switch (isPrimaryKey)
+        {
+            case true when underlyingType == typeof(int):
+                return "SERIAL";
+            case true when underlyingType == typeof(long):
+                return "BIGSERIAL";
+        }
+
+        if (underlyingType == typeof(int)) return "INTEGER";
+        if (underlyingType == typeof(long)) return "BIGINT";
+        if (underlyingType == typeof(string)) return "TEXT";
+        if (underlyingType == typeof(DateTime)) return "TIMESTAMP";
+        if (underlyingType == typeof(bool)) return "BOOLEAN";
+        if (underlyingType == typeof(double)) return "REAL";
+        if (underlyingType == typeof(Guid)) return "UUID";
+        if (underlyingType == typeof(byte)) return "SMALLINT";
+        if (underlyingType == typeof(byte[])) return "BYTEA";
+        if (underlyingType == typeof(TimeSpan)) return "INTERVAL";
+        if (underlyingType.IsEnum) return "TEXT";
+        throw new NotSupportedException($"Type {type.Name} is not supported");
+    }
+
+    private static string GetSqlTypeForPoly(PropertyInfo prop)
+    {
+        var underlyingType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+
+        if ((underlyingType == typeof(string[])) ||
+            (underlyingType.IsGenericType && underlyingType.GetGenericTypeDefinition() == typeof(List<>) && underlyingType.GetGenericArguments()[0] == typeof(string)))
+        {
+            if (prop.GetCustomAttribute<DbCsvStringAttribute>() != null)
+                return "TEXT";
+            throw new NotSupportedException($"Type {prop.PropertyType.Name} is not supported unless CsvStringAttribute is present");
+        }
+        if (underlyingType.IsEnum) return "TEXT";
+        if (underlyingType == typeof(int)) return "INTEGER";
+        if (underlyingType == typeof(long)) return "BIGINT";
+        if (underlyingType == typeof(string)) return "TEXT";
+        if (underlyingType == typeof(DateTime)) return "TIMESTAMP";
+        if (underlyingType == typeof(bool)) return "BOOLEAN";
+        if (underlyingType == typeof(double)) return "REAL";
+        if (underlyingType == typeof(Guid)) return "UUID";
+        if (underlyingType == typeof(byte)) return "SMALLINT";
+        if (underlyingType == typeof(byte[])) return "BYTEA";
+        if (underlyingType == typeof(TimeSpan)) return "INTERVAL";
+        throw new NotSupportedException($"Type {prop.PropertyType.Name} is not supported");
     }
 
     public string GenerateDatabaseSql(string outputDir)
@@ -35,11 +178,13 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
     public string GenerateDatabaseSqlForTypes(IList<Type> types)
     {
         var sbFinal = new StringBuilder();
+        var childTableSqls = new List<string>();
 
         var schemaNames = new HashSet<string>();
         var allTypes = new List<Type>(types);
         var polymorphicTypes = new List<(Type ParentType, Type SubType, string TableName, string Schema)>();
         var childTableTypes = new List<(Type ParentType, Type ChildType, string TableName, string Schema, string ParentForeignKeyColumn, string ChildForeignKeyColumn)>();
+        var emittedConstraints = new HashSet<string>();
 
         foreach (var type in types)
         {
@@ -71,15 +216,36 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
                 if (childAttr != null)
                 {
                     var childType = GetChildTypeFromProperty(prop);
-                    if (childType != null && childType.GetCustomAttribute<DbTableAttribute>() != null)
+                    if (childType != null)
                     {
-                        var childTableName = childAttr.GetTableName(type, childType);
-                        var childSchema = childAttr.GetSchemaName(type);
-                        var parentForeignKeyColumn = childAttr.GetForeignKeyColumnName(type);
-                        var childForeignKeyColumn = childAttr.GetChildForeignKeyColumnName(type, childType, prop.Name);
+                        // Check if simple type (string, int, Guid, etc.)
+                        bool isSimple = childType == typeof(string) || childType == typeof(int) || childType == typeof(long) || childType == typeof(Guid) || childType == typeof(double) || childType == typeof(bool) || childType == typeof(byte);
+                        if (isSimple)
+                        {
+                            var childTableName = childAttr.GetTableName(prop, type);
+                            var childSchema = childAttr.GetSchemaName(type);
+                            var parentForeignKeyColumn = childAttr.GetForeignKeyColumnName(type);
+                            var valueColumn = prop.Name.EndsWith("es") ? prop.Name.Substring(0, prop.Name.Length - 2) : (prop.Name.EndsWith("s") ? prop.Name.Substring(0, prop.Name.Length - 1) : prop.Name);
+                            valueColumn = valueColumn.ToSnakeCase();
+                            var valueType = childType == typeof(string) ? "TEXT" : childType == typeof(int) ? "INTEGER" : childType == typeof(long) ? "BIGINT" : childType == typeof(Guid) ? "UUID" : childType == typeof(double) ? "REAL" : childType == typeof(bool) ? "BOOLEAN" : childType == typeof(byte) ? "SMALLINT" : "TEXT";
+                            var sb = new StringBuilder();
+                            sb.Append($"CREATE TABLE IF NOT EXISTS \"{childSchema}\".\"{childTableName}\" (\n");
+                            sb.Append($"    \"{parentForeignKeyColumn}\" UUID REFERENCES \"{schema}\".\"{tableAttr.GetTableName(type)}\"(\"id\"),\n");
+                            sb.Append($"    \"{valueColumn}\" {valueType} NOT NULL\n");
+                            sb.Append(");");
+                            childTableSqls.Add(sb.ToString());
+                            schemaNames.Add(childSchema);
+                        }
+                        else if (childType.GetCustomAttribute<DbTableAttribute>() != null)
+                        {
+                            var childTableName = childAttr.GetTableName(prop, type);
+                            var childSchema = childAttr.GetSchemaName(type);
+                            var parentForeignKeyColumn = childAttr.GetForeignKeyColumnName(type);
+                            var childForeignKeyColumn = childAttr.GetChildForeignKeyColumnName(type, childType, prop.Name);
 
-                        childTableTypes.Add((type, childType, childTableName, childSchema, parentForeignKeyColumn, childForeignKeyColumn));
-                        schemaNames.Add(childSchema);
+                            childTableTypes.Add((type, childType, childTableName, childSchema, parentForeignKeyColumn, childForeignKeyColumn));
+                            schemaNames.Add(childSchema);
+                        }
                     }
                 }
             }
@@ -168,7 +334,6 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
 
         var tableSqls = new List<string>();
         var polyTableSqls = new List<string>();
-        var childTableSqls = new List<string>();
         var indexSqls = new List<string>();
 
         foreach (var type in types)
@@ -177,7 +342,7 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
             var tableName = tableAttr.GetTableName(type);
             var schema = tableAttr.GetSchemaName(type);
 
-            var tableSql = _schemaGenerator.GenerateCreateTableSql(type);
+            var tableSql = GenerateCreateTableSql(type);
             tableSqls.Add(tableSql);
 
             GenerateIndexesForType(type, tableName, schema, indexSqls);
@@ -193,7 +358,7 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
             var subProps = subType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             var sb = new StringBuilder();
             sb.Append($"CREATE TABLE IF NOT EXISTS \"{schema}\".\"{tableName}\" (\n");
-            sb.Append($"    \"{parentTableName}Id\" UUID REFERENCES \"{schema}\".\"{parentTableName}\"(\"{parentPkName}\"),\n");
+            sb.Append($"    \"{parentTableName}_id\" UUID REFERENCES \"{schema}\".\"{parentTableName}\"(\"{parentPkName}\"),\n");
 
             var columns = subProps.Select(p => GenerateColumnSqlForPoly(p));
             sb.Append(string.Join(",\n", columns));
@@ -227,7 +392,7 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
             indexSqls.Add($"CREATE INDEX IF NOT EXISTS \"idx_{tableName}_{childForeignKeyColumn}\" ON \"{schema}\".\"{tableName}\"(\"{childForeignKeyColumn}\");");
         }
 
-        GenerateEnumForeignKeys(allTypes, polymorphicTypes, childTableTypes, enumForeignKeySqls);
+        GenerateEnumForeignKeys(allTypes, polymorphicTypes, childTableTypes, enumForeignKeySqls, emittedConstraints);
 
         sbFinal.AppendLine("-- Enum tables");
         foreach (var sql in enumTableSqls)
@@ -312,68 +477,69 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
         }
     }
 
-    private void GenerateEnumForeignKeys(IList<Type> types, List<(Type ParentType, Type SubType, string TableName, string Schema)> polymorphicTypes, List<(Type ParentType, Type ChildType, string TableName, string Schema, string ParentForeignKeyColumn, string ChildForeignKeyColumn)> childTableTypes, List<string> enumForeignKeySqls)
+    private void GenerateEnumForeignKeys(
+        IList<Type> types,
+        List<(Type ParentType, Type SubType, string TableName, string Schema)> polymorphicTypes,
+        List<(Type ParentType, Type ChildType, string TableName, string Schema, string ParentForeignKeyColumn, string ChildForeignKeyColumn)> childTableTypes,
+        List<string> enumForeignKeySqls,
+        HashSet<string> emittedConstraints)
     {
         foreach (var type in types)
         {
             var tableAttr = type.GetCustomAttribute<DbTableAttribute>()!;
             var tableName = tableAttr.GetTableName(type);
             var schema = tableAttr.GetSchemaName(type);
-
             foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 var propType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                if (!propType.IsEnum)
-                    continue;
+                if (!propType.IsEnum) continue;
                 var enumAttr = prop.GetCustomAttribute<DbEnumTableAttribute>();
-                if (enumAttr == null)
-                    continue;
+                if (enumAttr == null) continue;
                 var enumTableName = enumAttr.GetTableName(propType);
                 var enumSchema = enumAttr.GetSchemaName(propType);
-
-                var fkSql = $"ALTER TABLE \"{schema}\".\"{tableName}\" ADD CONSTRAINT \"fk_{tableName}_{prop.Name.ToSnakeCase()}\" FOREIGN KEY (\"{prop.Name.ToSnakeCase()}\") REFERENCES \"{enumSchema}\".\"{enumTableName}\"(\"name\");";
+                var constraintName = $"fk_{tableName}_{prop.Name.ToSnakeCase()}";
+                if (!emittedConstraints.Add($"{schema}.{tableName}.{constraintName}")) continue;
+                var fkSql = $"ALTER TABLE \"{schema}\".\"{tableName}\" ADD CONSTRAINT \"{constraintName}\" FOREIGN KEY (\"{prop.Name.ToSnakeCase()}\") REFERENCES \"{enumSchema}\".\"{enumTableName}\"(\"name\");";
                 enumForeignKeySqls.Add(fkSql);
             }
         }
-
         foreach (var (_, subType, tableName, schema) in polymorphicTypes)
         {
             foreach (var prop in subType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 var propType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                if (!propType.IsEnum)
-                    continue;
+                if (!propType.IsEnum) continue;
                 var enumAttr = prop.GetCustomAttribute<DbEnumTableAttribute>();
-                if (enumAttr == null)
-                    continue;
+                if (enumAttr == null) continue;
                 var enumTableName = enumAttr.GetTableName(propType);
                 var enumSchema = enumAttr.GetSchemaName(propType);
-
-                var fkSql = $"ALTER TABLE \"{schema}\".\"{tableName}\" ADD CONSTRAINT \"fk_{tableName}_{prop.Name.ToSnakeCase()}\" FOREIGN KEY (\"{prop.Name.ToSnakeCase()}\") REFERENCES \"{enumSchema}\".\"{enumTableName}\"(\"name\");";
+                var constraintName = $"fk_{tableName}_{prop.Name.ToSnakeCase()}";
+                if (!emittedConstraints.Add($"{schema}.{tableName}.{constraintName}")) continue;
+                var fkSql = $"ALTER TABLE \"{schema}\".\"{tableName}\" ADD CONSTRAINT \"{constraintName}\" FOREIGN KEY (\"{prop.Name.ToSnakeCase()}\") REFERENCES \"{enumSchema}\".\"{enumTableName}\"(\"name\");";
                 enumForeignKeySqls.Add(fkSql);
             }
         }
-
         foreach (var (_, childType, _, schema, _, _) in childTableTypes)
         {
+            var childTableAttr = childType.GetCustomAttribute<DbTableAttribute>();
+            var childTableName = childTableAttr?.GetTableName(childType) ?? childType.Name.ToSnakeCase();
             foreach (var prop in childType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 var propType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                if (!propType.IsEnum)
-                    continue;
+                if (!propType.IsEnum) continue;
                 var enumAttr = prop.GetCustomAttribute<DbEnumTableAttribute>();
-                if (enumAttr == null)
-                    continue;
+                if (enumAttr == null) continue;
                 var enumTableName = enumAttr.GetTableName(propType);
                 var enumSchema = enumAttr.GetSchemaName(propType);
-
-                var fkSql = $"ALTER TABLE \"{schema}\".\"{childType.GetCustomAttribute<DbTableAttribute>()?.GetTableName(childType) ?? childType.Name.ToSnakeCase()}\" ADD CONSTRAINT \"fk_{childType.GetCustomAttribute<DbTableAttribute>()?.GetTableName(childType) ?? childType.Name.ToSnakeCase()}_{prop.Name.ToSnakeCase()}\" FOREIGN KEY (\"{prop.Name.ToSnakeCase()}\") REFERENCES \"{enumSchema}\".\"{enumTableName}\"(\"name\");";
+                var constraintName = $"fk_{childTableName}_{prop.Name.ToSnakeCase()}";
+                if (!emittedConstraints.Add($"{schema}.{childTableName}.{constraintName}")) continue;
+                var fkSql = $"ALTER TABLE \"{schema}\".\"{childTableName}\" ADD CONSTRAINT \"{constraintName}\" FOREIGN KEY (\"{prop.Name.ToSnakeCase()}\") REFERENCES \"{enumSchema}\".\"{enumTableName}\"(\"name\");";
                 enumForeignKeySqls.Add(fkSql);
             }
         }
     }
 
-    private static string GenerateColumnSqlForPoly(PropertyInfo prop)
+    private string GenerateColumnSqlForPoly(PropertyInfo prop)
     {
         var name = prop.Name.ToSnakeCase();
         var isNullable = IsNullableType(prop);
@@ -382,20 +548,6 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
         var fkAttr = prop.GetCustomAttribute<DbForeignKeyAttribute>();
         var fk = fkAttr != null ? $" REFERENCES \"{fkAttr.ReferenceTable.ToSnakeCase()}\"(\"{fkAttr.ReferenceColumn.ToSnakeCase()}\")" : string.Empty;
         return $"    \"{name}\" {type}{nullable}{fk}";
-    }
-
-    private static bool IsNullableType(PropertyInfo prop)
-    {
-        var type = prop.PropertyType;
-
-        if (Nullable.GetUnderlyingType(type) != null) return true;
-
-        if (type.IsValueType)
-            return false;
-        var nullableAttribute = prop.GetCustomAttributes()
-            .FirstOrDefault(attr => attr.GetType().Name == "NullableAttribute");
-
-        return nullableAttribute != null;
     }
 
     private static List<Type> CollectEnumTypes(IList<Type> tableTypes, List<(Type ParentType, Type SubType, string TableName, string Schema)> polymorphicTypes, List<(Type ParentType, Type ChildType, string TableName, string Schema, string ParentForeignKeyColumn, string ChildForeignKeyColumn)> childTableTypes)
@@ -448,31 +600,6 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
         }
 
         return enumTypes.ToList();
-    }
-
-    private static string GetSqlTypeForPoly(PropertyInfo prop)
-    {
-        var underlyingType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-
-        if ((underlyingType == typeof(string[])) ||
-            (underlyingType.IsGenericType && underlyingType.GetGenericTypeDefinition() == typeof(List<>) && underlyingType.GetGenericArguments()[0] == typeof(string)))
-        {
-            if (prop.GetCustomAttribute<DbCsvStringAttribute>() != null)
-                return "TEXT";
-            throw new NotSupportedException($"Type {prop.PropertyType.Name} is not supported unless CsvStringAttribute is present");
-        }
-        if (underlyingType.IsEnum) return "TEXT";
-        if (underlyingType == typeof(int)) return "INTEGER";
-        if (underlyingType == typeof(long)) return "BIGINT";
-        if (underlyingType == typeof(string)) return "TEXT";
-        if (underlyingType == typeof(DateTime)) return "DATETIME";
-        if (underlyingType == typeof(bool)) return "BOOLEAN";
-        if (underlyingType == typeof(double)) return "REAL";
-        if (underlyingType == typeof(Guid)) return "UUID";
-        if (underlyingType == typeof(byte)) return "SMALLINT";
-        if (underlyingType == typeof(byte[])) return "BYTEA";
-        if (underlyingType == typeof(TimeSpan)) return "INTERVAL";
-        throw new NotSupportedException($"Type {prop.PropertyType.Name} is not supported");
     }
 
     private static IEnumerable<Assembly> LoadAssembliesFromDirectory(string directory)

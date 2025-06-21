@@ -3,9 +3,5 @@
 public enum StorageType
 {
     Json,
-    Postgres,
-    Firebird,
-    MongoDb,
-    MySql,
-    MsSql
+    RelationDatabase
 }

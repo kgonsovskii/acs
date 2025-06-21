@@ -1,4 +1,5 @@
 ﻿using Infra.Db;
+using Infra.Db.Attributes;
 
 namespace SevenSeals.Tss.Atlas;
 

@@ -1,4 +1,4 @@
-﻿namespace Infra.Extensions;
+﻿namespace Infra;
 
 public static class Strings
 {
@@ -13,6 +13,32 @@ public static class Strings
 
         return char.ToLowerInvariant(input[0]) + input.Substring(1);
     }
+
+
+    public static string ToPascalCase(this string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        // Handle snake_case
+        if (input.Contains('_'))
+        {
+            var parts = input.Split('_');
+            var result = "";
+            foreach (var part in parts)
+            {
+                if (!string.IsNullOrEmpty(part))
+                {
+                    result += char.ToUpperInvariant(part[0]) + part.Substring(1).ToLowerInvariant();
+                }
+            }
+            return result;
+        }
+
+        // Handle camelCase or regular string
+        return char.ToUpperInvariant(input[0]) + input.Substring(1);
+    }
+
 
     public static string ToSnakeCase(this string input)
     {

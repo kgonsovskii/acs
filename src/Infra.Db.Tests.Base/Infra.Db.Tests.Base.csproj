@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Infra.Db.Common\Infra.Db.Common.csproj" />
+      <ProjectReference Include="..\Infra.Db\Infra.Db.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace SevenSeals.Tss.Shared;
@@ -6,6 +7,7 @@ namespace SevenSeals.Tss.Shared;
 public class GenericDiscriminantConverter<TEnum, TBase>: JsonConverter<TBase> where TEnum : struct, Enum where TBase: class
 {
     private Dictionary<Enum, Type> _map;
+    [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
     public GenericDiscriminantConverter(Dictionary<Enum, Type> map)
     {
         _map = map;

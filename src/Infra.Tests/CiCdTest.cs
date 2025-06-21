@@ -1,7 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SevenSeals.Tss.Shared;
 
-namespace Infra.Db;
+namespace Infra;
 
 [TestClass]
 public class CiCdTest
@@ -17,12 +16,12 @@ public class CiCdTest
     {
         try
         {
-            TestEnvironment.SkipIfNotCi("This test requires CI environment");
-            Assert.IsTrue("Local" == TestEnvironment.GetCiProvider());
+            InfraEnvironment.SkipIfNotCi("This test requires CI environment");
+            Assert.IsTrue("Local" == InfraEnvironment.GetCiProvider());
         }
         catch
         {
-            Assert.IsFalse(TestEnvironment.IsRunningInCi);
+            Assert.IsFalse(InfraEnvironment.IsRunningInCi);
         }
     }
 
@@ -31,26 +30,26 @@ public class CiCdTest
     {
         try
         {
-            TestEnvironment.SkipIfCi("This test should only run locally!");
-            Assert.IsTrue(TestEnvironment.IsRunningInCi);
+            InfraEnvironment.SkipIfCi("This test should only run locally!");
+            Assert.IsTrue(InfraEnvironment.IsRunningInCi);
         }
         catch (Exception e)
         {
-            Assert.IsTrue("Local" == TestEnvironment.GetCiProvider());
+            Assert.IsTrue("Local" == InfraEnvironment.GetCiProvider());
         }
     }
 
     [TestMethod]
     public void TestWithConditionalLogic()
     {
-        if (TestEnvironment.IsRunningInCi)
+        if (InfraEnvironment.IsRunningInCi)
         {
-            var provider = TestEnvironment.GetCiProvider();
+            var provider = InfraEnvironment.GetCiProvider();
             Assert.IsTrue(new[] { "GitHub Actions", "GitLab CI", "GitVerse CI", "Unknown CI" }.Contains(provider));
         }
         else
         {
-            Assert.IsTrue("Local" == TestEnvironment.GetCiProvider());
+            Assert.IsTrue("Local" == InfraEnvironment.GetCiProvider());
         }
     }
 }

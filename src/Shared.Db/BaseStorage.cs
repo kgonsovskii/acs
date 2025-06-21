@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Infra;
+using Microsoft.Extensions.Logging;
 
 namespace SevenSeals.Tss.Shared;
 
@@ -15,7 +16,7 @@ public abstract class BaseStorageBase
     }
 }
 
-public interface IBaseStorage<TItem, in TId> where TItem : IItem<TId>
+public interface IBaseStorage<TItem, in TId> where TItem : IItem<TId> where TId : struct
 {
     public IEnumerable<TItem> GetAll();
     public void SetAll(IEnumerable<TItem> all);
@@ -25,7 +26,7 @@ public interface IBaseStorage<TItem, in TId> where TItem : IItem<TId>
     public void Delete(TId id);
 }
 
-public class BaseStorage<TItem, TId> : BaseStorageBase, IBaseStorage<TItem, TId> where TItem : IItem<TId>
+public class BaseStorage<TItem, TId> : BaseStorageBase, IBaseStorage<TItem, TId> where TItem : class, IItem<TId> where TId : struct
 {
     private IBaseStorage<TItem, TId> _storage;
     public BaseStorage(Settings settings, ILogger logger) : base(settings, logger)
