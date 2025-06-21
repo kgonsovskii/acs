@@ -99,13 +99,13 @@ public class DbChildTableAttribute : Attribute
     public string? Schema { get; set; }
     public string? ForeignKeyColumnName { get; set; }
 
-    public string GetTableName(Type parentType, Type childType)
+    public string GetTableName(PropertyInfo property, Type parentType)
     {
         if (!string.IsNullOrEmpty(TableName))
             return TableName;
 
         var parentTableName = parentType.GetCustomAttribute<DbTableAttribute>()?.GetTableName(parentType) ?? parentType.Name.ToSnakeCase();
-        var childTableName = childType.GetCustomAttribute<DbTableAttribute>()?.GetTableName(childType) ?? childType.Name.ToSnakeCase();
+        var childTableName = BaseNameModifier(property.Name).ToSnakeCase();
 
         return $"{parentTableName}_{childTableName}";
     }
@@ -134,9 +134,17 @@ public class DbChildTableAttribute : Attribute
     {
         if (parentType != childType || string.IsNullOrEmpty(propertyName))
             return GetChildForeignKeyColumnName(childType);
-        var baseName = propertyName;
-        if (baseName.EndsWith("ren")) baseName = baseName.Substring(0, baseName.Length - 3); // children -> child
-        else if (baseName.EndsWith("s")) baseName = baseName.Substring(0, baseName.Length - 1); // tasks -> task
+        var baseName = BaseNameModifier(propertyName);
         return baseName.ToSnakeCase() + "Id";
+    }
+
+    private static string BaseNameModifier(string baseName)
+    {
+        // Handle common English plural forms
+        if (baseName.EndsWith("ren")) baseName = baseName.Substring(0, baseName.Length - 3); // children -> child
+        else if (baseName.EndsWith("ies")) baseName = baseName.Substring(0, baseName.Length - 3) + "y"; // companies -> company
+        else if (baseName.EndsWith("es")) baseName = baseName.Substring(0, baseName.Length - 2); // addresses -> address
+        else if (baseName.EndsWith("s")) baseName = baseName.Substring(0, baseName.Length - 1); // tasks -> task
+        return baseName;
     }
 }

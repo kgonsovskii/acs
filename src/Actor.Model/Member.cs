@@ -3,7 +3,7 @@ using Infra.Db;
 namespace SevenSeals.Tss.Actor;
 
 [DbTable]
-public class Actor: ActorBase
+public class Member: ActorBase
 {
     [DbPolymorphicTable(typeof(Person), typeof(Drone))]
     public Card Card { get; set; } = new Person();

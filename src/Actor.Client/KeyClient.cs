@@ -4,12 +4,12 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Actor;
 
-public interface IKeyClient: IProtoStorageClient<Key, Key, Guid>;
+public interface IPassClient: IProtoStorageClient<Pass, Pass, Guid>;
 
-public class KeyClient : ProtoStorageClient<Key, Key, Guid>, IKeyClient
+public class PassClient : ProtoStorageClient<Pass, Pass, Guid>, IPassClient
 {
-    public KeyClient(HttpClient httpClient, Settings settings, IOptions<ActorClientOptions> options,
-        ILogger<KeyClient> logger) : base(httpClient, settings, options, logger)
+    public PassClient(HttpClient httpClient, Settings settings, IOptions<ActorClientOptions> options,
+        ILogger<PassClient> logger) : base(httpClient, settings, options, logger)
     {
 
     }

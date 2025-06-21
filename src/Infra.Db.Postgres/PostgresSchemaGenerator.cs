@@ -80,7 +80,7 @@ public class PostgresSchemaGenerator : ISchemaGenerator
         if (underlyingType == typeof(int)) return "INTEGER";
         if (underlyingType == typeof(long)) return "BIGINT";
         if (underlyingType == typeof(string)) return "TEXT";
-        if (underlyingType == typeof(DateTime)) return "DATETIME";
+        if (underlyingType == typeof(DateTime)) return "TIMESTAMP";
         if (underlyingType == typeof(bool)) return "BOOLEAN";
         if (underlyingType == typeof(double)) return "REAL";
         if (underlyingType == typeof(Guid)) return "UUID";

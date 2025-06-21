@@ -4,9 +4,9 @@ using SevenSeals.Tss.Shared;
 namespace SevenSeals.Tss.Actor;
 
 [TestClass]
-public class KeyTests : TestStorageBase<Key, Key, Guid, IKeyClient, ActorTestFactory, Startup>
+public class PassTests : TestStorageBase<Pass, Pass, Guid, IPassClient, ActorTestFactory, Startup>
 {
-    protected override Guid GetId(Key response)
+    protected override Guid GetId(Pass response)
     {
         return response.Id;
     }

@@ -24,7 +24,7 @@ public static class RandomExtensions
         }
     }
 
-    private static object GenerateRandomValue(Type type)
+    public static object GenerateRandomValue(Type type)
     {
         if (type == typeof(int))
             return Random.Next();

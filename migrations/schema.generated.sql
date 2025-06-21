@@ -24,6 +24,14 @@ CREATE SCHEMA IF NOT EXISTS "codex" AUTHORIZATION tss;
 CREATE SCHEMA IF NOT EXISTS "contour" AUTHORIZATION tss;
 
 -- Enum tables
+CREATE TABLE IF NOT EXISTS "actor"."pass_type" (
+    "name" TEXT PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS "actor"."pass_status" (
+    "name" TEXT PRIMARY KEY
+);
+
 CREATE TABLE IF NOT EXISTS "atlas"."zone_type" (
     "name" TEXT PRIMARY KEY
 );
@@ -49,7 +57,19 @@ CREATE TABLE IF NOT EXISTS "contour"."stop_bits" (
 );
 
 -- Regular tables
-CREATE TABLE "actor"."actor" (
+CREATE TABLE "actor"."member" (
+    "id" UUID PRIMARY KEY NOT NULL,
+    "name" TEXT NOT NULL,
+    "hint" TEXT NOT NULL,
+    "is_active" BOOLEAN NOT NULL
+);
+
+CREATE TABLE "actor"."pass" (
+    "number" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "status" TEXT NOT NULL,
+    "issue_date" TIMESTAMP NOT NULL,
+    "expiry_date" TIMESTAMP NULL,
     "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NOT NULL,
     "hint" TEXT NOT NULL,
@@ -105,7 +125,6 @@ CREATE TABLE "contour"."event_log" (
 );
 
 CREATE TABLE "contour"."spot" (
-    "addresses" TEXT NOT NULL,
     "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NOT NULL,
     "hint" TEXT NOT NULL,
@@ -113,15 +132,15 @@ CREATE TABLE "contour"."spot" (
 );
 
 -- Polymorphic tables
-CREATE TABLE IF NOT EXISTS "actor"."actor_person" (
-    "actorId" UUID REFERENCES "actor"."actor"("id"),
+CREATE TABLE IF NOT EXISTS "actor"."member_person" (
+    "memberId" UUID REFERENCES "actor"."member"("id"),
     "type" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "phone" TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "actor"."actor_drone" (
-    "actorId" UUID REFERENCES "actor"."actor"("id"),
+CREATE TABLE IF NOT EXISTS "actor"."member_drone" (
+    "memberId" UUID REFERENCES "actor"."member"("id"),
     "type" TEXT NOT NULL,
     "serial_number" TEXT NOT NULL,
     "firmware_version" TEXT NOT NULL
@@ -147,17 +166,31 @@ CREATE TABLE IF NOT EXISTS "contour"."spot_com_port" (
 );
 
 -- Child tables
-CREATE TABLE IF NOT EXISTS "atlas"."zone_zone" (
+CREATE TABLE IF NOT EXISTS "contour"."spot_address" (
+    "spotId" UUID REFERENCES "contour"."spot"("id"),
+    "address" TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "atlas"."zone_child" (
     "zoneId" UUID REFERENCES "atlas"."zone"("id"),
     "childId" UUID REFERENCES "atlas"."zone"("id"),
     PRIMARY KEY ("zoneId", "childId")
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS "idx_zone_zone_zoneId" ON "atlas"."zone_zone"("zoneId");
-CREATE INDEX IF NOT EXISTS "idx_zone_zone_childId" ON "atlas"."zone_zone"("childId");
+CREATE INDEX IF NOT EXISTS "idx_zone_child_zoneId" ON "atlas"."zone_child"("zoneId");
+CREATE INDEX IF NOT EXISTS "idx_zone_child_childId" ON "atlas"."zone_child"("childId");
 
 -- Enum data population
+INSERT INTO "actor"."pass_type" ("name") VALUES ('physical') ON CONFLICT ("name") DO NOTHING;
+INSERT INTO "actor"."pass_type" ("name") VALUES ('virtual') ON CONFLICT ("name") DO NOTHING;
+INSERT INTO "actor"."pass_type" ("name") VALUES ('card') ON CONFLICT ("name") DO NOTHING;
+INSERT INTO "actor"."pass_type" ("name") VALUES ('mobile') ON CONFLICT ("name") DO NOTHING;
+INSERT INTO "actor"."pass_status" ("name") VALUES ('active') ON CONFLICT ("name") DO NOTHING;
+INSERT INTO "actor"."pass_status" ("name") VALUES ('lost') ON CONFLICT ("name") DO NOTHING;
+INSERT INTO "actor"."pass_status" ("name") VALUES ('stolen') ON CONFLICT ("name") DO NOTHING;
+INSERT INTO "actor"."pass_status" ("name") VALUES ('expired') ON CONFLICT ("name") DO NOTHING;
+INSERT INTO "actor"."pass_status" ("name") VALUES ('deactivated') ON CONFLICT ("name") DO NOTHING;
 INSERT INTO "atlas"."zone_type" ("name") VALUES ('building') ON CONFLICT ("name") DO NOTHING;
 INSERT INTO "atlas"."zone_type" ("name") VALUES ('floor') ON CONFLICT ("name") DO NOTHING;
 INSERT INTO "atlas"."zone_type" ("name") VALUES ('room') ON CONFLICT ("name") DO NOTHING;
@@ -189,12 +222,13 @@ INSERT INTO "contour"."stop_bits" ("name") VALUES ('two') ON CONFLICT ("name") D
 INSERT INTO "contour"."stop_bits" ("name") VALUES ('one_point_five') ON CONFLICT ("name") DO NOTHING;
 
 -- Enum foreign keys
+ALTER TABLE "actor"."pass" ADD CONSTRAINT "fk_pass_type" FOREIGN KEY ("type") REFERENCES "actor"."pass_type"("name");
+ALTER TABLE "actor"."pass" ADD CONSTRAINT "fk_pass_status" FOREIGN KEY ("status") REFERENCES "actor"."pass_status"("name");
 ALTER TABLE "atlas"."zone" ADD CONSTRAINT "fk_zone_type" FOREIGN KEY ("type") REFERENCES "atlas"."zone_type"("name");
 ALTER TABLE "codex"."time_zone_rule" ADD CONSTRAINT "fk_time_zone_rule_day_of_week" FOREIGN KEY ("day_of_week") REFERENCES "codex"."day_of_week"("name");
-ALTER TABLE "actor"."actor_person" ADD CONSTRAINT "fk_actor_person_type" FOREIGN KEY ("type") REFERENCES "actor"."card_type"("name");
-ALTER TABLE "actor"."actor_drone" ADD CONSTRAINT "fk_actor_drone_type" FOREIGN KEY ("type") REFERENCES "actor"."card_type"("name");
+ALTER TABLE "actor"."member_person" ADD CONSTRAINT "fk_member_person_type" FOREIGN KEY ("type") REFERENCES "actor"."card_type"("name");
+ALTER TABLE "actor"."member_drone" ADD CONSTRAINT "fk_member_drone_type" FOREIGN KEY ("type") REFERENCES "actor"."card_type"("name");
 ALTER TABLE "contour"."spot_ip" ADD CONSTRAINT "fk_spot_ip_type" FOREIGN KEY ("type") REFERENCES "contour"."channel_type"("name");
 ALTER TABLE "contour"."spot_com_port" ADD CONSTRAINT "fk_spot_com_port_type" FOREIGN KEY ("type") REFERENCES "contour"."channel_type"("name");
 ALTER TABLE "contour"."spot_com_port" ADD CONSTRAINT "fk_spot_com_port_parity" FOREIGN KEY ("parity") REFERENCES "contour"."parity"("name");
 ALTER TABLE "contour"."spot_com_port" ADD CONSTRAINT "fk_spot_com_port_stop_bits" FOREIGN KEY ("stop_bits") REFERENCES "contour"."stop_bits"("name");
-ALTER TABLE "atlas"."zone" ADD CONSTRAINT "fk_zone_type" FOREIGN KEY ("type") REFERENCES "atlas"."zone_type"("name");

@@ -11,6 +11,6 @@ public class Spot: StructuralItem<Guid>, IProtoRequest, IProtoResponse
     [DbPolymorphicTable(typeof(IpOptions), typeof(ComPortOptions))]
     public ChannelOptions Options { get; set; } = new IpOptions();
 
-    [DbCsvString]
+    [DbChildTable]
     public string[] Addresses { get; set; } = [];
 }

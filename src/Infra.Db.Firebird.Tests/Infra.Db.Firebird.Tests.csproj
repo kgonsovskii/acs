@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>Infra.Db</RootNamespace>
   </PropertyGroup>
@@ -12,16 +12,15 @@
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\Infra.Db.Common\Infra.Db.Common.csproj" />
-    <ProjectReference Include="..\Infra.Db.Postgres\Infra.Db.Postgres.csproj" />
+    <ProjectReference Include="..\Infra.Db.Firebird\Infra.Db.Firebird.csproj" />
     <ProjectReference Include="..\Infra.Db.Tests.Base\Infra.Db.Tests.Base.csproj" />
     <ProjectReference Include="..\Shared.Db\Shared.Db.csproj" />
-    <ProjectReference Include="..\Shared.Tests.Base\Shared.Tests.Base.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <Content Remove="appsettings.Infra.Db.Postgres.Tests.base.json" />
+    <Content Remove="appsettings.Infra.Db.Firebird.Tests.base.json" />
   </ItemGroup>
 </Project> 
