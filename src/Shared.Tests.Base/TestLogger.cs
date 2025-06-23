@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace SevenSeals.Tss.Shared;
+namespace SevenSeals.Tss.Shared.Tests.Base;
 
 public class TestLogProvider : ILoggerProvider
 {

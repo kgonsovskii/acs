@@ -1,6 +1,5 @@
 ﻿using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
-using Infra.Db;
 using Infra.Db.Attributes;
 using SevenSeals.Tss.Shared;
 

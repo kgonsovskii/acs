@@ -1,44 +1,19 @@
-using Infra.Db;
+﻿using Microsoft.Extensions.Hosting;
 
 namespace SevenSeals.Tss.Shared;
 
-internal static class Program
+public class Program : ProgramBase<Startup>
 {
-    private static void Main(string[] args)
+    protected override string ServiceGroup => "Db.Tool";
+
+    public static void Main(string[] args)
     {
-        var outputDir = AppContext.BaseDirectory;
-        var dbGenerator = new PostgresDatabaseGenerator();
-        var sql = dbGenerator.GenerateDatabaseSql(outputDir);
-
-        var srcDir = FindSrcDirectory(outputDir);
-        if (srcDir == null)
-        {
-            Console.WriteLine("Could not locate /src directory from: " + outputDir);
-            return;
-        }
-
-        var solutionRoot = Directory.GetParent(srcDir)!.FullName;
-        var migrationsDir = Path.Combine(solutionRoot, "migrations");
-        Directory.CreateDirectory(migrationsDir);
-        var outFile = Path.Combine(migrationsDir, "schema.generated.sql");
-        File.WriteAllText(outFile, sql);
-        Console.WriteLine($"SQL schema generated to: {outFile}");
-
-
-        var fakeGen = new PostgresFakeGenerator();
-        var sqlFake = Path.Combine(migrationsDir, "schema.fake.sql");
-        var sqlFakeData = fakeGen.GenerateFakeDataSql(outputDir);
-        File.WriteAllText(sqlFake, sqlFakeData);
-        Console.WriteLine($"Fake data SQL generated: {sqlFake}");
+       new Program().Run(args);
     }
 
-    private static string? FindSrcDirectory(string startDir)
+    protected override IHostBuilder CreateHostBuilder(string[] args)
     {
-        var dir = new DirectoryInfo(startDir);
-        while (dir != null && dir.Name.ToLowerInvariant() != "src")
-        {
-            dir = dir.Parent;
-        }
-        return dir?.FullName;
+        var builder = base.CreateHostBuilder(args);
+        return builder;
     }
 }

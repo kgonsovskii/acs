@@ -1,6 +1,8 @@
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text.RegularExpressions;
+using SevenSeals.Tss.Shared;
+
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 namespace SevenSeals.Tss.Atlas;
@@ -55,7 +57,7 @@ public class AtlasPlotterTests
         var sklad = new Zone
         {
             Id = Guid.NewGuid(),
-            Name = "Склад 1111",
+            Name = "Склад",
             Type = ZoneType.Room,
             ParentId = floor2.Id,
         };
@@ -142,6 +144,9 @@ public class AtlasPlotterTests
             Zones = [building, floor2, сoridor, sklad, buhgalter, classroom, coders, externalArea],
             Transits = transits
         };
+
+        _map.Zones.SerializeToFile("Zone.json");
+        _map.Transits.SerializeToFile("Transit.json");
 
         _plotter = new AtlasPlotter(_map);
     }

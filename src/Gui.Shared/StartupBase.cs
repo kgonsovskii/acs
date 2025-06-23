@@ -1,10 +1,10 @@
 ﻿using System.Text.Json;
-using Infra;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SevenSeals.Tss.Shared;
 
 namespace Gui.Shared;
 
@@ -46,5 +46,5 @@ public abstract class GuiStartupBase<TStartup> where TStartup : class
         UseInternal(app, env, logger);
     }
 
-    protected virtual string ServiceGroup => this.GetServiceGroup();
+    protected virtual string ServiceGroup => "Gui";
 }

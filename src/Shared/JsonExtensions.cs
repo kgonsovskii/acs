@@ -9,6 +9,11 @@ public static class JsonExtensions
         return JsonSerializer.Serialize(obj, Services.JsonSerializerOptions);
     }
 
+    public static void SerializeToFile(this object obj, string path)
+    {
+        File.WriteAllText(path, obj.Serialize());
+    }
+
     public static void Serialize<TValue>(this TValue value, Utf8JsonWriter writer,
         JsonSerializerOptions? options = null)
     {

@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SevenSeals.Tss.Shared;
+using Infra;
+using SevenSeals.Tss.Shared.Tests.Base;
 
 namespace SevenSeals.Tss.Atlas;
 
@@ -9,5 +10,13 @@ public class AtlasTestsTransits : TestStorageBase<Transit, Transit, Guid, ITrans
     protected override Guid GetId(Transit response)
     {
         return response.Id;
+    }
+
+    protected override Transit CreateRequest()
+    {
+        var transit = new Transit();
+        transit.FillWithRandomValues();
+        transit.SpotId = null;
+        return transit;
     }
 }

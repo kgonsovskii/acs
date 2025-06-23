@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using SevenSeals.Tss.Shared;
+using SevenSeals.Tss.Shared.Tests.Base;
 
 namespace SevenSeals.Tss.Codex;
 
@@ -8,6 +8,6 @@ public class CodexTestFactory : TestWebAppFactory<Startup>
 {
     protected override void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)
     {
-        services.AddCodexClient(context.Configuration);
+        services.AddCodexClients(context.Configuration);
     }
 }

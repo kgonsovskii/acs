@@ -1,5 +1,4 @@
-﻿using Infra;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -12,6 +11,7 @@ public abstract class GuiProgramBase
 }
 public abstract class GuiProgramBase<TGuiStartup>: GuiProgramBase where TGuiStartup : GuiStartupBase<TGuiStartup>
 {
+
     public override int Run(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
@@ -52,11 +52,12 @@ public abstract class GuiProgramBase<TGuiStartup>: GuiProgramBase where TGuiStar
 #endif
                 hostingContext.HostingEnvironment.EnvironmentName = environmentName;
 
+                var serviceGroup = ServiceGroup;
                 config
                     .SetBasePath(env.ContentRootPath)
-                    .AddJsonFile($"appsettings.{ServiceGroup}.base.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{ServiceGroup}.json", optional: false, reloadOnChange: true)
-                    .AddJsonFile($"appsettings.{ServiceGroup}.{environmentName}.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{serviceGroup}.base.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{serviceGroup}.json", optional: false, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{serviceGroup}.{environmentName}.json", optional: true, reloadOnChange: true)
                     .AddEnvironmentVariables();
                 config.AddCommandLine(args);
             })
@@ -65,5 +66,5 @@ public abstract class GuiProgramBase<TGuiStartup>: GuiProgramBase where TGuiStar
                 webBuilder.UseStartup<TGuiStartup>();
             });
 
-    protected virtual string ServiceGroup => this.GetServiceGroup();
+    protected virtual string ServiceGroup => "Gui";
 }

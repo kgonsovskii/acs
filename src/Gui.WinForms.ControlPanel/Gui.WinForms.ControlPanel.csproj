@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <CleanProjectName>Gui</CleanProjectName>
+  </PropertyGroup>
+  
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <UseWindowsForms>true</UseWindowsForms>
+        <RootNamespace>Gui.WinForms</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Actor.Model\Actor.Model.csproj" />
+        <ProjectReference Include="..\Actor.Client\Actor.Client.csproj" />
+        <ProjectReference Include="..\Atlas.Client\Atlas.Client.csproj" />
+        <ProjectReference Include="..\Chronicle.Client\Chronicle.Client.csproj" />
+        <ProjectReference Include="..\Chronicle.Model\Chronicle.Model.csproj" />
+        <ProjectReference Include="..\Codex.Client\Codex.Client.csproj" />
+        <ProjectReference Include="..\Codex.Model\Codex.Model.csproj" />
+        <ProjectReference Include="..\Contour.Client\Contour.Client.csproj" />
+        <ProjectReference Include="..\Gui.Shared\Gui.Shared.csproj" />
+        <ProjectReference Include="..\Gui.WinForms.Shared\Gui.WinForms.Shared.csproj" />
+        <ProjectReference Include="..\Logic.Client\Logic.Client.csproj" />
+        <ProjectReference Include="..\Logic.Model\Logic.Model.csproj" />
+    </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+  </ItemGroup>
+
+    <ItemGroup>
+        <None Update="appsettings.Gui.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="appsettings.Gui.Development.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+</Project>

@@ -1,0 +1,66 @@
+[
+	{
+		"Type": "Building",
+		"ParentId": null,
+		"Id": "f9918759-9a99-40e9-9fbb-e06d57e07677",
+		"Name": "Seven Seals HQ",
+		"Hint": "Feodosiyskaya, building 1",
+		"IsActive": false
+	},
+	{
+		"Type": "Floor",
+		"ParentId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
+		"Id": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+		"Name": "Second floor",
+		"Hint": null,
+		"IsActive": false
+	},
+	{
+		"Type": "Corridor",
+		"ParentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+		"Id": "26cf4711-9880-4a57-bcc5-6da0569df512",
+		"Name": "Corridor",
+		"Hint": null,
+		"IsActive": false
+	},
+	{
+		"Type": "Room",
+		"ParentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+		"Id": "4cb69f84-9d1c-4135-9421-e970054048da",
+		"Name": "Storage",
+		"Hint": null,
+		"IsActive": false
+	},
+	{
+		"Type": "Room",
+		"ParentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+		"Id": "22bd61c5-967f-4457-82ce-573368774e71",
+		"Name": "Chief Accountant",
+		"Hint": null,
+		"IsActive": false
+	},
+	{
+		"Type": "Room",
+		"ParentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+		"Id": "cd33e3e1-a977-45d8-bf81-2deacd978c52",
+		"Name": "Staff Room",
+		"Hint": null,
+		"IsActive": false
+	},
+	{
+		"Type": "Room",
+		"ParentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+		"Id": "336bb7c8-379f-44c0-9526-96077f4da03c",
+		"Name": "Programmers",
+		"Hint": null,
+		"IsActive": false
+	},
+	{
+		"Type": "ExternalArea",
+		"ParentId": null,
+		"Id": "7b335e42-2c34-455b-8041-86111c50aac1",
+		"Name": "Outside World",
+		"Hint": null,
+		"IsActive": false
+	}
+]

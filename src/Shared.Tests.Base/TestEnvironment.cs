@@ -1,4 +1,4 @@
-namespace SevenSeals.Tss.Shared
+namespace SevenSeals.Tss.Shared.Tests.Base
 {
     public static class TestEnvironment
     {

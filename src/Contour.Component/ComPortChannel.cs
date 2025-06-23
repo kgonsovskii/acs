@@ -9,7 +9,7 @@ public class ComPortChannel : Channel
 
     private SerialPort _serialPort;
 
-    public ComPortChannel(SpotOptions options, ComPortOptions comPortOptions, CancellationToken cancellationToken)
+    public ComPortChannel(ContourOptions options, ComPortOptions comPortOptions, CancellationToken cancellationToken)
         : base(options, comPortOptions, cancellationToken)
     {
     }

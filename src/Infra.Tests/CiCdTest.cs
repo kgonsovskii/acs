@@ -1,6 +1,7 @@
+using Infra;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Infra;
+namespace SevenSeals.Tss.Infra.Tests;
 
 [TestClass]
 public class CiCdTest

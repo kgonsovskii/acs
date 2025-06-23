@@ -8,11 +8,11 @@ namespace SevenSeals.Tss.Contour;
 
 public interface IDiagnosticClient : IProtoClient
 {
-    public Task<ValueResponse> ProgId(SpotRequest request);
+    public Task<ValueResponse> ProgId(ContourRequest request);
 
-    public Task<ValueResponse> ProgVer(SpotRequest request);
+    public Task<ValueResponse> ProgVer(ContourRequest request);
 
-    public Task<ValueResponse> SerNum(SpotRequest request);
+    public Task<ValueResponse> SerNum(ContourRequest request);
 }
 public class DiagnosticClient: ProtoClient, IDiagnosticClient
 {
@@ -20,12 +20,12 @@ public class DiagnosticClient: ProtoClient, IDiagnosticClient
     {
     }
 
-    public async Task<ValueResponse> ProgId(SpotRequest request)
-        => await PostAsync<SpotRequest, ValueResponse>(nameof(ProgId), request);
+    public async Task<ValueResponse> ProgId(ContourRequest request)
+        => await PostAsync<ContourRequest, ValueResponse>(nameof(ProgId), request);
 
-    public async Task<ValueResponse> ProgVer(SpotRequest request)
-        => await PostAsync<SpotRequest, ValueResponse>(nameof(ProgVer), request);
+    public async Task<ValueResponse> ProgVer(ContourRequest request)
+        => await PostAsync<ContourRequest, ValueResponse>(nameof(ProgVer), request);
 
-    public async Task<ValueResponse> SerNum(SpotRequest request)
-        => await PostAsync<SpotRequest, ValueResponse>(nameof(SerNum), request);
+    public async Task<ValueResponse> SerNum(ContourRequest request)
+        => await PostAsync<ContourRequest, ValueResponse>(nameof(SerNum), request);
 }

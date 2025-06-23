@@ -4,7 +4,10 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Actor;
 
-public interface IPassClient: IProtoStorageClient<Pass, Pass, Guid>;
+public interface IPassClient : IProtoStorageClient<Pass, Pass, Guid>
+{
+    public Task<Pass> GetByKeyNumber(string keyNumber);
+}
 
 public class PassClient : ProtoStorageClient<Pass, Pass, Guid>, IPassClient
 {
@@ -13,4 +16,7 @@ public class PassClient : ProtoStorageClient<Pass, Pass, Guid>, IPassClient
     {
 
     }
+
+    public virtual async Task<Pass> GetByKeyNumber(string keyNumber)
+        => (await GetByField("keyNumber", keyNumber)).First();
 }

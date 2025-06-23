@@ -53,6 +53,21 @@ public static class HashExtensions
         if (obj == null)
             throw new ArgumentNullException(nameof(obj));
 
+        // Handle Dictionary objects specially
+        if (obj is System.Collections.IDictionary dictionary)
+        {
+            unchecked
+            {
+                var hash = 17;
+                foreach (System.Collections.DictionaryEntry entry in dictionary)
+                {
+                    hash = hash * 31 + (entry.Key?.GetHashCode() ?? 0);
+                    hash = hash * 31 + (entry.Value?.GetHashCode() ?? 0);
+                }
+                return hash;
+            }
+        }
+
         var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(p => p.CanRead && !p.GetCustomAttributes<JsonIgnoreAttribute>().Any());
 

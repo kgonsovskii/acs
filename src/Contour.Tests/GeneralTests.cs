@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Infra;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
 

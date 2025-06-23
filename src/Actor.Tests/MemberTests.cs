@@ -1,7 +1,7 @@
 ﻿using Infra;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SevenSeals.Tss.Shared;
+using SevenSeals.Tss.Shared.Tests.Base;
 
 namespace SevenSeals.Tss.Actor;
 
@@ -19,5 +19,19 @@ public class MemberTests : TestStorageBase<Member, Member, Guid, IMemberClient, 
         result.FillWithRandomValues();
         result.Data.FillWithRandomValues();
         return result;
+    }
+
+    [TestMethod]
+    public void TestSerialization()
+    {
+        var x = new Member()
+        {
+            Data = new Person()
+            {
+                Email = "PersonA@tss.com"
+            },
+            Name = "Person A"
+        };
+        var y = x.Serialize();
     }
 }

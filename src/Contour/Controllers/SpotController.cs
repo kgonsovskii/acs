@@ -1,5 +1,4 @@
-﻿using SevenSeals.Tss.Contour.Storage;
-using SevenSeals.Tss.Shared;
+﻿using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour.Controllers;
 

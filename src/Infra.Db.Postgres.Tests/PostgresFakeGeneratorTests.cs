@@ -1,6 +1,7 @@
+using Infra.Db;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Infra.Db;
+namespace SevenSeals.Tss.Infra.Db.Postgres.Tests;
 
 [TestClass]
 public class PostgresFakeGeneratorTests

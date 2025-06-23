@@ -1,0 +1,20 @@
+[
+ {
+  "data" : {
+    "type" : "person",
+    "email" : "PersonA@tss.com"
+  },
+  "id" : "db5a6024-eeb8-4c09-9314-86f8e4a04989",
+  "name" : "Person A",
+  "isActive" : true
+},
+  {
+    "data" : {
+      "type" : "person",
+      "email" : "PersonB@tss.com"
+    },
+    "id" : "5d5f9a6e-2b4c-49e9-82ee-083c7d0dd80b",
+    "name" : "Person B",
+    "isActive" : true
+  }
+]

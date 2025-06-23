@@ -12,6 +12,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Contour.Component\Contour.Component.csproj" />
     <ProjectReference Include="..\Contour.Model\Contour.Model.csproj" />
+    <ProjectReference Include="..\Contour.Storage\Contour.Storage.csproj" />
+    <ProjectReference Include="..\Logic.Client\Logic.Client.csproj" />
     <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
     <ProjectReference Include="..\Shared.App\Shared.App.csproj" />
     <ProjectReference Include="..\Shared.Db\Shared.Db.csproj" />

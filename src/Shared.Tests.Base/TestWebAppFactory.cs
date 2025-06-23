@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace SevenSeals.Tss.Shared;
+namespace SevenSeals.Tss.Shared.Tests.Base;
 
 public abstract class TestWebAppFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
 {

@@ -6,7 +6,7 @@ namespace SevenSeals.Tss.Codex;
 
 public static class Services
 {
-    public static IServiceCollection AddCodexClient(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddCodexClients(this IServiceCollection services, IConfiguration configuration)
     {
         services.ConfigureClientOptions<CodexClientOptions>(configuration);
         services.AddScoped<IRouteClient, RouteClient>();

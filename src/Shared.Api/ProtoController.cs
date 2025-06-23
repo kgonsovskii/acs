@@ -18,7 +18,7 @@ public abstract class ProtoController<TRequest, TResponse>: ControllerBase where
         Settings = settings;
     }
 
-    protected OkObjectResult OkProto(object response)
+    protected virtual OkObjectResult OkProto(object response)
     {
         HttpContext.Response.Headers[ProtoHeaders.Agent] = Settings.Agent;
         HttpContext.Response.Headers[ProtoHeaders.TraceId] = HttpContext.Items[ProtoHeaders.TraceId]?.ToString();

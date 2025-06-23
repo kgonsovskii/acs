@@ -1,11 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <CleanProjectName>Db.Tool</CleanProjectName>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <OutputType>Exe</OutputType>
     <RootNamespace>SevenSeals.Tss.Shared</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Infra.Db.Firebird\Infra.Db.Firebird.csproj" />
     <ProjectReference Include="..\Infra.Db.Postgres\Infra.Db.Postgres.csproj" />
+    <ProjectReference Include="..\Shared.App\Shared.App.csproj" />
     <ProjectReference Include="..\Shared.Db\Shared.Db.csproj" />
     <ProjectReference Include="..\Actor.Model\Actor.Model.csproj" />
     <ProjectReference Include="..\Atlas.Model\Atlas.Model.csproj" />
@@ -14,4 +19,48 @@
     <ProjectReference Include="..\Logic.Model\Logic.Model.csproj" />
     <ProjectReference Include="..\Chronicle.Model\Chronicle.Model.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.Db.Tool.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Db.Tool.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Spot.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Db.Tool.base.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Transit.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Zone.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Member.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Pass.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="appsettings.Db.Tool.base.json" />
+  </ItemGroup>
+
+  <Target Name="CopyAppSettingsToMigrations" BeforeTargets="Build">
+    <ItemGroup>
+      <JsonFiles Include="*.json" />
+    </ItemGroup>
+
+    <MakeDir Directories="$(MSBuildProjectDirectory)\..\..\migrations" />
+
+    <Copy
+      SourceFiles="@(JsonFiles)"
+      DestinationFolder="$(MSBuildProjectDirectory)\..\..\migrations\">
+      <Output TaskParameter="CopiedFiles" ItemName="CopiedJsonFiles" />
+    </Copy>
+  </Target>
+  
 </Project> 

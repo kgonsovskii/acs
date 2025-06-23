@@ -1,0 +1,43 @@
+[
+  {
+    "options": {
+      "type": "Ip",
+      "host": "office.sevenseals.ru",
+      "port": 5087
+    },
+    "addresses": [
+      "77"
+    ],
+    "isActive": true,
+    "id": "d414e607-964f-40a1-8b31-470d3b9d85ca"
+  },
+  {
+    "options": {
+      "type": "Ip",
+      "host": "office.sevenseals.ru",
+      "port": 5086
+    },
+    "addresses": [
+      "171"
+    ],
+    "isActive": true,
+    "id": "3037e535-87b3-46a4-8ece-349da4bb7bd4"
+  },
+  {
+    "options": {
+      "type": "ComPort",
+      "portName": "COM3",
+      "baudRate": 19200,
+      "parity": "None",
+      "dataBits": 8,
+      "stopBits": "One",
+      "readTimeoutMs": 1000,
+      "writeTimeoutMs": 1000
+    },
+    "addresses": [
+      "7"
+    ],
+    "isActive": true,
+    "id": "1d9f31e9-90e3-45ea-a85f-fb07f1b4b334"
+  }
+]
