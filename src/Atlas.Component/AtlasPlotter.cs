@@ -57,7 +57,7 @@ public class AtlasPlotter
         return sb.ToString();
     }
 
-    public string GeneratePlantUmlUrl()
+    private string GeneratePlantUmlUrlBase64()
     {
         var plantUmlText = GeneratePlantUml();
 
@@ -74,7 +74,17 @@ public class AtlasPlotter
         // Convert to custom PlantUML Base64
         var base64 = Encode64(output.ToArray());
 
-        return $"https://www.plantuml.com/plantuml/uml/{base64}";
+        return base64;
+    }
+
+    public string GeneratePlantUmlUrl()
+    {
+        return $"https://www.plantuml.com/plantuml/uml/{GeneratePlantUmlUrlBase64()}";
+    }
+
+    public string GeneratePlantUmlImageUrl()
+    {
+        return $"https://www.plantuml.com/plantuml/png/{GeneratePlantUmlUrlBase64()}";
     }
 
     private static string Encode6Bit(byte b)

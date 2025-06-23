@@ -1,4 +1,6 @@
 @echo off
+chcp 65001
+set PGCLIENTENCODING=UTF8
 setlocal
 set PATH=C:\Program Files\PostgreSQL\17\bin;%PATH%
 REM Generate schema using Shared.Tool
@@ -19,19 +21,10 @@ psql -U postgres -c "CREATE DATABASE acs OWNER tss;" || echo Database acs may al
 
 REM Run generated schema as tss user
 set PGPASSWORD=123
-set SCHEMA_FILE=%~dp0schema.generated.sql
+set SCHEMA_FILE=%~dp0schema.sql
 if exist "%SCHEMA_FILE%" (
-    echo Applying schema.generated.sql to acs database...
+    echo Applying schema.sql to acs database...
     psql -U tss -d acs -f "%SCHEMA_FILE%"
 ) else (
-    echo schema.generated.sql not found in %~dp0!
+    echo schema.sql not found in %~dp0!
 )
-
-set FAKE_FILE=%~dp0schema.fake.sql
-if exist "%FAKE_FILE%" (
-    echo Applying schema.fake.sql to acs database...
-    psql -U tss -d acs -f "%FAKE_FILE%"
-) else (
-    echo schema.fake.sql not found in %~dp0!
-)
-endlocal 

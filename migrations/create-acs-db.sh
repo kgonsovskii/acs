@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 export PATH="/usr/pgsql-17/bin:/usr/local/pgsql/bin:/usr/local/bin:$PATH"
+export PGCLIENTENCODING=UTF8
 # Generate schema using Shared.Tool
 if [[ "$1" == "true" ]]; then
   dotnet run --project ../src/Shared.Db.Tool -- --recreate
@@ -25,9 +26,9 @@ psql -U postgres -c "CREATE DATABASE acs OWNER tss;" || echo 'Database acs may a
 
 # Run generated schema as tss user
 export PGPASSWORD=123
-if [ -f "$(dirname "$0")/schema.generated.sql" ]; then
-  echo "Applying schema.generated.sql to acs database..."
-  psql -U tss -d acs -f "$(dirname "$0")/schema.generated.sql"
+if [ -f "$(dirname "$0")/schema.sql" ]; then
+  echo "Applying schema.sql to acs database..."
+  psql -U tss -d acs -f "$(dirname "$0")/schema.sql"
 else
-  echo "schema.generated.sql not found in $(dirname "$0")!"
+  echo "schema.sql not found in $(dirname "$0")!"
 fi 

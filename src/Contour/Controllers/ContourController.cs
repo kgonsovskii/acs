@@ -6,13 +6,14 @@ using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour.Controllers;
 
-public class ContourController : BaseController
+public class ContourController : ProtoStatefulController
 {
-    private readonly SpotHub _spotHub;
+    private readonly ContourHub _contourHub;
     private readonly AppSnapshot _snapshot;
-    public ContourController(SpotHub spotHub, AppSnapshot snapshot, Settings settings): base(settings)
+
+    public ContourController(ContourHub contourHub, AppSnapshot snapshot, Settings settings): base(settings)
     {
-        _spotHub = spotHub;
+        _contourHub = contourHub;
         _snapshot = snapshot;
     }
 
@@ -28,61 +29,43 @@ public class ContourController : BaseController
     /// <response code="400">Returned when the request is invalid or missing required connection parameters.</response>
     [HttpPost(nameof(Link))]
     [Description("Connects to a spot device using host and port or an existing session ID.")]
-    [ProducesResponseType(typeof(SpotResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ContourResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
-    public async Task<ActionResult<SpotResponse>> Link([FromBody] SpotRequest request)
+    public async Task<ActionResult<ContourResponse>> Link([FromBody] ContourRequest request)
     {
-        var spot = await _spotHub.GetSpot(request, true);
+        var spot = await _contourHub.GetContour(request);
         return OkSpot(spot, request, null);
     }
 
     [HttpPost(nameof(RelayOn))]
-    [ProducesResponseType(typeof(SpotResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ContourResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
-    public async Task<ActionResult<SpotResponse>> RelayOn([FromBody] RelayOnRequest request)
+    public async Task<ActionResult<ContourResponse>> RelayOn([FromBody] RelayOnRequest request)
     {
-        var spot = await _spotHub.GetSpot(request);
+        var spot = await _contourHub.GetContour(request);
         spot.RelayOn(request.RelayPort, request.Interval, request.SuppressDoorEvent);
         return OkSpot(spot, request, null);
     }
 
     [HttpPost(nameof(RelayOff))]
-    [ProducesResponseType(typeof(SpotResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ContourResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
-    public async Task<ActionResult<SpotResponse>> RelayOff([FromBody] RelayOffRequest request)
+    public async Task<ActionResult<ContourResponse>> RelayOff([FromBody] RelayOffRequest request)
     {
-        var spot = await _spotHub.GetSpot(request);
+        var spot = await _contourHub.GetContour(request);
         spot.RelayOff(request.RelayPort);
         return OkSpot(spot, request, null);
     }
 
-    [HttpPost(nameof(State))]
-    [ProducesResponseType(typeof(StateResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [Produces("application/json")]
-    public async Task<ActionResult<StateResponse>> State([FromBody] StateRequest request)
+    private OkObjectResult OkSpot(Contour contour, ContourRequest request, ContourResponse? response)
     {
-        var response = new StateResponse()
+        response ??= new ContourResponse()
         {
-            State = _snapshot.State
+            SessionId = contour.Channel.Id
         };
-        return OkProto(response);
-    }
-
-    [HttpPost(nameof(Events))]
-    [ProducesResponseType(typeof(EventsResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [Produces("application/json")]
-    public async Task<ActionResult<EventsResponse>> Events([FromBody] EventsRequest request)
-    {
-        var response = new EventsResponse()
-        {
-            Events = _snapshot.Events
-        };
-        _snapshot.Clean();
         return OkProto(response);
     }
 }

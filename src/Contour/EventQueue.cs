@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
             {
                 var bytes = new byte[20];
                 reader.GetBytes(2,0, bytes, 0,10);
-                var evt = new ControllerEvent(reader.GetString(0), bytes, reader.GetDateTime(1));
+                var evt = ControllerEvent.Create(reader.GetString(0), bytes, reader.GetDateTime(1));
                 evt.Used = true;
                 _queue.Enqueue(evt);
             }
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
         }
     }
 
-    public SendableEvent? Front(out bool forAll, out bool coEvt)
+    public Event? Front(out bool forAll, out bool coEvt)
     {
         lock (_lock)
         {
@@ -150,9 +150,13 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
 
             if (_queue.TryPeek(out var evt))
             {
-                var sendable = SendableEvent.Create(evt); // assumes factory method like in C++
+                // Check if the event is sendable
+                if (!SendableEventFactory.IsSendable(evt))
+                {
+                    return null;
+                }
 
-                if (evt.Type == EventType.Controller) // assuming EventType enum
+                if (evt.Type == EventType.Controller)
                 {
                     coEvt = true;
                     if (evt is ControllerEvent ce)
@@ -167,7 +171,7 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
                     coEvt = false;
                 }
 
-                return sendable;
+                return evt;
             }
         }
 

@@ -1,6 +1,4 @@
-﻿using SevenSeals.Tss.Contour.Events;
-
-namespace SevenSeals.Tss.Contour;
+﻿namespace SevenSeals.Tss.Contour;
 
 public interface IChannelEvents
 {
@@ -25,7 +23,7 @@ public class ChannelEvents : IChannelEvents
     }
     public void OnControllerEvent(Channel channel, byte[] rawEvent)
     {
-        var controllerEvent = new ControllerEvent(channel.Id, rawEvent);
+       // var controllerEvent = new ControllerEvent(channel.Id, rawEvent);
     //    _eventQueue.Push(controllerEvent);
        // if (_eventLog.IsLogging)
         //    _eventLog.Add(controllerEvent);

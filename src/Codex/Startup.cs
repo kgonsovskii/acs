@@ -19,8 +19,7 @@ public class Startup: Shared.StartupBase<Startup>
 
     protected override IServiceCollection ConfigureServicesInternal(IServiceCollection services)
     {
-        services.AddSingleton<ITimeZoneStorage, TimeZoneStorage>();
-        services.AddSingleton<IRouteStorage, RouteStorage>();
+        services.AddCodexStorage();
         return services;
     }
 

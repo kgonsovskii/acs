@@ -8,6 +8,6 @@ public class AtlasTestFactory : TestWebAppFactory<Startup>
 {
     protected override void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)
     {
-        services.AddAtlasClient(context.Configuration);
+        services.AddAtlasClients(context.Configuration);
     }
 }

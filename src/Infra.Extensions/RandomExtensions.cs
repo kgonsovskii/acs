@@ -19,7 +19,7 @@ public static class RandomExtensions
         {
             var type = prop.PropertyType;
             // Nullable value type: всегда значение
-            if (Nullable.GetUnderlyingType(type) is Type underlyingType)
+            if (Nullable.GetUnderlyingType(type) is { } underlyingType)
             {
                 type = underlyingType;
             }
@@ -80,7 +80,7 @@ public static class RandomExtensions
         }
     }
 
-    public static object GenerateRandomValue(Type type)
+    public static object? GenerateRandomValue(Type type)
     {
         if (type == typeof(int))
             return Random.Next();
@@ -116,7 +116,7 @@ public static class RandomExtensions
         }
 
         // Nullable types
-        if (Nullable.GetUnderlyingType(type) is Type underlyingType)
+        if (Nullable.GetUnderlyingType(type) is { } underlyingType)
             return GenerateRandomValue(underlyingType);
 
         return null; // unsupported types

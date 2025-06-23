@@ -4,46 +4,85 @@ using Infra.Db.Attributes;
 
 namespace Infra.Db;
 
+public interface IFakeGenerator
+{
+    string GenerateFakeDataSql(string outputDir, Func<Type, bool>? onFilter = null);
+    string GenerateFakeDataSqlForTypes(IList<Type> types, Func<Type, bool>? onFilter = null);
+}
+
 public class PostgresFakeGenerator : IFakeGenerator
 {
-    public string GenerateFakeDataSql(string outputDir)
+    protected readonly TypeCollector TypeCollector = new();
+    public string GenerateFakeDataSql(string outputDir, Func<Type, bool>? onFilter = null)
     {
-        var types = new List<Type>();
-        var assemblies = LoadAssembliesFromDirectory(outputDir);
-        foreach (var assembly in assemblies)
-        {
-            var assemblyTypes = SafeGetTypes(assembly);
-            foreach (var type in assemblyTypes)
-            {
-                if (type.GetCustomAttribute<DbTableAttribute>() != null)
-                {
-                    types.Add(type);
-                }
-            }
-        }
-        return GenerateFakeDataSqlForTypes(types);
+        var types = TypeCollector.CollectDbTableTypes(outputDir);
+        if (onFilter != null)
+            types = types.Where(onFilter).ToList();
+        return GenerateFakeDataSqlForTypes(types, onFilter);
     }
 
-    public string GenerateFakeDataSqlForTypes(IList<Type> types)
+    public string GenerateFakeDataSqlForTypes(IList<Type> types, Func<Type, bool>? onFilter = null)
     {
+        if (onFilter != null)
+            types = types.Where(onFilter).ToList();
         var sb = new StringBuilder();
         var tableRows = new Dictionary<string, List<Dictionary<string, object?>>>();
         var tableSchemas = new Dictionary<string, (Type, string, string)>(); // key: schema.table, value: (type, schema, table)
         var parentIds = new Dictionary<string, List<object>>(); // For linking child/polymorphic tables
         var parentPolyValues = new Dictionary<string, List<Dictionary<string, object?>>?>(); // key: schema.table, value: list of dicts: propName -> value
 
-        // 1. Regular tables
+        // Build dependency graph for tables based on foreign keys
+        var dependencies = new Dictionary<string, HashSet<string>>();
+        var typeByKey = new Dictionary<string, Type>();
         foreach (var type in types)
         {
             var tableAttr = type.GetCustomAttribute<DbTableAttribute>()!;
             var schema = tableAttr.GetSchemaName(type);
             var table = tableAttr.GetTableName(type);
             var key = $"{schema}.{table}";
+            typeByKey[key] = type;
+            dependencies[key] = new HashSet<string>();
+            foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                var fkAttr = prop.GetCustomAttribute<DbForeignKeyAttribute>();
+                if (fkAttr != null)
+                {
+                    var refSchema = fkAttr.ReferenceSchema.ToSnakeCase();
+                    var refTable = fkAttr.ReferenceTable.ToSnakeCase();
+                    var refKey = $"{refSchema}.{refTable}";
+                    if (typeByKey.ContainsKey(refKey)) // Only add dependency if we generate that table
+                        dependencies[key].Add(refKey);
+                }
+            }
+        }
+        // Topological sort
+        var sortedKeys = new List<string>();
+        var visited = new HashSet<string>();
+        void Visit(string k)
+        {
+            if (visited.Contains(k)) return;
+            visited.Add(k);
+            foreach (var dep in dependencies[k])
+                if (dependencies.ContainsKey(dep)) Visit(dep);
+            sortedKeys.Add(k);
+        }
+        foreach (var k in dependencies.Keys) Visit(k);
+        // Initialize tableSchemas, tableRows, parentIds, parentPolyValues for all tables in sortedKeys
+        foreach (var key in sortedKeys)
+        {
+            var type = typeByKey[key];
+            var tableAttr = type.GetCustomAttribute<DbTableAttribute>()!;
+            var schema = tableAttr.GetSchemaName(type);
+            var table = tableAttr.GetTableName(type);
             tableSchemas[key] = (type, schema, table);
             tableRows[key] = new List<Dictionary<string, object?>>();
             parentIds[key] = new List<object>();
             parentPolyValues[key] = new List<Dictionary<string, object?>>();
-
+        }
+        // Generate tables in sorted order
+        foreach (var key in sortedKeys)
+        {
+            var (type, schema, table) = tableSchemas[key];
             var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttribute<DbPolymorphicTableAttribute>() == null &&
                            p.GetCustomAttribute<DbChildTableAttribute>() == null)
@@ -57,11 +96,31 @@ public class PostgresFakeGenerator : IFakeGenerator
                 var polyVals = new Dictionary<string, object?>();
                 foreach (var prop in props)
                 {
-                    var value = GenerateRandomValueForProperty(prop);
+                    object? value;
+                    var fkAttr = prop.GetCustomAttribute<DbForeignKeyAttribute>();
+                    if (fkAttr != null)
+                    {
+                        var refSchema = fkAttr.ReferenceSchema.ToSnakeCase();
+                        var refTable = fkAttr.ReferenceTable.ToSnakeCase();
+                        var refKey = $"{refSchema}.{refTable}";
+                        if (parentIds.ContainsKey(refKey) && parentIds[refKey].Count > 0)
+                        {
+                            var refList = parentIds[refKey];
+                            value = refList[new Random().Next(refList.Count)];
+                        }
+                        else
+                        {
+                            value = null;
+                        }
+                    }
+                    else
+                    {
+                        value = GenerateRandomValueForProperty(prop);
+                    }
                     row[prop.Name] = value;
                     if (prop.GetCustomAttribute<DbPrimaryKeyAttribute>() != null)
                     {
-                        parentIds[key].Add(value);
+                        if (value != null) parentIds[key].Add(value);
                     }
                 }
                 foreach (var polyProp in polyProps)
@@ -163,7 +222,7 @@ public class PostgresFakeGenerator : IFakeGenerator
         // Emit INSERTs
         foreach (var (key, rows) in tableRows)
         {
-            var (type, schema, table) = tableSchemas[key];
+            var (_, schema, table) = tableSchemas[key];
             if (rows.Count == 0) continue;
             var columns = rows[0].Keys.ToList();
             foreach (var row in rows)

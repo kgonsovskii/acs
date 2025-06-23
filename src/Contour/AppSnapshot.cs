@@ -1,20 +1,22 @@
-﻿namespace SevenSeals.Tss.Contour;
+﻿using SevenSeals.Tss.Contour.Events;
+
+namespace SevenSeals.Tss.Contour;
 
 public class AppSnapshot
 {
-    public SpotHub SpotHub { get; set; }
+    private ContourHub ContourHub { get; set; }
 
-    public ChannelHub ChannelHub { get; set; }
+    private ChannelHub ChannelHub { get; set; }
 
-    public AppSnapshot(SpotHub spotHub, ChannelHub channelHub)
+    public AppSnapshot(ContourHub contourHub, ChannelHub channelHub)
     {
-        SpotHub = spotHub;
+        ContourHub = contourHub;
         ChannelHub = channelHub;
     }
 
     public void Clean()
     {
-        SpotHub.Events.Clear();
+        ContourHub.ClearEvents();
     }
 
     public SnapshotState State
@@ -24,41 +26,24 @@ public class AppSnapshot
             var result = new SnapshotState()
             {
                 Channels = ChannelHub.Map.Values.ToList().Select(a =>
-                    new
+                    new ChannelInfo
                     {
-                        a.Id, a.IsPolling
-                    }),
-                Spots = SpotHub.Map.Values.ToList().Select(a =>
-                    new
+                        Id = a.Id,
+                        IsPolling = a.IsPolling
+                    }).ToList(),
+                Spots = ContourHub.Map.Values.ToList().Select(a =>
+                    new SpotInfo
                     {
-                        a.Address, a.ProgId, a.IsAlarm
-                    })
+                        Address = a.Address,
+                        ProgId = a.ProgId,
+                        IsAlarm = a.IsAlarm
+                    }).ToList()
             };
             return result;
         }
     }
 
-    public SnapshotEvents Events
-    {
-        get
-        {
-            var result = new SnapshotEvents()
-            {
-                Events = SpotHub.Events.ToArray()
-            };
-            return result;
-        }
-    }
+    public List<ControllerEvent> Events => ContourHub.GetEventsSnapshot();
 
-    public class SnapshotState
-    {
-        public object Channels { get; set; }
 
-        public object Spots { get; set; }
-    }
-
-    public class SnapshotEvents
-    {
-        public object Events { get; set; }
-    }
 }

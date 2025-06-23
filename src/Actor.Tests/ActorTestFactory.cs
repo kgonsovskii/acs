@@ -8,6 +8,6 @@ public class ActorTestFactory : TestWebAppFactory<Startup>
 {
     protected override void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)
     {
-        services.AddActorClient(context.Configuration);
+        services.AddActorClients(context.Configuration);
     }
 }

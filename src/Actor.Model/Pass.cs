@@ -1,4 +1,3 @@
-using Infra.Db;
 using Infra.Db.Attributes;
 
 namespace SevenSeals.Tss.Actor;
@@ -11,6 +10,9 @@ public class Pass: ActorBase
     [DbEnumTable] public PassStatus Status { get; set; }
     public DateTime IssueDate { get; set; }
     public DateTime? ExpiryDate { get; set; }
+
+    [DbForeignKey(typeof(Member))]
+    public Guid? MemberId { get; set; }
 }
 
 public enum PassType

@@ -8,7 +8,10 @@ using Microsoft.Extensions.Options;
 
 namespace SevenSeals.Tss.Shared;
 
-public interface IProtoClient: IDisposable;
+public interface IProtoClient : IDisposable
+{
+    public ClientOptions Options { get; }
+}
 
 public abstract class ProtoClient : ProtoClient<ClientOptions>, IProtoClient
 {
@@ -31,9 +34,11 @@ public interface IProtoClient<TOptions> : IDisposable where TOptions : ClientOpt
 
 public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOptions : ClientOptions
 {
+    public TOptions Options { get; }
     protected virtual string Route => GetType().Name.Replace("Client", "");
 
-    private readonly string _agent;
+    protected string Agent { get; }
+
     private readonly HttpClient _httpClient;
     private readonly ILogger? _logger;
     private readonly Action<string>? _loggerAction;
@@ -42,22 +47,27 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
     public ProtoClient(HttpClient httpClient, Settings settings, IOptions<TOptions> options,
         ILogger<ProtoClient<TOptions>> logger)
     {
-        _agent = settings.Agent;
+        if (string.IsNullOrEmpty(options.Value.BaseUri))
+        {
+            throw new ArgumentNullException(typeof(TOptions).FullName);
+        }
+        Agent = settings.Agent;
         _logger = logger;
         _httpClient = httpClient;
+        Options = options.Value;
         httpClient.BaseAddress = new Uri(options.Value.BaseUri);
     }
 
     protected ProtoClient(HttpClient httpClient, string agent, ILogger logger)
     {
         _httpClient = httpClient;
-        _agent = agent;
+        Agent = agent;
         _logger = logger;
     }
 
     protected ProtoClient(string baseUri, string agent, Action<string> logAction)
     {
-        _agent = agent;
+        Agent = agent;
         _httpClient = new HttpClient() { BaseAddress = new Uri(baseUri) };
         _loggerAction = logAction;
     }
@@ -78,9 +88,9 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
         return await RequestAsync<TResponse>(WebRequestMethods.Http.Get, action);
     }
 
-    protected async Task<IMany<TResponse>> GetManyAsync<TResponse>(string action) where TResponse : IProtoResponse
+    protected async Task<List<TResponse>> GetManyAsync<TResponse>(string action) where TResponse : IProtoResponse
     {
-        return await RequestAsync<Many<TResponse>>(WebRequestMethods.Http.Get, action);
+        return await RequestAsync<List<TResponse>>(WebRequestMethods.Http.Get, action);
     }
 
     protected async Task<TResponse> PostAsync<TRequest, TResponse>(string action, TRequest request)
@@ -107,7 +117,7 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
         return await RequestAsync<TResponse>(verb, action, request);
     }
 
-    private async Task<TResponse> RequestAsync<TResponse>(string verb, string action) where TResponse : IProtoResponse
+    private async Task<TResponse> RequestAsync<TResponse>(string verb, string action)
     {
         return await RequestAsync<TResponse>(verb, action, null, null);
     }
@@ -121,11 +131,22 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
     }
 
     private async Task<TResponse> RequestAsync<TResponse>(string verb, string action, string? json, int? hash)
-        where TResponse : IProtoResponse
     {
         var traceId = TraceId.NextTraceId();
         var response = await RequestAsync(verb, action, traceId, json, hash);
         return await HandleResponse<TResponse>(response, traceId, hash);
+    }
+
+    protected virtual Dictionary<string, string> BuildHeaders(int traceId)
+    {
+        var headers = new Dictionary<string, string>
+        {
+            [ProtoHeaders.TraceId] = traceId.ToString(),
+            [ProtoHeaders.Agent] = Agent,
+            [ProtoHeaders.Chop] = "1",
+            [ProtoHeaders.Version] = AppVersion.Version
+        };
+        return headers;
     }
 
     private async Task<HttpResponseMessage> RequestAsync(string verb, string action, int traceId, string? json,
@@ -133,13 +154,7 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
     {
         var url = BuildUrlFromRequest(action);
 
-        var headers = new Dictionary<string, string>
-        {
-            [ProtoHeaders.TraceId] = traceId.ToString(),
-            [ProtoHeaders.Agent] = _agent,
-            [ProtoHeaders.Chop] = "1",
-            [ProtoHeaders.Version] = AppVersion.Version
-        };
+        var headers = BuildHeaders(traceId);
 
         HttpRequestMessage? message = null;
         StringContent? content = null;
@@ -184,8 +199,7 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
         return fullUri;
     }
 
-    private async Task<TResponse> HandleResponse<TResponse>(HttpResponseMessage response, int traceId, int? hash)
-        where TResponse : IProtoResponse
+    protected virtual async Task<TResponse> HandleResponse<TResponse>(HttpResponseMessage response, int traceId, int? hash)
     {
         var content = await response.Content.ReadAsStringAsync();
         Log($"Response: {response.StatusCode} BODY: {content}");

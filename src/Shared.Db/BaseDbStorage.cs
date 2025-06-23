@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace SevenSeals.Tss.Shared;
 
-internal class BaseDbStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId> where TItem : class, IItem<TId> where TId : struct
+public class BaseDbStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId> where TItem : class, IItem<TId> where TId : struct
 {
     private readonly IDbAdapter<TItem, TId> _adapter;
 
@@ -13,7 +13,7 @@ internal class BaseDbStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, T
         _adapter = Adapters.GetAdapter<TItem, TId>(settings.SqlDialect, settings.ConnectionString);
     }
 
-    public virtual IEnumerable<TItem> GetAll()
+    public virtual IList<TItem> GetAll()
     {
         return _adapter.GetAll();
     }

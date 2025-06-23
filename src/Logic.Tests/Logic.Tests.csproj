@@ -19,6 +19,7 @@
   <ItemGroup>
       <ProjectReference Include="..\Logic.Client\Logic.Client.csproj" />
       <ProjectReference Include="..\Logic\Logic.csproj" />
+      <ProjectReference Include="..\Shared.Tests.Base\Shared.Tests.Base.csproj" />
     </ItemGroup>
   
     <ItemGroup>

@@ -1,4 +1,6 @@
-﻿namespace SevenSeals.Tss.Contour;
+﻿using SevenSeals.Tss.Contour.Events;
+
+namespace SevenSeals.Tss.Contour;
 
 public partial class Contour: ProtoObject
 {
@@ -32,7 +34,12 @@ public partial class Contour: ProtoObject
 
     private readonly CancellationToken _cts = new();
 
-    public Action<Contour, byte[]>? OnEvent { get; set; }
+    // Legacy raw event for backward compatibility
+    public Action<Contour, byte[]>? OnRawEvent { get; set; }
+
+    // New proper event that creates ControllerEvent using factory
+    public event EventHandler<ControllerEvent>? OnEvent;
+
 
     public Contour(Channel channel, CancellationToken cancellationToken, byte addr)
     {
@@ -58,7 +65,6 @@ public partial class Contour: ProtoObject
             {
                 ReadEvt();
             }
-
             Thread.Sleep(999);
         }
     }

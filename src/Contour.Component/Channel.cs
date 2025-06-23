@@ -4,7 +4,7 @@ public abstract class Channel: ProtoObject, IDisposable
 {
     public readonly IChannelEvents? events;
 
-    public readonly SpotOptions Options;
+    public readonly ContourOptions Options;
     public ChannelOptions ChannelOptions { get;  }
 
     private readonly CancellationToken _cts;
@@ -27,7 +27,7 @@ public abstract class Channel: ProtoObject, IDisposable
 
     protected IDisposable _writeAllKeysTh;
 
-    protected Channel(SpotOptions options, ChannelOptions channelOptions,  CancellationToken cancellationToken)
+    protected Channel(ContourOptions options, ChannelOptions channelOptions,  CancellationToken cancellationToken)
     {
         Options = options;
         ChannelOptions = channelOptions;
@@ -50,34 +50,8 @@ public abstract class Channel: ProtoObject, IDisposable
 
     public List<char> FindControllers()
     {
-        // Stubbed logic
         return [];
     }
-
-    //public ControllerManager Controllers => new ControllerManager();
-
-    public void Activate()
-    {
-        if (IsPolling)
-            return;
-
-
-    }
-
-
-
-    public void Deactivate()
-    {
-        _deactivating = true;
-        _thread?.Join();
-        _thread = null;
-    }
-
-    public bool Active => _thread != null;
-    public bool IsReady => true;
-    public (bool Active, bool Ready) ActiveAndReady => (true, true);
-    public uint PollSpeed => _speedOld;
-
 
     protected internal abstract int Read(byte[] buf, int size);
     protected internal abstract int Read(out byte buf);

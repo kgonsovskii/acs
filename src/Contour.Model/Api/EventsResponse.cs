@@ -2,7 +2,12 @@
 
 namespace SevenSeals.Tss.Contour.Api;
 
-public class EventsResponse: ProtoResponse
+public class EventsResponse: ProtoEventsResponse
 {
-    public required object Events { get; init; }
+
+}
+
+public class ContourEvent : ProtoEvent
+{
+
 }

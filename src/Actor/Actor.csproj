@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Actor.Model\Actor.Model.csproj" />
+    <ProjectReference Include="..\Actor.Storage\Actor.Storage.csproj" />
     <ProjectReference Include="..\Shared.App\Shared.App.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
     <ProjectReference Include="..\Shared.Db\Shared.Db.csproj" />
@@ -26,10 +27,6 @@
     <None Update="appsettings.Actor.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="appsettings.base.json" />
   </ItemGroup>
   
 </Project> 

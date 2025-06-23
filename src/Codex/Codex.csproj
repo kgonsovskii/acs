@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Codex.Model\Codex.Model.csproj" />
+      <ProjectReference Include="..\Codex.Storage\Codex.Storage.csproj" />
       <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
       <ProjectReference Include="..\Shared.App\Shared.App.csproj" />
       <ProjectReference Include="..\Shared\Shared.csproj" />

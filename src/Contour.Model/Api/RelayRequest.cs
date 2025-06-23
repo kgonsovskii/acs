@@ -2,7 +2,7 @@
 
 namespace SevenSeals.Tss.Contour.Api;
 
-public class RelayRequest: SpotRequest
+public class RelayRequest: ContourRequest
 {
     [DefaultValue(1)] public int RelayPort { get; set; } = 1;
 }

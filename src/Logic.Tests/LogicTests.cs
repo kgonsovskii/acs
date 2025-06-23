@@ -1,12 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Logic;
 
 [TestClass]
-public class LogicTests
+public class LogicTests: TestBase<ILogicClient, LogicTestFactory, Startup>
 {
     [TestMethod]
-    public async Task TestMe()
+    public async Task State()
     {
         await Task.Delay(0);
     }

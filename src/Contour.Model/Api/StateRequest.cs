@@ -2,4 +2,4 @@
 
 namespace SevenSeals.Tss.Contour.Api;
 
-public class StateRequest: ProtoRequest;
+public class StateRequest: ProtoStateRequest;

@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SevenSeals.Tss.Atlas.Services;
-using SevenSeals.Tss.Atlas.Storage;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SevenSeals.Tss.Atlas;
@@ -20,8 +19,7 @@ public class Startup : Shared.StartupBase<Startup>
 
     protected override IServiceCollection ConfigureServicesInternal(IServiceCollection services)
     {
-        services.AddSingleton<ITransitStorage, TransitStorage>();
-        services.AddSingleton<IZoneStorage, ZoneStorage>();
+        services.AddAtlasStorage();
         services.AddSingleton<IAtlasService, AtlasService>();
         return services;
     }

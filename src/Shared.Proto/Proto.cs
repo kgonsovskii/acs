@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections;
+using System.Text.Json.Serialization;
 
 namespace SevenSeals.Tss.Shared;
 
@@ -13,10 +14,6 @@ public abstract class Proto: IProto;
 public class ProtoRequest: Proto, IProtoRequest;
 
 public class ProtoResponse: Proto, IProtoResponse;
-
-public interface IMany<T> : IEnumerable<T>, IProtoResponse;
-
-public class Many<T> : List<T>, IMany<T>;
 
 public class ProtoHeader
 {
@@ -45,3 +42,43 @@ public class ProtoHeader
     public long TimeStamp { get; set; }
 }
 
+public interface IProtoStateRequest: IProtoRequest;
+
+public class ProtoStateRequest : ProtoRequest, IProtoStateRequest
+{
+
+}
+
+public interface IProtoStateResponse: IProtoResponse;
+
+public class ProtoStateResponse : ProtoResponse, IProtoStateResponse
+{
+
+}
+
+public interface IProtoEventsRequest: IProtoRequest;
+
+public class ProtoEventsRequest : ProtoRequest, IProtoEventsRequest
+{
+
+}
+
+public interface IProtoEventsResponse : IProtoResponse
+{
+    public IList Events { get; set; }
+}
+
+public class ProtoEventsResponse : ProtoResponse, IProtoEventsResponse
+{
+    public required IList Events { get; set; }
+}
+
+public interface IProtoEvent
+{
+
+}
+
+public abstract class ProtoEvent: IProtoEvent
+{
+
+}
