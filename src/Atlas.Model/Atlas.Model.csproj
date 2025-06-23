@@ -5,6 +5,7 @@
   </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Contour.Model\Contour.Model.csproj" />
       <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
     </ItemGroup>
 

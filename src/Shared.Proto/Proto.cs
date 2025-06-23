@@ -14,10 +14,6 @@ public class ProtoRequest: Proto, IProtoRequest;
 
 public class ProtoResponse: Proto, IProtoResponse;
 
-public interface IMany<T> : IEnumerable<T>, IProtoResponse;
-
-public class Many<T> : List<T>, IMany<T>;
-
 public class ProtoHeader
 {
     /// <summary>

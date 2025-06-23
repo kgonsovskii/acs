@@ -8,6 +8,6 @@ public class CodexTestFactory : TestWebAppFactory<Startup>
 {
     protected override void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)
     {
-        services.AddCodexClient(context.Configuration);
+        services.AddCodexClients(context.Configuration);
     }
 }

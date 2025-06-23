@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Actor.Client\Actor.Client.csproj" />
+    <ProjectReference Include="..\Atlas.Client\Atlas.Client.csproj" />
+    <ProjectReference Include="..\Chronicle.Client\Chronicle.Client.csproj" />
+    <ProjectReference Include="..\Codex.Client\Codex.Client.csproj" />
+    <ProjectReference Include="..\Contour.Client\Contour.Client.csproj" />
     <ProjectReference Include="..\Logic.Component\Logic.Component.csproj" />
     <ProjectReference Include="..\Logic.Model\Logic.Model.csproj" />
     <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />

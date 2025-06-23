@@ -8,7 +8,10 @@ using Microsoft.Extensions.Options;
 
 namespace SevenSeals.Tss.Shared;
 
-public interface IProtoClient: IDisposable;
+public interface IProtoClient : IDisposable
+{
+    public ClientOptions Options { get; }
+}
 
 public abstract class ProtoClient : ProtoClient<ClientOptions>, IProtoClient
 {
@@ -31,6 +34,7 @@ public interface IProtoClient<TOptions> : IDisposable where TOptions : ClientOpt
 
 public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOptions : ClientOptions
 {
+    public TOptions Options { get; }
     protected virtual string Route => GetType().Name.Replace("Client", "");
 
     private readonly string _agent;
@@ -42,9 +46,14 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
     public ProtoClient(HttpClient httpClient, Settings settings, IOptions<TOptions> options,
         ILogger<ProtoClient<TOptions>> logger)
     {
+        if (string.IsNullOrEmpty(options.Value.BaseUri))
+        {
+            throw new ArgumentNullException(typeof(TOptions).FullName);
+        }
         _agent = settings.Agent;
         _logger = logger;
         _httpClient = httpClient;
+        Options = options.Value;
         httpClient.BaseAddress = new Uri(options.Value.BaseUri);
     }
 
@@ -78,9 +87,9 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
         return await RequestAsync<TResponse>(WebRequestMethods.Http.Get, action);
     }
 
-    protected async Task<IMany<TResponse>> GetManyAsync<TResponse>(string action) where TResponse : IProtoResponse
+    protected async Task<List<TResponse>> GetManyAsync<TResponse>(string action) where TResponse : IProtoResponse
     {
-        return await RequestAsync<Many<TResponse>>(WebRequestMethods.Http.Get, action);
+        return await RequestAsync<List<TResponse>>(WebRequestMethods.Http.Get, action);
     }
 
     protected async Task<TResponse> PostAsync<TRequest, TResponse>(string action, TRequest request)
@@ -107,7 +116,7 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
         return await RequestAsync<TResponse>(verb, action, request);
     }
 
-    private async Task<TResponse> RequestAsync<TResponse>(string verb, string action) where TResponse : IProtoResponse
+    private async Task<TResponse> RequestAsync<TResponse>(string verb, string action)
     {
         return await RequestAsync<TResponse>(verb, action, null, null);
     }
@@ -121,7 +130,6 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
     }
 
     private async Task<TResponse> RequestAsync<TResponse>(string verb, string action, string? json, int? hash)
-        where TResponse : IProtoResponse
     {
         var traceId = TraceId.NextTraceId();
         var response = await RequestAsync(verb, action, traceId, json, hash);
@@ -185,7 +193,6 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
     }
 
     private async Task<TResponse> HandleResponse<TResponse>(HttpResponseMessage response, int traceId, int? hash)
-        where TResponse : IProtoResponse
     {
         var content = await response.Content.ReadAsStringAsync();
         Log($"Response: {response.StatusCode} BODY: {content}");

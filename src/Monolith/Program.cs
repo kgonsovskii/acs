@@ -42,6 +42,7 @@ public class Program
                 .Where(t => programBaseType.IsAssignableFrom(t)
                             && t != programBaseType
                             && !t.IsAbstract
+                            && !t.FullName!.Contains("Shared")
                             && t.GetConstructor(Type.EmptyTypes) != null)
                 .ToList();
 

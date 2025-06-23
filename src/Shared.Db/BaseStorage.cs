@@ -18,7 +18,7 @@ public abstract class BaseStorageBase
 
 public interface IBaseStorage<TItem, in TId> where TItem : IItem<TId> where TId : struct
 {
-    public IEnumerable<TItem> GetAll();
+    public IList<TItem> GetAll();
     public void SetAll(IEnumerable<TItem> all);
     public TItem? GetById(TId id);
     public void Create(TItem item);
@@ -40,11 +40,10 @@ public class BaseStorage<TItem, TId> : BaseStorageBase, IBaseStorage<TItem, TId>
             _storage = new BaseDbStorage<TItem, TId>(settings, logger);
         }
     }
-    public virtual IEnumerable<TItem> GetAll()
+    public virtual IList<TItem> GetAll()
     {
         return _storage.GetAll();
     }
-
     public virtual void SetAll(IEnumerable<TItem> all)
     {
         _storage.SetAll(all);

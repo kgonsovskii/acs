@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Data;
+using Microsoft.Extensions.Logging;
 
 namespace SevenSeals.Tss.Shared;
 
-internal class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId> where TItem : IItem<TId> where TId : struct
+public class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId> where TItem : IItem<TId> where TId : struct
 {
     public BaseJsonStorage(Settings settings, ILogger logger) : base(settings, logger)
     {
@@ -39,10 +40,15 @@ internal class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem,
         }
     }
 
-    public virtual IEnumerable<TItem> GetAll()
+    public virtual IList<TItem> GetAll()
     {
         LoadData();
         return Items;
+    }
+
+    public DataTable GetDataTable()
+    {
+        throw new NotImplementedException();
     }
 
     public void SetAll(IEnumerable<TItem> all)

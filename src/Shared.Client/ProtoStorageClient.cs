@@ -6,7 +6,7 @@ namespace SevenSeals.Tss.Shared;
 public interface IProtoStorageClient<in TRequest, TResponse, in TId> : IProtoClient
     where TRequest : IProtoRequest where TResponse : IProtoResponse
 {
-    public Task<IMany<TResponse>> GetAll();
+    public Task<List<TResponse>> GetAll();
 
     public Task<TResponse> GetById(TId id);
 
@@ -31,7 +31,7 @@ public abstract class ProtoStorageClient<TRequest, TResponse, TId>: ProtoClient,
     {
     }
 
-    public virtual async Task<IMany<TResponse>> GetAll()
+    public virtual async Task<List<TResponse>> GetAll()
         => await GetManyAsync<TResponse>("");
 
     public virtual async Task<TResponse> GetById(TId id)

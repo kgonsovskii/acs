@@ -4,4 +4,14 @@
         <RootNamespace>SevenSeals.Tss.Chronicle</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Shared.Client\Shared.Client.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+        <HintPath>..\..\..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.16\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

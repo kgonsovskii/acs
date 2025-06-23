@@ -1,10 +1,13 @@
-﻿using SevenSeals.Tss.Atlas.Storage;
+﻿using SevenSeals.Tss.Atlas.Api;
+using SevenSeals.Tss.Atlas.Storage;
 
 namespace SevenSeals.Tss.Atlas.Services;
 
 public interface IAtlasService
 {
     public Map Schema();
+
+    public PlotResponse Plot();
 
     public void Schema(Map map);
 }
@@ -33,6 +36,17 @@ public class AtlasService: IAtlasService
     {
         _zoneStorage.SetAll(map.Zones);
         _transitStorage.SetAll(map.Transits);
+    }
+
+    public PlotResponse Plot()
+    {
+        var map = Schema();
+        var plotter = new AtlasPlotter(map);
+        return new PlotResponse()
+        {
+            Url = plotter.GeneratePlantUmlUrl(),
+            UrlImage = plotter.GeneratePlantUmlImageUrl()
+        };
     }
 }
 

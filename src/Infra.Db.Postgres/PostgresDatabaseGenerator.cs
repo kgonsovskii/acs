@@ -6,6 +6,7 @@ namespace Infra.Db;
 
 public class PostgresDatabaseGenerator : IDatabaseGenerator
 {
+   protected readonly TypeCollector TypeCollector = new();
    public string GenerateCreateTableSql(Type type)
     {
         var tableAttr = type.GetCustomAttribute<DbTableAttribute>();
@@ -79,7 +80,7 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
         var pk = isPrimaryKey ? " PRIMARY KEY" : string.Empty;
         var nullable = isNullable ? " NULL" : " NOT NULL";
         var fkAttr = prop.GetCustomAttribute<DbForeignKeyAttribute>();
-        var fk = fkAttr != null ? $" REFERENCES \"{fkAttr.ReferenceTable.ToSnakeCase()}\"(\"{fkAttr.ReferenceColumn.ToSnakeCase()}\")" : string.Empty;
+        var fk = fkAttr != null ? $" REFERENCES \"{fkAttr.ReferenceSchema.ToSnakeCase()}\".\"{fkAttr.ReferenceTable.ToSnakeCase()}\"(\"{fkAttr.ReferenceColumn.ToSnakeCase()}\")" : string.Empty;
         return $"    \"{name}\" {type}{pk}{nullable}{fk}";
     }
 
@@ -158,20 +159,7 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
 
     public string GenerateDatabaseSql(string outputDir)
     {
-        var types = new List<Type>();
-        var assemblies = LoadAssembliesFromDirectory(outputDir);
-        foreach (var assembly in assemblies)
-        {
-
-            var assemblyTypes = SafeGetTypes(assembly);
-            foreach (var type in assemblyTypes)
-            {
-                if (type.GetCustomAttribute<DbTableAttribute>() != null)
-                {
-                    types.Add(type);
-                }
-            }
-        }
+        var types = TypeCollector.CollectDbTableTypes(outputDir);
         return GenerateDatabaseSqlForTypes(types);
     }
 
@@ -215,7 +203,7 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
                 var childAttr = prop.GetCustomAttribute<DbChildTableAttribute>();
                 if (childAttr != null)
                 {
-                    var childType = GetChildTypeFromProperty(prop);
+                    var childType = TypeCollector.GetChildTypeFromProperty(prop);
                     if (childType != null)
                     {
                         // Check if simple type (string, int, Guid, etc.)
@@ -251,7 +239,7 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
             }
         }
 
-        var enumTypes = CollectEnumTypes(allTypes, polymorphicTypes, childTableTypes);
+        var enumTypes = TypeCollector.CollectEnumTypes(allTypes, polymorphicTypes, childTableTypes);
 
         var enumTableSqls = new List<string>();
         var enumInsertSqls = new List<string>();
@@ -313,7 +301,7 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
         sbFinal.AppendLine("DO $$");
         sbFinal.AppendLine("BEGIN");
         sbFinal.AppendLine("   IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'acs') THEN");
-        sbFinal.AppendLine("      CREATE DATABASE acs OWNER tss;");
+        sbFinal.AppendLine("      CREATE DATABASE acs OWNER tss ENCODING 'UTF8' LC_COLLATE='ru_RU.UTF-8' LC_CTYPE='ru_RU.UTF-8' TEMPLATE template0;");
         sbFinal.AppendLine("   END IF;");
         sbFinal.AppendLine("END$$;");
         sbFinal.AppendLine();
@@ -548,83 +536,5 @@ public class PostgresDatabaseGenerator : IDatabaseGenerator
         var fkAttr = prop.GetCustomAttribute<DbForeignKeyAttribute>();
         var fk = fkAttr != null ? $" REFERENCES \"{fkAttr.ReferenceTable.ToSnakeCase()}\"(\"{fkAttr.ReferenceColumn.ToSnakeCase()}\")" : string.Empty;
         return $"    \"{name}\" {type}{nullable}{fk}";
-    }
-
-    private static List<Type> CollectEnumTypes(IList<Type> tableTypes, List<(Type ParentType, Type SubType, string TableName, string Schema)> polymorphicTypes, List<(Type ParentType, Type ChildType, string TableName, string Schema, string ParentForeignKeyColumn, string ChildForeignKeyColumn)> childTableTypes)
-    {
-        var enumTypes = new HashSet<Type>();
-
-        foreach (var type in tableTypes)
-        {
-            foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                var propType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                if (!propType.IsEnum)
-                    continue;
-                var enumAttr = prop.GetCustomAttribute<DbEnumTableAttribute>();
-                if (enumAttr != null)
-                {
-                    enumTypes.Add(propType);
-                }
-            }
-        }
-
-        foreach (var (_, subType, _, _) in polymorphicTypes)
-        {
-            foreach (var prop in subType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                var propType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                if (!propType.IsEnum)
-                    continue;
-                var enumAttr = prop.GetCustomAttribute<DbEnumTableAttribute>();
-                if (enumAttr != null)
-                {
-                    enumTypes.Add(propType);
-                }
-            }
-        }
-
-        foreach (var (_, childType, _, _, _, _) in childTableTypes)
-        {
-            foreach (var prop in childType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                var propType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
-                if (!propType.IsEnum)
-                    continue;
-                var enumAttr = prop.GetCustomAttribute<DbEnumTableAttribute>();
-                if (enumAttr != null)
-                {
-                    enumTypes.Add(propType);
-                }
-            }
-        }
-
-        return enumTypes.ToList();
-    }
-
-    private static IEnumerable<Assembly> LoadAssembliesFromDirectory(string directory)
-    {
-        var dlls = Directory.GetFiles(directory, "*.dll");
-        foreach (var dll in dlls)
-        {
-            yield return Assembly.LoadFrom(dll);
-        }
-    }
-
-    private static IEnumerable<Type> SafeGetTypes(Assembly assembly)
-    {
-        return assembly.GetTypes();
-    }
-
-    private Type? GetChildTypeFromProperty(PropertyInfo prop)
-    {
-        var propType = prop.PropertyType;
-
-        if (propType.IsGenericType && propType.GetGenericTypeDefinition() == typeof(List<>))
-        {
-            return propType.GetGenericArguments()[0];
-        }
-
-        return propType.IsArray ? propType.GetElementType() : null;
     }
 }

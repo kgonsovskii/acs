@@ -1,4 +1,7 @@
+using System.ComponentModel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SevenSeals.Tss.Atlas.Api;
 using SevenSeals.Tss.Atlas.Services;
 using SevenSeals.Tss.Shared;
 
@@ -16,7 +19,7 @@ public class AtlasController : ProtoController<Map, Map>
     [HttpGet(nameof(Schema))]
     public ActionResult<Map> Schema()
     {
-        return Ok(_atlasService.Schema());
+        return OkProto(_atlasService.Schema());
     }
 
     [HttpPut(nameof(Schema))]
@@ -24,5 +27,15 @@ public class AtlasController : ProtoController<Map, Map>
     {
         _atlasService.Schema(schema);
         return NoContent();
+    }
+
+    [HttpGet(nameof(Plot))]
+    [Description("Plot atlas Schema")]
+    [ProducesResponseType(typeof(PlotResponse), StatusCodes.Status200OK)]
+    [Produces("application/json")]
+    public ActionResult Plot()
+    {
+        var response = _atlasService.Plot();
+        return OkProto(response);
     }
 }

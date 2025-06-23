@@ -17,5 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Infra.Extensions\Infra.Extensions.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 </Project>

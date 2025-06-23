@@ -27,9 +27,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="appsettings.base.json" />
-  </ItemGroup>
   
 </Project> 
