@@ -3,7 +3,7 @@ using SevenSeals.Tss.Contour.Api;
 
 namespace SevenSeals.Tss.Contour.Diagnostic;
 
-public class MainClientRequest: SpotRequest
+public class MainClientRequest: ContourRequest
 {
     [DefaultValue(true)]
     public bool IsMainClient { get; set; } = true;

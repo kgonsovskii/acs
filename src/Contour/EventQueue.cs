@@ -44,7 +44,7 @@ public class EventQueue : IHostedService, IDisposable
     {
        /* Execute(@"
 
-CREATE TABLE IF NOT EXISTS ControllerEventQueue (
+CREATE TABLE IF NOT EXISTS ContourEventQueue (
     ch TEXT,
     t2 TIMESTAMP,
     evt TEXT
@@ -91,10 +91,10 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
             using var tx = Connection.BeginTransaction();
             foreach (var evt in _queue)
             {
-                if (evt is ControllerEvent ce)
+                if (evt is ContourEvent ce)
                 {
                     using var cmd = Connection.CreateCommand();
-                    cmd.CommandText = "INSERT INTO ControllerEventQueue (ch, t2, evt) VALUES (@ch, @t2, @evt)";
+                    cmd.CommandText = "INSERT INTO ContourEventQueue (ch, t2, evt) VALUES (@ch, @t2, @evt)";
                     cmd.Parameters.AddWithValue("@ch", ce.ChannelId);
                     cmd.Parameters.AddWithValue("@t2", ce.Timestamp);
                     cmd.Parameters.AddWithValue("@evt", ce.Data);
@@ -110,17 +110,17 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
      /*   lock (_lock)
         {
             using var cmd = Connection.CreateCommand();
-            cmd.CommandText = "SELECT ch, t2, evt FROM ControllerEventQueue";
+            cmd.CommandText = "SELECT ch, t2, evt FROM ContourEventQueue";
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 var bytes = new byte[20];
                 reader.GetBytes(2,0, bytes, 0,10);
-                var evt = new ControllerEvent(reader.GetString(0), bytes, reader.GetDateTime(1));
+                var evt = ContourEvent.Create(reader.GetString(0), bytes, reader.GetDateTime(1));
                 evt.Used = true;
                 _queue.Enqueue(evt);
             }
-            Execute("DROP TABLE IF EXISTS ControllerEventQueue");
+            Execute("DROP TABLE IF EXISTS ContourEventQueue");
             Execute("VACUUM");
         }*/
 /*    }
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
         }
     }
 
-    public SendableEvent? Front(out bool forAll, out bool coEvt)
+    public Event? Front(out bool forAll, out bool coEvt)
     {
         lock (_lock)
         {
@@ -150,12 +150,16 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
 
             if (_queue.TryPeek(out var evt))
             {
-                var sendable = SendableEvent.Create(evt); // assumes factory method like in C++
+                // Check if the event is sendable
+                if (!SendableEventFactory.IsSendable(evt))
+                {
+                    return null;
+                }
 
-                if (evt.Type == EventType.Controller) // assuming EventType enum
+                if (evt.Type == EventType.Controller)
                 {
                     coEvt = true;
-                    if (evt is ControllerEvent ce)
+                    if (evt is ContourEvent ce)
                     {
                         forAll = !ce.Used;
                         ce.Used = true;
@@ -167,7 +171,7 @@ CREATE TABLE IF NOT EXISTS ControllerEventQueue (
                     coEvt = false;
                 }
 
-                return sendable;
+                return evt;
             }
         }
 

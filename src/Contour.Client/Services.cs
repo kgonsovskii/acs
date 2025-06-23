@@ -12,6 +12,6 @@ public static class Services
         services.AddScoped<IContourClient, ContourClient>();
         services.AddScoped<ISpotClient, SpotClient>();
         services.AddScoped<IDiagnosticClient, DiagnosticClient>();
-        services.Configure<SpotOptions>(configuration.GetSection("spotSettings"));
+        services.Configure<ContourOptions>(configuration.GetSection("spotSettings"));
     }
 }

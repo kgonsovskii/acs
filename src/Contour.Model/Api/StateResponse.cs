@@ -2,7 +2,7 @@
 
 namespace SevenSeals.Tss.Contour.Api;
 
-public class StateResponse: ProtoResponse
+public class StateResponse: ProtoStateResponse
 {
-    public required object State { get; init; }
+    public required ContourSnapshot State { get; init; }
 }

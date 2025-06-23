@@ -9,7 +9,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.9.3" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.9.3" />
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
@@ -19,6 +19,7 @@
   <ItemGroup>
       <ProjectReference Include="..\Logic.Client\Logic.Client.csproj" />
       <ProjectReference Include="..\Logic\Logic.csproj" />
+      <ProjectReference Include="..\Shared.Tests.Base\Shared.Tests.Base.csproj" />
     </ItemGroup>
   
     <ItemGroup>

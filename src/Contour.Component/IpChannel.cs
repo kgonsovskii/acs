@@ -9,7 +9,7 @@ public class IpChannel : Channel
     public new IpOptions ChannelOptions => base.ChannelOptions as IpOptions ?? throw new InvalidOperationException();
     private Socket _comm;
 
-    public IpChannel(SpotOptions options, IpOptions ipOptions,CancellationToken cancellationToken) : base(options, ipOptions, cancellationToken)
+    public IpChannel(ContourOptions options, IpOptions ipOptions,CancellationToken cancellationToken) : base(options, ipOptions, cancellationToken)
     {
     }
 

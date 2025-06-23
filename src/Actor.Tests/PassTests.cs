@@ -1,6 +1,6 @@
 ﻿using Infra;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SevenSeals.Tss.Shared;
+using SevenSeals.Tss.Shared.Tests.Base;
 
 namespace SevenSeals.Tss.Actor;
 
@@ -16,6 +16,7 @@ public class PassTests : TestStorageBase<Pass, Pass, Guid, IPassClient, ActorTes
     {
         var pass = new Pass();
         pass.FillWithRandomValues();
+        pass.MemberId = null;
         return pass;
     }
 }

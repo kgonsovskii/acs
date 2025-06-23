@@ -6,7 +6,7 @@ namespace SevenSeals.Tss.Atlas;
 
 public static class Services
 {
-    public static IServiceCollection AddAtlasClient(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddAtlasClients(this IServiceCollection services, IConfiguration configuration)
     {
         services.ConfigureClientOptions<AtlasClientOptions>(configuration);
         services.AddScoped<IAtlasClient, AtlasClient>();

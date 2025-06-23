@@ -1,4 +1,6 @@
-﻿namespace SevenSeals.Tss.Contour;
+﻿using SevenSeals.Tss.Contour.Events;
+
+namespace SevenSeals.Tss.Contour;
 
 public partial class Contour: ProtoObject
 {
@@ -14,69 +16,25 @@ public partial class Contour: ProtoObject
     private bool _polling;
     private bool _autonomic;
 
-    private HashSet<ulong> _chipsActivated;
-    private string _lastErrMsg;
-    private Timer _aliveTimer;
-    private Timer _deadTimer;
-    private Timer _stateTimer;
-    private int _recoverState;
-    private int _state;
+    public DateTime SuspendBefore { get; set; }
 
-    private const int RecoverNone = 0;
-    private const int RecoverAlive = 1;
-    private const int RecoverDead = 2;
 
-    private const int StateStateless = 1;
-    private const int StateAutonomicPolling = 2;
-    private const int StateComplex = 3;
+    public event Func<Contour, ContourEvent, Task>? OnEvent;
 
-    private readonly CancellationToken _cts = new();
+    public Guid? SpotId {get; set;}
 
-    public Action<Contour, byte[]>? OnEvent { get; set; }
-
-    public Contour(Channel channel, CancellationToken cancellationToken, byte addr)
+    public Contour(Guid? spotId, Channel channel, byte addr)
     {
-        _cts = cancellationToken;
          Channel = channel;
          Address = addr;
         _polling = false;
-        _chipsActivated = [];
-        _recoverState = RecoverNone;
-        _state = StateStateless;
-
-        // Initialize timers
-        _aliveTimer = new Timer(OnAliveTimer, null, Timeout.Infinite, Timeout.Infinite);
-        _deadTimer = new Timer(OnDeadTimer, null, Timeout.Infinite, Timeout.Infinite);
-        _stateTimer = new Timer(OnStateTimer, null, Timeout.Infinite, Timeout.Infinite);
+        SpotId = spotId;
     }
 
-    protected void Polling()
+    public void Poll()
     {
-        while (_cts.IsCancellationRequested == false)
-        {
-            lock (Channel)
-            {
-                ReadEvt();
-            }
-
-            Thread.Sleep(999);
-        }
+        ReadEvt();
     }
-
-    public void Activate()
-    {
-        if (_pollingTask != null)
-            return;
-        if (!Channel.Options.AutoPoll)
-            return;
-        _pollingTask = Task.Run(Polling);
-    }
-
 
     public string Name => $"Controller_{Address}";
-
-    private void SetState(int state)
-    {
-        _state = state;
-    }
 }

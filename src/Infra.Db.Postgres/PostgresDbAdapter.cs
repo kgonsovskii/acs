@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Npgsql;
 using System.Data;
+using System.Text;
 using Infra.Db.Attributes;
 
 namespace Infra.Db;
@@ -53,7 +54,7 @@ public class PostgresDbAdapter<TClass, TId> : IDbAdapter<TClass, TId>
             .ToArray();
     }
 
-    public IEnumerable<TClass> GetAll()
+    public IList<TClass> GetAll()
     {
         var (sql, parameters, childTableInfos) = BuildMegaJoinQuery(null);
         var result = new List<TClass>();
@@ -205,8 +206,8 @@ public class PostgresDbAdapter<TClass, TId> : IDbAdapter<TClass, TId>
                 var subProperties = subType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
                 foreach (var subProp in subProperties)
                 {
-                    var columnName = subProp.Name.ToSnakeCase();
-                    selectColumns.Add($"{alias}.\"{columnName}\" AS \"{alias}_{columnName}\"");
+                    var col = subProp.Name.ToSnakeCase();
+                    selectColumns.Add($"{alias}.\"{col}\" AS {alias}_{col}");
                 }
             }
         }
@@ -348,6 +349,11 @@ public class PostgresDbAdapter<TClass, TId> : IDbAdapter<TClass, TId>
             }
             // Уникализируем значения
             values = values.Distinct().ToList();
+            if (info.IsSimple && values.Count > 1)
+            {
+                // Sort for deterministic order (string, int, Guid, etc.)
+                values = values.OrderBy(v => v).ToList();
+            }
             if (prop.PropertyType.IsArray)
             {
                 var array = Array.CreateInstance(info.ChildType, values.Count);
@@ -408,6 +414,108 @@ public class PostgresDbAdapter<TClass, TId> : IDbAdapter<TClass, TId>
             transaction.Rollback();
             throw;
         }
+    }
+
+    public string DumpSql(IEnumerable<TClass> items)
+    {
+        Detached = true;
+        var sb = new StringBuilder();
+        foreach (var item in items)
+        {
+            sb.AppendLine(BuildInsertMainTableSql(item, asText: Detached));
+            sb.Append(BuildInsertPolymorphicTablesSql(item, asText: Detached));
+            sb.Append(BuildInsertChildTablesSql(item, asText: Detached));
+        }
+        Detached = false;
+        return sb.ToString();
+    }
+
+    private string BuildInsertMainTableSql(TClass item, bool asText)
+    {
+        var columns = GetDirectColumns();
+        var values = string.Join(", ", _directProperties.Select(p => asText ? ToSqlLiteral(GetPropertyValueForDb(p, item)) : $"@{p.Name}"));
+        var sql = $"INSERT INTO \"{_schema}\".\"{_tableName}\" ({columns}) VALUES ({values});";
+        return sql;
+    }
+
+    private string BuildInsertPolymorphicTablesSql(TClass item, bool asText)
+    {
+        var sb = new StringBuilder();
+        foreach (var prop in _allProperties)
+        {
+            var polyAttr = prop.GetCustomAttribute<DbPolymorphicTableAttribute>();
+            if (polyAttr == null) continue;
+            var value = prop.GetValue(item);
+            if (value == null) continue;
+            var actualType = value.GetType();
+            var subType = polyAttr.OptionTypes.FirstOrDefault(t => t.IsAssignableFrom(actualType));
+            if (subType == null) continue;
+            var subName = subType.Name;
+            if (subName.EndsWith("Options"))
+                subName = subName.Substring(0, subName.Length - "Options".Length);
+            subName = subName.ToSnakeCase();
+            var subTable = $"{_tableName}_{subName}";
+            var pkValue = GetPrimaryKeyValue(item);
+            var subProperties = subType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var subColumns = string.Join(", ", subProperties.Select(p => $"\"{p.Name.ToSnakeCase()}\""));
+            var fkColumn = $"\"{_tableName}_id\"";
+            var values = string.Join(", ", subProperties.Select(p => asText ? ToSqlLiteral(GetPropertyValueForDb(p, value)) : $"@{p.Name}"));
+            var pkSql = asText ? ToSqlLiteral(pkValue) : "@parentId";
+            var sql = $"INSERT INTO \"{_schema}\".\"{subTable}\" ({fkColumn}, {subColumns}) VALUES ({pkSql}, {values});";
+            sb.AppendLine(sql);
+        }
+        return sb.ToString();
+    }
+
+    private string BuildInsertChildTablesSql(TClass item, bool asText)
+    {
+        var sb = new StringBuilder();
+        foreach (var prop in _allProperties)
+        {
+            var childAttr = prop.GetCustomAttribute<DbChildTableAttribute>();
+            if (childAttr == null) continue;
+            var value = prop.GetValue(item);
+            if (value == null) continue;
+            var childType = GetChildTypeFromProperty(prop);
+            if (childType == null) continue;
+            var childTableName = childAttr.GetTableName(prop, typeof(TClass));
+            var childSchema = childAttr.GetSchemaName(typeof(TClass));
+            var parentForeignKeyColumn = childAttr.GetForeignKeyColumnName(typeof(TClass));
+            var pkValue = GetPrimaryKeyValue(item);
+            if (childType == typeof(string) || childType == typeof(int) || childType == typeof(long) ||
+                childType == typeof(Guid) || childType == typeof(double) || childType == typeof(bool) ||
+                childType == typeof(byte))
+            {
+                if (value is IEnumerable<object> collection)
+                {
+                    foreach (var element in collection)
+                    {
+                        var valueColumn = prop.Name.EndsWith("es") ? prop.Name.Substring(0, prop.Name.Length - 2) :
+                                        (prop.Name.EndsWith("s") ? prop.Name.Substring(0, prop.Name.Length - 1) : prop.Name);
+                        valueColumn = valueColumn.ToSnakeCase();
+                        var pkSql = asText ? ToSqlLiteral(pkValue) : "@parentId";
+                        var valSql = asText ? ToSqlLiteral(element) : "@value";
+                        var sql = $"INSERT INTO \"{childSchema}\".\"{childTableName}\" (\"{parentForeignKeyColumn}\", \"{valueColumn}\") VALUES ({pkSql}, {valSql});";
+                        sb.AppendLine(sql);
+                    }
+                }
+            }
+            // Complex child types not implemented for SQL dump
+        }
+        return sb.ToString();
+    }
+
+    private string ToSqlLiteral(object? value)
+    {
+        if (value == null || value == DBNull.Value) return "NULL";
+        if (value is string s) return $"'{s.Replace("'", "''")}'";
+        if (value is Guid g) return $"'{g}'";
+        if (value is DateTime dt) return $"'{dt:yyyy-MM-dd HH:mm:ss.fff}'";
+        if (value is bool b) return b ? "TRUE" : "FALSE";
+        if (value is Enum e) return $"'{e.ToString()!.ToSnakeCase()}'";
+        if (value is byte[] bytes) return $"'\\x{BitConverter.ToString(bytes).Replace("-", string.Empty).ToLower()}'";
+        if (value is int or long or double or float or decimal or byte or short) return Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture)!;
+        return $"'{value.ToString()!.Replace("'", "''")}'";
     }
 
     private void InsertIntoMainTable(NpgsqlConnection connection, TClass item)
@@ -559,22 +667,124 @@ public class PostgresDbAdapter<TClass, TId> : IDbAdapter<TClass, TId>
 
     public void Update(TId id, TClass item)
     {
-        var setClause = string.Join(", ", _directProperties.Select(p => $"\"{p.Name.ToSnakeCase()}\" = @{p.Name}"));
-        var sql = $"UPDATE \"{_schema}\".\"{_tableName}\" SET {setClause} WHERE \"{_primaryKeyColumn}\" = @id";
-
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
-
-        using var command = new NpgsqlCommand(sql, connection);
-        command.Parameters.AddWithValue("@id", id);
-
-        foreach (var prop in _directProperties)
+        using var transaction = connection.BeginTransaction();
+        try
         {
-            var value = GetPropertyValueForDb(prop, item);
-            command.Parameters.AddWithValue($"@{prop.Name}", value);
-        }
+            // 1. Update main table
+            var setClause = string.Join(", ", _directProperties.Select(p => $"\"{p.Name.ToSnakeCase()}\" = @{p.Name}"));
+            var sql = $"UPDATE \"{_schema}\".\"{_tableName}\" SET {setClause} WHERE \"{_primaryKeyColumn}\" = @id";
+            using (var command = new NpgsqlCommand(sql, connection, transaction))
+            {
+                command.Parameters.AddWithValue("@id", id);
+                foreach (var prop in _directProperties)
+                {
+                    var value = GetPropertyValueForDb(prop, item);
+                    command.Parameters.AddWithValue($"@{prop.Name}", value);
+                }
+                command.ExecuteNonQuery();
+            }
 
-        command.ExecuteNonQuery();
+            // 2. Update polymorphic tables: delete old, insert new
+            foreach (var prop in _allProperties)
+            {
+                var polyAttr = prop.GetCustomAttribute<DbPolymorphicTableAttribute>();
+                if (polyAttr == null) continue;
+                foreach (var subType in polyAttr.OptionTypes)
+                {
+                    var subName = subType.Name;
+                    if (subName.EndsWith("Options"))
+                        subName = subName.Substring(0, subName.Length - "Options".Length);
+                    subName = subName.ToSnakeCase();
+                    var subTable = $"{_tableName}_{subName}";
+                    var delSql = $"DELETE FROM \"{_schema}\".\"{subTable}\" WHERE \"{_tableName}_id\" = @id";
+                    using var delCmd = new NpgsqlCommand(delSql, connection, transaction);
+                    delCmd.Parameters.AddWithValue("@id", id);
+                    delCmd.ExecuteNonQuery();
+                }
+                var value = prop.GetValue(item);
+                if (value == null) continue;
+                var actualType = value.GetType();
+                var subType2 = polyAttr.OptionTypes.FirstOrDefault(t => t.IsAssignableFrom(actualType));
+                if (subType2 == null) continue;
+                var subName2 = subType2.Name;
+                if (subName2.EndsWith("Options"))
+                    subName2 = subName2.Substring(0, subName2.Length - "Options".Length);
+                subName2 = subName2.ToSnakeCase();
+                var subTable2 = $"{_tableName}_{subName2}";
+                var subProperties = subType2.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                var subColumns = string.Join(", ", subProperties.Select(p => $"\"{p.Name.ToSnakeCase()}\""));
+                var subParameters = string.Join(", ", subProperties.Select(p => $"@{p.Name}"));
+                var fkColumn = $"\"{_tableName}_id\"";
+                var insSql = $"INSERT INTO \"{_schema}\".\"{subTable2}\" ({fkColumn}, {subColumns}) VALUES (@parentId, {subParameters})";
+                using var insCmd = new NpgsqlCommand(insSql, connection, transaction);
+                insCmd.Parameters.AddWithValue("@parentId", id);
+                foreach (var subProp in subProperties)
+                {
+                    var subValue = GetPropertyValueForDb(subProp, value);
+                    insCmd.Parameters.AddWithValue($"@{subProp.Name}", subValue);
+                }
+                insCmd.ExecuteNonQuery();
+            }
+
+            // 3. Update child tables: delete old, insert new
+            foreach (var prop in _allProperties)
+            {
+                var childAttr = prop.GetCustomAttribute<DbChildTableAttribute>();
+                if (childAttr == null) continue;
+                var childTableName = childAttr.GetTableName(prop, typeof(TClass));
+                var childSchema = childAttr.GetSchemaName(typeof(TClass));
+                var parentForeignKeyColumn = childAttr.GetForeignKeyColumnName(typeof(TClass));
+                var delSql = $"DELETE FROM \"{childSchema}\".\"{childTableName}\" WHERE \"{parentForeignKeyColumn}\" = @id";
+                using (var delCmd = new NpgsqlCommand(delSql, connection, transaction))
+                {
+                    delCmd.Parameters.AddWithValue("@id", id);
+                    delCmd.ExecuteNonQuery();
+                }
+                var value = prop.GetValue(item);
+                if (value == null) continue;
+                var childType = GetChildTypeFromProperty(prop);
+                if (childType == null) continue;
+                if (childType == typeof(string) || childType == typeof(int) || childType == typeof(long) ||
+                    childType == typeof(Guid) || childType == typeof(double) || childType == typeof(bool) ||
+                    childType == typeof(byte))
+                {
+                    if (value is IEnumerable<object> collection)
+                    {
+                        foreach (var element in collection)
+                        {
+                            var valueColumn = prop.Name.EndsWith("es") ? prop.Name.Substring(0, prop.Name.Length - 2) :
+                                            (prop.Name.EndsWith("s") ? prop.Name.Substring(0, prop.Name.Length - 1) : prop.Name);
+                            valueColumn = valueColumn.ToSnakeCase();
+                            var insSql = $"INSERT INTO \"{childSchema}\".\"{childTableName}\" (\"{parentForeignKeyColumn}\", \"{valueColumn}\") VALUES (@parentId, @value)";
+                            using var insCmd = new NpgsqlCommand(insSql, connection, transaction);
+                            insCmd.Parameters.AddWithValue("@parentId", id);
+                            insCmd.Parameters.AddWithValue("@value", element);
+                            insCmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+                else if (childType.GetCustomAttribute<DbTableAttribute>() != null)
+                {
+                    if (value is IEnumerable<object> collection)
+                    {
+                        foreach (var element in collection)
+                        {
+                            // Not implemented: recursive update for complex child tables
+                            throw new NotImplementedException($"Complex child table update for {childType.Name} is not yet implemented");
+                        }
+                    }
+                }
+            }
+
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
     }
 
     public void Delete(TId id)
@@ -631,28 +841,11 @@ public class PostgresDbAdapter<TClass, TId> : IDbAdapter<TClass, TId>
         }
     }
 
+    public bool Detached { get; set; }
+
     private string GetDirectColumns()
     {
         return string.Join(", ", _directProperties.Select(p => $"\"{p.Name.ToSnakeCase()}\""));
-    }
-
-    private TClass MapReaderToObject(IDataReader reader)
-    {
-        var instance = Activator.CreateInstance<TClass>();
-
-        foreach (var prop in _directProperties)
-        {
-            var columnName = prop.Name.ToSnakeCase();
-            var value = reader[columnName];
-
-            if (value != DBNull.Value)
-            {
-                var convertedValue = ConvertValue(value, prop.PropertyType);
-                prop.SetValue(instance, convertedValue);
-            }
-        }
-
-        return instance;
     }
 
     private object GetPropertyValueForDb(PropertyInfo prop, object item)
@@ -695,7 +888,30 @@ public class PostgresDbAdapter<TClass, TId> : IDbAdapter<TClass, TId>
         var underlyingType = Nullable.GetUnderlyingType(targetType);
         if (underlyingType != null)
         {
-            return Convert.ChangeType(value, underlyingType);
+            return ConvertValue(value, underlyingType);
+        }
+
+        // Handle Guid conversion from string
+        if (targetType == typeof(Guid) && value is string guidString)
+        {
+            if (Guid.TryParse(guidString, out var guid))
+                return guid;
+            throw new ArgumentException($"Invalid GUID format: {guidString}");
+        }
+
+        // Handle boolean conversion from string
+        if (targetType == typeof(bool) && value is string boolString)
+        {
+            if (bool.TryParse(boolString, out var boolValue))
+                return boolValue;
+            // Also handle "1"/"0" and "true"/"false" case-insensitive
+            if (boolString.Equals("1", StringComparison.OrdinalIgnoreCase) || 
+                boolString.Equals("true", StringComparison.OrdinalIgnoreCase))
+                return true;
+            if (boolString.Equals("0", StringComparison.OrdinalIgnoreCase) || 
+                boolString.Equals("false", StringComparison.OrdinalIgnoreCase))
+                return false;
+            throw new ArgumentException($"Invalid boolean format: {boolString}");
         }
 
         // Handle enums
@@ -718,132 +934,27 @@ public class PostgresDbAdapter<TClass, TId> : IDbAdapter<TClass, TId>
             }
         }
 
-        // Default conversion
-        return Convert.ChangeType(value, targetType);
-    }
-
-    private void LoadPolymorphicData(NpgsqlConnection connection, TClass item)
-    {
-        foreach (var prop in _allProperties)
+        // Try safe conversion first
+        try
         {
-            var polyAttr = prop.GetCustomAttribute<DbPolymorphicTableAttribute>();
-            if (polyAttr == null) continue;
-
-            var pkValue = GetPrimaryKeyValue(item);
-
-            // Try to load from each possible polymorphic table
-            foreach (var subType in polyAttr.OptionTypes)
-            {
-                var subName = subType.Name;
-                if (subName.EndsWith("Options"))
-                    subName = subName.Substring(0, subName.Length - "Options".Length);
-                subName = subName.ToSnakeCase();
-                var subTable = $"{_tableName}_{subName}";
-
-                var subProperties = subType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-                var subColumns = string.Join(", ", subProperties.Select(p => $"\"{p.Name.ToSnakeCase()}\""));
-                var sql = $"SELECT {subColumns} FROM \"{_schema}\".\"{subTable}\" WHERE \"{_tableName}_id\" = @parentId";
-
-                using var command = new NpgsqlCommand(sql, connection);
-                command.Parameters.AddWithValue("@parentId", pkValue);
-
-                using var reader = command.ExecuteReader();
-                if (reader.Read())
-                {
-                    // Found data in this polymorphic table
-                    var subInstance = Activator.CreateInstance(subType);
-
-                    foreach (var subProp in subProperties)
-                    {
-                        var columnName = subProp.Name.ToSnakeCase();
-                        var value = reader[columnName];
-
-                        if (value != DBNull.Value)
-                        {
-                            var convertedValue = ConvertValue(value, subProp.PropertyType);
-                            subProp.SetValue(subInstance, convertedValue);
-                        }
-                    }
-
-                    prop.SetValue(item, subInstance);
-                    break; // Found the correct polymorphic table
-                }
-            }
+            return Convert.ChangeType(value, targetType);
         }
-    }
-
-    private void LoadChildData(NpgsqlConnection connection, TClass item)
-    {
-        foreach (var prop in _allProperties)
+        catch (InvalidCastException)
         {
-            var childAttr = prop.GetCustomAttribute<DbChildTableAttribute>();
-            if (childAttr == null) continue;
-
-            var pkValue = GetPrimaryKeyValue(item);
-            var childType = GetChildTypeFromProperty(prop);
-            if (childType == null) continue;
-
-            var childTableName = childAttr.GetTableName(prop, typeof(TClass));
-            var childSchema = childAttr.GetSchemaName(typeof(TClass));
-            var parentForeignKeyColumn = childAttr.GetForeignKeyColumnName(typeof(TClass));
-
-            // Handle simple types
-            if (childType == typeof(string) || childType == typeof(int) || childType == typeof(long) ||
-                childType == typeof(Guid) || childType == typeof(double) || childType == typeof(bool) ||
-                childType == typeof(byte))
+            // If Convert.ChangeType fails, try to convert via string
+            if (value is IConvertible convertible)
             {
-                var valueColumn = prop.Name.EndsWith("es") ? prop.Name.Substring(0, prop.Name.Length - 2) :
-                                (prop.Name.EndsWith("s") ? prop.Name.Substring(0, prop.Name.Length - 1) : prop.Name);
-                valueColumn = valueColumn.ToSnakeCase();
-
-                var sql = $"SELECT \"{valueColumn}\" FROM \"{childSchema}\".\"{childTableName}\" WHERE \"{parentForeignKeyColumn}\" = @parentId ORDER BY \"{valueColumn}\"";
-
-                using var command = new NpgsqlCommand(sql, connection);
-                command.Parameters.AddWithValue("@parentId", pkValue);
-
-                using var reader = command.ExecuteReader();
-                var values = new List<object>();
-
-                while (reader.Read())
-                {
-                    var value = reader[valueColumn];
-                    if (value != DBNull.Value)
-                    {
-                        values.Add(value);
-                    }
-                }
-
-                // Create the appropriate collection type
-                if (prop.PropertyType.IsArray)
-                {
-                    var array = Array.CreateInstance(childType, values.Count);
-                    for (int i = 0; i < values.Count; i++)
-                    {
-                        array.SetValue(Convert.ChangeType(values[i], childType), i);
-                    }
-                    prop.SetValue(item, array);
-                }
-                else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
-                {
-                    var listType = typeof(List<>).MakeGenericType(childType);
-                    var list = Activator.CreateInstance(listType);
-                    var addMethod = listType.GetMethod("Add");
-
-                    foreach (var value in values)
-                    {
-                        addMethod!.Invoke(list, new[] { Convert.ChangeType(value, childType) });
-                    }
-
-                    prop.SetValue(item, list);
-                }
+                return Convert.ChangeType(convertible, targetType);
             }
-            // Handle complex types (simplified - would need recursive loading in full implementation)
-            else if (childType.GetCustomAttribute<DbTableAttribute>() != null)
+            
+            // Last resort: try to convert via ToString() if target is string
+            if (targetType == typeof(string))
             {
-                // For now, just log that complex child tables are not fully implemented
-                // In a full implementation, you'd need to recursively load these objects
-                Console.WriteLine($"Complex child table loading for {childType.Name} is not yet fully implemented");
+                return value.ToString() ?? string.Empty;
             }
+            
+            // If all else fails, throw a more descriptive exception
+            throw new ArgumentException($"Cannot convert {sourceType.Name} to {targetType.Name}. Value: {value}");
         }
     }
 
@@ -890,5 +1001,283 @@ public class PostgresDbAdapter<TClass, TId> : IDbAdapter<TClass, TId>
         public DateTime GetDateTime(int i) => (DateTime)_values[i];
         public bool IsDBNull(int i) => _values[i] == DBNull.Value;
         public System.Collections.IEnumerator GetEnumerator() => _values.GetEnumerator();
+    }
+
+    public IList<TClass> GetByField(string fieldName, object value)
+    {
+        var (resolvedFieldName, convertedValue) = ResolveFieldNameAndConvertValue(fieldName, value);
+        var whereClause = $"{resolvedFieldName} = @{fieldName}";
+        var parameters = new Dictionary<string, object> { { fieldName, convertedValue } };
+        return GetByWhere(whereClause, parameters);
+    }
+
+    public IList<TClass> GetByFields(Dictionary<string, object> criteria)
+    {
+        if (criteria == null || criteria.Count == 0)
+            return GetAll();
+
+        var whereConditions = new List<string>();
+        var parameters = new Dictionary<string, object>();
+
+        foreach (var kvp in criteria)
+        {
+            var (resolvedFieldName, convertedValue) = ResolveFieldNameAndConvertValue(kvp.Key, kvp.Value);
+            var paramName = $"param_{kvp.Key}";
+            whereConditions.Add($"{resolvedFieldName} = @{paramName}");
+            parameters[paramName] = convertedValue;
+        }
+
+        var whereClause = string.Join(" AND ", whereConditions);
+        return GetByWhere(whereClause, parameters);
+    }
+
+    public IList<TClass> GetByWhere(string whereClause, Dictionary<string, object>? parameters = null)
+    {
+        var (sql, queryParams, childTableInfos) = BuildMegaJoinQueryWithWhere(whereClause, parameters);
+        var result = new List<TClass>();
+
+        using var connection = new NpgsqlConnection(_connectionString);
+        connection.Open();
+        using var command = new NpgsqlCommand(sql, connection);
+        
+        // Add all parameters
+        foreach (var param in queryParams)
+            command.Parameters.AddWithValue(param.Key, param.Value);
+
+        using var reader = command.ExecuteReader();
+        var rows = new List<IDataRecord>();
+        while (reader.Read())
+        {
+            var values = new object[reader.FieldCount];
+            reader.GetValues(values);
+            rows.Add(new DataRecordSnapshot(reader, values));
+        }
+
+        if (rows.Count == 0)
+            return result;
+
+        // Group by primary key to handle child collections
+        var idProp = _directProperties.FirstOrDefault(p => p.GetCustomAttribute<DbPrimaryKeyAttribute>() != null);
+        if (idProp == null)
+            throw new InvalidOperationException("Primary key property not found");
+        
+        var idCol = idProp.Name.ToSnakeCase();
+        var groups = rows.GroupBy(r => r[idCol]);
+        
+        foreach (var group in groups)
+        {
+            var groupRows = group.ToList();
+            var item = MapMegaJoinRowsToObject(groupRows, childTableInfos);
+            result.Add(item);
+        }
+
+        return result;
+    }
+
+    public TClass? GetFirstByField(string fieldName, object value)
+    {
+        var results = GetByField(fieldName, value);
+        return results.FirstOrDefault();
+    }
+
+    public bool ExistsByField(string fieldName, object value)
+    {
+        var (resolvedFieldName, convertedValue) = ResolveFieldNameAndConvertValue(fieldName, value);
+        
+        // If it's a polymorphic field, we need to check the polymorphic table
+        if (resolvedFieldName.StartsWith("poly_"))
+        {
+            // Extract table alias and build query for polymorphic table
+            var alias = resolvedFieldName.Split('.')[0];
+            var columnName = resolvedFieldName.Split('.')[1].Trim('"');
+            var tableName = alias.Replace("poly_", "");
+            var fullTableName = $"{_tableName}_{tableName}";
+            
+            using var connection = new NpgsqlConnection(_connectionString);
+            connection.Open();
+            
+            var sql = $"SELECT COUNT(*) FROM \"{_schema}\".\"{fullTableName}\" WHERE \"{columnName}\" = @{fieldName}";
+            using var command = new NpgsqlCommand(sql, connection);
+            command.Parameters.AddWithValue(fieldName, convertedValue);
+            
+            var count = Convert.ToInt32(command.ExecuteScalar());
+            return count > 0;
+        }
+        else
+        {
+            // Regular field - check main table
+            var whereClause = $"{resolvedFieldName} = @{fieldName}";
+            var parameters = new Dictionary<string, object> { { fieldName, convertedValue } };
+            
+            using var connection = new NpgsqlConnection(_connectionString);
+            connection.Open();
+            
+            var sql = $"SELECT COUNT(*) FROM \"{_schema}\".\"{_tableName}\" main WHERE {whereClause}";
+            using var command = new NpgsqlCommand(sql, connection);
+            command.Parameters.AddWithValue(fieldName, convertedValue);
+            
+            var count = Convert.ToInt32(command.ExecuteScalar());
+            return count > 0;
+        }
+    }
+
+    private (string resolvedFieldName, object convertedValue) ResolveFieldNameAndConvertValue(string fieldName, object value)
+    {
+        // Handle polymorphic field paths like "Data.Email"
+        if (fieldName.Contains("."))
+        {
+            var parts = fieldName.Split('.');
+            if (parts.Length == 2 && parts[0] == "Data")
+            {
+                // This is a polymorphic field like "Data.Email"
+                var subFieldName = parts[1];
+                
+                // Find the polymorphic property
+                var polyProp = _allProperties.FirstOrDefault(p => p.GetCustomAttribute<DbPolymorphicTableAttribute>() != null);
+                if (polyProp != null)
+                {
+                    var polyAttr = polyProp.GetCustomAttribute<DbPolymorphicTableAttribute>();
+                    if (polyAttr != null)
+                    {
+                        // For now, we'll check all polymorphic tables for the field
+                        // In a real implementation, you might want to be more specific about which table
+                        var subName = "person"; // Default to person table for now
+                        var alias = $"poly_{subName}";
+                        var resolvedFieldName = $"{alias}.\"{subFieldName.ToSnakeCase()}\"";
+                        
+                        // Convert value based on the field type
+                        var convertedValue = ConvertValueForField(subFieldName, value);
+                        
+                        return (resolvedFieldName, convertedValue);
+                    }
+                }
+            }
+        }
+        
+        // Regular field - check if it's a main table field
+        var mainTableField = $"main.\"{fieldName.ToSnakeCase()}\"";
+        var convertedMainValue = ConvertValueForField(fieldName, value);
+        
+        return (mainTableField, convertedMainValue);
+    }
+
+    private object ConvertValueForField(string fieldName, object value)
+    {
+        // Find the property to determine its type
+        var prop = _directProperties.FirstOrDefault(p => p.Name.Equals(fieldName, StringComparison.OrdinalIgnoreCase));
+        if (prop != null)
+        {
+            return ConvertValue(value, prop.PropertyType);
+        }
+        
+        // Check polymorphic properties
+        var polyProp = _allProperties.FirstOrDefault(p => p.GetCustomAttribute<DbPolymorphicTableAttribute>() != null);
+        if (polyProp != null)
+        {
+            var polyAttr = polyProp.GetCustomAttribute<DbPolymorphicTableAttribute>();
+            if (polyAttr != null)
+            {
+                // Check all polymorphic types for the field
+                foreach (var subType in polyAttr.OptionTypes)
+                {
+                    var subProp = subType.GetProperty(fieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+                    if (subProp != null)
+                    {
+                        return ConvertValue(value, subProp.PropertyType);
+                    }
+                }
+            }
+        }
+        
+        // Default conversion
+        return ConvertValue(value, typeof(string));
+    }
+
+    private (string sql, Dictionary<string, object> parameters, List<ChildTableJoinInfo> childTableInfos) BuildMegaJoinQueryWithWhere(string whereClause, Dictionary<string, object>? parameters)
+    {
+        var queryParams = parameters ?? new Dictionary<string, object>();
+        var joins = new List<string>();
+        var selectColumns = new List<string>();
+        var childTableInfos = new List<ChildTableJoinInfo>();
+
+        // Main table columns
+        foreach (var prop in _directProperties)
+        {
+            selectColumns.Add($"main.\"{prop.Name.ToSnakeCase()}\"");
+        }
+
+        // Polymorphic tables
+        foreach (var prop in _allProperties)
+        {
+            var polyAttr = prop.GetCustomAttribute<DbPolymorphicTableAttribute>();
+            if (polyAttr == null) continue;
+            
+            foreach (var subType in polyAttr.OptionTypes)
+            {
+                var subName = subType.Name;
+                if (subName.EndsWith("Options"))
+                    subName = subName.Substring(0, subName.Length - "Options".Length);
+                subName = subName.ToSnakeCase();
+                var subTable = $"{_tableName}_{subName}";
+                var alias = $"poly_{subName}";
+                
+                joins.Add($"LEFT JOIN \"{_schema}\".\"{subTable}\" {alias} ON {alias}.\"{_tableName}_id\" = main.\"{_primaryKeyColumn}\"");
+                
+                // Add columns from polymorphic table
+                var subProperties = subType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                foreach (var subProp in subProperties)
+                {
+                    var col = subProp.Name.ToSnakeCase();
+                    selectColumns.Add($"{alias}.\"{col}\" AS {alias}_{col}");
+                }
+            }
+        }
+
+        // Child tables
+        foreach (var prop in _allProperties)
+        {
+            var childAttr = prop.GetCustomAttribute<DbChildTableAttribute>();
+            if (childAttr == null) continue;
+            
+            var childTableName = childAttr.GetTableName(prop, typeof(TClass));
+            var childSchema = childAttr.GetSchemaName(typeof(TClass));
+            var parentForeignKeyColumn = childAttr.GetForeignKeyColumnName(typeof(TClass));
+            var alias = $"child_{prop.Name}";
+            
+            joins.Add($"LEFT JOIN \"{childSchema}\".\"{childTableName}\" {alias} ON {alias}.\"{parentForeignKeyColumn}\" = main.\"{_primaryKeyColumn}\"");
+            
+            var childType = GetChildTypeFromProperty(prop);
+            if (childType != null)
+            {
+                if (childType.IsPrimitive || childType == typeof(string) || childType == typeof(Guid))
+                {
+                    // Simple child table (string[], int[], etc.)
+                    var valueColumn = prop.Name.EndsWith("es") ? prop.Name.Substring(0, prop.Name.Length - 2) : 
+                                    (prop.Name.EndsWith("s") ? prop.Name.Substring(0, prop.Name.Length - 1) : prop.Name);
+                    valueColumn = valueColumn.ToSnakeCase();
+                    selectColumns.Add($"{alias}.\"{valueColumn}\" AS \"{alias}_{valueColumn}\"");
+                    childTableInfos.Add(new ChildTableJoinInfo(prop, alias, new[] { valueColumn }, childType));
+                }
+                else if (childType.GetCustomAttribute<DbTableAttribute>() != null)
+                {
+                    // Complex child table
+                    var childProperties = childType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                    var childColumns = childProperties.Select(p => $"{alias}.\"{p.Name.ToSnakeCase()}\"").ToArray();
+                    childTableInfos.Add(new ChildTableJoinInfo(prop, alias, childColumns, childType));
+                    
+                    foreach (var childCol in childColumns)
+                    {
+                        selectColumns.Add(childCol);
+                    }
+                }
+            }
+        }
+
+        var sql = $"SELECT {string.Join(", ", selectColumns)} FROM \"{_schema}\".\"{_tableName}\" main";
+        if (joins.Count > 0)
+            sql += " " + string.Join(" ", joins);
+        sql += $" WHERE {whereClause}";
+
+        return (sql, queryParams, childTableInfos);
     }
 }

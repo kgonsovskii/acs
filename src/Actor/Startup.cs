@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using JetBrains.Annotations;
-using SevenSeals.Tss.Actor.Storage;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SevenSeals.Tss.Actor;
@@ -11,8 +10,7 @@ public class Startup : Shared.StartupBase<Startup>
     public Startup(IConfiguration configuration) : base(configuration){}
     protected override IServiceCollection ConfigureServicesInternal(IServiceCollection services)
     {
-        services.AddSingleton<IActorStorage, ActorStorage>();
-        services.AddSingleton<IKeyStorage, KeyStorage>();
+        services.AddActorStorage();
         return services;
     }
 

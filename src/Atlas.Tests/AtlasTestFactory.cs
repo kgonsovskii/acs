@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using SevenSeals.Tss.Shared;
+using SevenSeals.Tss.Shared.Tests.Base;
 
 namespace SevenSeals.Tss.Atlas;
 
@@ -8,6 +8,6 @@ public class AtlasTestFactory : TestWebAppFactory<Startup>
 {
     protected override void ConfigureServices(WebHostBuilderContext context, IServiceCollection services)
     {
-        services.AddAtlasClient(context.Configuration);
+        services.AddAtlasClients(context.Configuration);
     }
 }

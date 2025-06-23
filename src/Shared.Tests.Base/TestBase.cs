@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-namespace SevenSeals.Tss.Shared;
+namespace SevenSeals.Tss.Shared.Tests.Base;
 
 public abstract class TestBase
 {

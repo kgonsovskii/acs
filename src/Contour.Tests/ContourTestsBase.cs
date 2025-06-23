@@ -1,8 +1,8 @@
 ﻿using Infra;
 using Microsoft.Extensions.DependencyInjection;
 using SevenSeals.Tss.Contour.Api;
-using SevenSeals.Tss.Contour.Storage;
 using SevenSeals.Tss.Shared;
+using SevenSeals.Tss.Shared.Tests.Base;
 
 namespace SevenSeals.Tss.Contour;
 
@@ -20,7 +20,7 @@ public abstract class ContourTestsBase<TClient>: TestBase<TClient, ContourTestFa
         _spots = map.ToList();
     }
 
-    protected new TRequest NewRequest<TRequest>() where TRequest : SpotRequest, new()
+    protected new TRequest NewRequest<TRequest>() where TRequest : ContourRequest, new()
     {
         var map = _spots.First(a=>a.Options.Type == ChannelType.Ip);
         var request = new TRequest
@@ -31,7 +31,7 @@ public abstract class ContourTestsBase<TClient>: TestBase<TClient, ContourTestFa
         return request;
     }
 
-    protected virtual TRequest NewRequestComPort<TRequest>() where TRequest : SpotRequest, new()
+    protected virtual TRequest NewRequestComPort<TRequest>() where TRequest : ContourRequest, new()
     {
         var map = _spots.First(a=>a.Options.Type == ChannelType.ComPort);
         var request = new TRequest

@@ -8,30 +8,30 @@ namespace SevenSeals.Tss.Contour.Controllers;
 
 public class DiagnosticController: BaseController
 {
-    private readonly SpotHub _spotHub;
+    private readonly ContourHub _contourHub;
 
-    public DiagnosticController(SpotHub spotHub, Settings settings): base(settings)
+    public DiagnosticController(ContourHub contourHub, Settings settings): base(settings)
     {
-        _spotHub = spotHub;
+        _contourHub = contourHub;
     }
 
     [HttpPost(nameof(MainClient))]
-    [ProducesResponseType(typeof(SpotResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ContourResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
-    public async Task<ActionResult<SpotResponse>> MainClient([FromBody] MainClientRequest request)
+    public async Task<ActionResult<ContourResponse>> MainClient([FromBody] MainClientRequest request)
     {
-        var spot = await _spotHub.GetSpot(request);
+        var spot = await _contourHub.GetContour(request);
         return OkSpot(spot, request, null);
     }
 
     [HttpPost(nameof(ProgId))]
-    [ProducesResponseType(typeof(SpotResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ContourResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
-    public async Task<ActionResult<ValueResponse>> ProgId([FromBody] SpotRequest request)
+    public async Task<ActionResult<ValueResponse>> ProgId([FromBody] ContourRequest request)
     {
-        var spot = await _spotHub.GetSpot(request);
+        var spot = await _contourHub.GetContour(request);
         var response = new ValueResponse()
         {
             Name = nameof(ProgId),
@@ -44,9 +44,9 @@ public class DiagnosticController: BaseController
     [ProducesResponseType(typeof(ValueResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
-    public async Task<ActionResult<ValueResponse>> ProgVer([FromBody] SpotRequest request)
+    public async Task<ActionResult<ValueResponse>> ProgVer([FromBody] ContourRequest request)
     {
-        var spot = await _spotHub.GetSpot(request);
+        var spot = await _contourHub.GetContour(request);
         var response = new ValueResponse()
         {
             Name = nameof(ProgVer),
@@ -59,9 +59,9 @@ public class DiagnosticController: BaseController
     [ProducesResponseType(typeof(ValueResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [Produces("application/json")]
-    public async Task<ActionResult<ValueResponse>> SerNum([FromBody] SpotRequest request)
+    public async Task<ActionResult<ValueResponse>> SerNum([FromBody] ContourRequest request)
     {
-        var spot = await _spotHub.GetSpot(request);
+        var spot = await _contourHub.GetContour(request);
         var response = new ValueResponse()
         {
             Name = nameof(SerNum),

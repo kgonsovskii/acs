@@ -1,0 +1,20 @@
+[
+  {
+    "type": "physical",
+    "status": "active",
+    "issueDate": "0001-01-01T00:00:00",
+    "id": "db5a6024-eeb8-4c09-9314-86f8e4a04989",
+    "memberId" : "db5a6024-eeb8-4c09-9314-86f8e4a04989",
+    "keyNumber": "000003C6A799",	
+    "isActive": true
+  },
+  {
+    "type": "physical",
+    "status": "stolen",
+    "issueDate": "0001-01-01T00:00:00",
+    "id": "5d5f9a6e-2b4c-49e9-82ee-083c7d0dd80b",
+    "memberId" : "5d5f9a6e-2b4c-49e9-82ee-083c7d0dd80b",
+    "keyNumber": "0000007B1B89",
+    "isActive": true
+  }
+]

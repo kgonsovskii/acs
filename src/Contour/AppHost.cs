@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SevenSeals.Tss.Contour.Storage;
+using Microsoft.Extensions.Options;
+using SevenSeals.Tss.Contour.Api;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Contour;
@@ -13,21 +14,24 @@ public class AppHost : IHostedService
 
     private readonly ChannelHub _channels;
 
-    private readonly SemaphoreSlim _semaphore = new(1, 1);
-    private readonly SemaphoreSlim _taskSemaphore = new(1, 1);
-
     private readonly ILogger<AppHost> _logger;
     private readonly Settings _settings;
     private readonly AppState _appState;
+    private readonly ContourOptions _contourOptions;
+    private readonly ContourHub _contourHub;
+    private readonly ISpotStorage _spotStorage;
 
-    public AppHost(Settings settings, AppState appState, EventQueue eventQueue, IEventLogStorage eventLog, ChannelHub channelHub,ILogger<AppHost> logger)
+    public AppHost(Settings settings, ISpotStorage spotStorage, ContourHub contourHub, IOptions<ContourOptions> contourOptions,  AppState appState, EventQueue eventQueue, IEventLogStorage eventLog, ChannelHub channelHub,ILogger<AppHost> logger)
     {
         _appState = appState;
         _eventQueue = eventQueue;
         _eventLog = eventLog;
         _channels = channelHub;
         _logger = logger;
+        _contourOptions = contourOptions.Value;
         _settings = settings;
+        _spotStorage = spotStorage;
+        _contourHub = contourHub;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -39,14 +43,47 @@ public class AppHost : IHostedService
     public async Task StopAsync(CancellationToken cancellationToken)
     {
         await _appState.CancellationTokenSource.CancelAsync();
-        await SwitchToAuto(true, true, true);
+    }
+
+    private bool _initialized;
+
+    private async Task Initialize()
+    {
+        if (_contourOptions.AutoPoll)
+        {
+            var spots = _spotStorage.GetAll().Where(a => a.IsActive).ToList();
+            Parallel.ForEach(spots, async spot =>
+            {
+                foreach (var adr in spot.Addresses)
+                {
+                    var request = new ContourRequest()
+                    {
+                        SpotId = spot.Id,
+                        Address = adr,
+                        Options = spot.Options
+                    };
+                    try
+                    {
+                        await _contourHub.GetContour(request);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogCritical(e, "Can't activate spot: {CoName} with {CoId} ", spot.Name, spot.Id);
+                    }
+                }
+            });
+        }
     }
 
     private async Task WorkerLoop(CancellationToken ct)
     {
+        if (!_initialized)
+        {
+            _initialized = true;
+            await Initialize();
+        }
         while (!ct.IsCancellationRequested)
         {
-            await _taskSemaphore.WaitAsync(ct);
             try
             {
                 await WorkerLoopIteration();
@@ -55,73 +92,26 @@ public class AppHost : IHostedService
             {
                 _logger.LogError(e.Message);
             }
-            finally
-            {
-                _taskSemaphore.Release();
-            }
-
-            await Task.Delay(100, ct);
+            await Task.Delay(_contourOptions.PollTimeout, ct);
         }
     }
 
     private async Task WorkerLoopIteration()
     {
-        /*if (stopEventQueue)
+        Parallel.ForEach(_contourHub, item =>
         {
-            await SwitchToAuto(true, false, false);
-        }*/
-    }
-
-    private async Task SwitchToAuto(bool doTheBest, bool closeChannel, bool clearChannels)
-    {
-        var channelsChanged = false;
-        await _semaphore.WaitAsync();
-        try
-        {
-            foreach (var channel in _channels)
+            if (item.SuspendBefore >= DateTime.Now)
+                return;
+            try
             {
-                /*foreach (var controller in channel.Controllers)
-                {
-                    try
-                    {
-                        await controller.PollOffAsync(true);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (doTheBest)
-                        {
-                            _logger.LogError(ex, "Error during poll off");
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-
-                if (closeChannel)
-                {
-                    channel.Deactivate();
-                }*/
+                item.Poll();
             }
-
-            if (clearChannels)
+            catch (Exception e)
             {
-                if (_channels.Any())
-                {
-                     _channels.Clear();
-                    channelsChanged = true;
-                }
+                item.SuspendBefore = DateTime.Now.Add(_contourOptions.DeadTimeout);
+                _logger.LogCritical("Can't poll spot: {CoName} with {CoId} Delaying on {DeadTimeout}", item.Name,
+                    item.Id, _contourOptions.DeadTimeout);
             }
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-
-        if (channelsChanged)
-        {
-       //     _eventQueue.Push(new ChannelsChangedEvent());
-        }
+        });
     }
 }

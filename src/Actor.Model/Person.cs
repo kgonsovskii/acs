@@ -1,8 +1,10 @@
 using Infra.Db.Attributes;
+using System.ComponentModel;
 
 namespace SevenSeals.Tss.Actor;
 
-public class Person: MemberBase
+[TypeConverter(typeof(ExpandableObjectConverter))]
+public class Person : MemberBase
 {
     public override MemberType Type { get; set; } = MemberType.Person;
     [DbNull] public string? Email { get; set; }

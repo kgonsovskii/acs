@@ -18,32 +18,53 @@
     <FileVersion>$(AssemblyVersion)</FileVersion>
     <InformationalVersion>$(AssemblyVersion)</InformationalVersion>
   </PropertyGroup>
-
+  
+  <PropertyGroup>
+    <CleanProjectName Condition="'$(CleanProjectName)' == ''">$(MSBuildProjectName)</CleanProjectName>
+  </PropertyGroup>
+  
   <PropertyGroup>
     <AppSettingsExists Condition="
+    
+        '$(MSBuildProjectName)' == 'Shared.Db.Tool'
+        or
+        (
+             '$([System.String]::new($(MSBuildProjectName)).StartsWith(`Gui`))' == 'true'
+             and
+               '$([System.String]::new($(MSBuildProjectName)).Contains(`Shared`))' == 'false'
+        )
+      or
+    (
     (
       '$([System.String]::new($(MSBuildProjectName)).EndsWith(`.Tests`))' == 'true' 
       Or 
       '$([System.String]::new($(MSBuildProjectName)).Contains(`.`))' == 'false'
     )
     And
-    '$([System.String]::new($(MSBuildProjectName)).Contains(`Shared`))' == 'false'
-    And
     '$(MSBuildProjectName)' != 'Monolith'
+   And
+    '$([System.String]::new($(MSBuildProjectName)).Contains(`Shared`))' == 'false'
+      )
   ">true</AppSettingsExists>
   </PropertyGroup>
+  
 
   <Target Name="CopyBaseAppSettings" BeforeTargets="BeforeBuild" Condition="'$(AppSettingsExists)' == 'true'">
     <Copy
       SourceFiles="$(MSBuildThisFileDirectory)\Shared\appsettings.base.json"
-      DestinationFiles="$(MSBuildProjectDirectory)\appsettings.$(MSBuildProjectName).base.json"
+      DestinationFiles="$(MSBuildProjectDirectory)\appsettings.$(CleanProjectName).base.json"
       SkipUnchangedFiles="true"
     />
   </Target>
 
   <ItemGroup Condition="'$(AppSettingsExists)' == 'true'">
-    <Content Include="appsettings.$(MSBuildProjectName).base.json">
+    <Content Include="appsettings.$(CleanProjectName).base.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
 </Project>

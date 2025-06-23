@@ -21,4 +21,7 @@ public static class ProtoHeaders
 
     [Description("Application version for diagnostics")]
     public const string Version = "X-Version";
+
+    [Description("Self address of the controller for client reconstruction")]
+    public const string SelfAddress = "X-Self-Address";
 }

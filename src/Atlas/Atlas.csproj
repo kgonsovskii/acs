@@ -26,6 +26,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Atlas.Component\Atlas.Component.csproj" />
       <ProjectReference Include="..\Atlas.Model\Atlas.Model.csproj" />
+      <ProjectReference Include="..\Atlas.Storage\Atlas.Storage.csproj" />
       <ProjectReference Include="..\Shared.Api\Shared.Api.csproj" />
       <ProjectReference Include="..\Shared.App\Shared.App.csproj" />
       <ProjectReference Include="..\Shared\Shared.csproj" />

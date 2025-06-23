@@ -10,9 +10,9 @@ public class BaseController: ProtoController<IProtoRequest, IProtoResponse>
     {
     }
 
-    protected OkObjectResult OkSpot(Contour contour, SpotRequest request, SpotResponse? response)
+    protected OkObjectResult OkSpot(Contour contour, ContourRequest request, ContourResponse? response)
     {
-        response ??= new SpotResponse()
+        response ??= new ContourResponse()
         {
             SessionId = contour.Channel.Id
         };
