@@ -30,14 +30,19 @@ public class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, T
 
     protected virtual void SaveData()
     {
+        SaveToFile(DataFile);
+    }
+
+    public virtual void SaveToFile(string file)
+    {
         try
         {
             var json = Items.Serialize();
-            File.WriteAllText(DataFile, json);
+            File.WriteAllText(file, json);
         }
         catch (Exception e)
         {
-            Logger.LogError(e, $"Failed to save data {DataFile}");
+            Logger.LogError(e, $"Failed to save data {file}");
         }
     }
 
@@ -52,7 +57,7 @@ public class BaseJsonStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, T
         throw new NotImplementedException();
     }
 
-    public void SetAll(IEnumerable<TItem> all)
+    public void SetAll(IList<TItem> all)
     {
         Items.Clear();
         Items.AddRange(all);

@@ -4,6 +4,7 @@ using SevenSeals.Tss.Atlas;
 using SevenSeals.Tss.Codex;
 using SevenSeals.Tss.Contour;
 using SevenSeals.Tss.Logic;
+using SevenSeals.Tss.Shared;
 
 namespace Gui.WinForms;
 
@@ -19,8 +20,12 @@ public partial class MainForm : Form
     private readonly ITimeZoneClient _timeZoneClient;
     private readonly IContourClient _contourClient;
     private readonly ILogicClient _logicClient;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly Settings _settings;
 
     public MainForm(
+        IServiceProvider serviceProvider,
+        Settings settings,
         IMemberClient memberClient,
         IPassClient passClient,
         IAtlasClient atlasClient,
@@ -43,6 +48,8 @@ public partial class MainForm : Form
         _timeZoneClient = timeZoneClient;
         _contourClient = contourClient;
         _logicClient = logicClient;
+        _serviceProvider = serviceProvider;
+        _settings = settings;
         AddFormsToTabs();
     }
 
@@ -59,7 +66,7 @@ public partial class MainForm : Form
         memberForm.Show();
 
         // Actor.pass tab
-        var passForm = new PassClientForm(_passClient)
+        var passForm = new PassClientForm(_passClient, _contourClient, _spotClient)
         {
             TopLevel = false,
             FormBorderStyle = FormBorderStyle.None,
@@ -69,7 +76,7 @@ public partial class MainForm : Form
         passForm.Show();
 
         // Atlas tab
-        var atlasForm = new AtlasClientForm(_atlasClient, _zoneClient, _transitClient)
+        var atlasForm = new AtlasClientForm(_serviceProvider, _atlasClient, _zoneClient, _transitClient)
         {
             TopLevel = false,
             FormBorderStyle = FormBorderStyle.None,

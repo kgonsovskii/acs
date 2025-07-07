@@ -1,4 +1,8 @@
+using System.Windows.Forms.VisualStyles;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SevenSeals.Tss.Atlas;
+using SevenSeals.Tss.Shared;
 
 namespace Gui.WinForms.Forms;
 
@@ -7,13 +11,15 @@ public partial class AtlasClientForm : Form
     private readonly IAtlasClient _atlasClient;
     private readonly IZoneClient _zoneClient;
     private readonly ITransitClient _transitClient;
-    private Map? _currentMap;
     private List<Zone> _zones = new();
     private List<Transit> _transits = new();
     private readonly HttpClient _httpClient = new();
+    private string? _lastSelectedId;
+    private IServiceProvider _serviceProvider;
 
-    public AtlasClientForm(IAtlasClient atlasClient, IZoneClient zoneClient, ITransitClient transitClient)
+    public AtlasClientForm(IServiceProvider serviceProvider, IAtlasClient atlasClient, IZoneClient zoneClient, ITransitClient transitClient)
     {
+        _serviceProvider = serviceProvider;
         _atlasClient = atlasClient;
         _zoneClient = zoneClient;
         _transitClient = transitClient;
@@ -37,6 +43,8 @@ public partial class AtlasClientForm : Form
         btnRefresh.Click += btnRefresh_Click;
         treeViewZones.AfterSelect += treeViewZones_AfterSelect;
         propertyGrid.PropertyValueChanged += propertyGrid_PropertyValueChanged;
+        btnUp.Click += btnMoveUp_Click;
+        btnDown.Click += btnMoveDown_Click;
     }
 
     private async void AtlasClientForm_Load(object sender, EventArgs e)
@@ -119,7 +127,15 @@ public partial class AtlasClientForm : Form
         }
     }
 
-    private Zone? SelectedZone
+    private IItem SelectedItem
+    {
+        get
+        {
+           return propertyGrid.SelectedGridItem.Tag as IItem
+        }
+    }
+
+    private Zone SelectedZone
     {
         get
         {
@@ -136,12 +152,15 @@ public partial class AtlasClientForm : Form
     {
         get
         {
-            return propertyGrid.SelectedObject as Transit;
+            if (propertyGrid.SelectedObject is Transit transit)
+                return _transits.FirstOrDefault(z => z.Id == transit.Id);
+            return null;
         }
     }
 
     private async void btnAddZone_Click(object sender, EventArgs e)
     {
+        SaveSelectedZoneId();
         var parentZone = SelectedZone;
         if (parentZone == null || parentZone.Type == ZoneType.ExternalArea)
         {
@@ -162,10 +181,13 @@ public partial class AtlasClientForm : Form
             await RefreshMap();
             await RefreshPlot();
         }
+        RestoreSelectedZoneId();
+        ExpandAllNodes(treeViewZones.Nodes);
     }
 
     private async void btnDeleteZone_Click(object sender, EventArgs e)
     {
+        SaveSelectedZoneId();
         var zone = SelectedZone;
         if (zone == null || zone.Type == ZoneType.ExternalArea)
         {
@@ -177,10 +199,13 @@ public partial class AtlasClientForm : Form
             await _zoneClient.Delete(zone.Id);
             await RefreshMap();
         }
+        RestoreSelectedZoneId();
+        ExpandAllNodes(treeViewZones.Nodes);
     }
 
     private async void btnAddTransit_Click(object sender, EventArgs e)
     {
+        SaveSelectedZoneId();
         var fromZone = SelectedZone;
         if (fromZone == null || fromZone.Type == ZoneType.ExternalArea)
         {
@@ -200,10 +225,13 @@ public partial class AtlasClientForm : Form
             await RefreshMap();
             await RefreshPlot();
         }
+        RestoreSelectedZoneId();
+        ExpandAllNodes(treeViewZones.Nodes);
     }
 
     private async void btnDeleteTransit_Click(object sender, EventArgs e)
     {
+        SaveSelectedZoneId();
         if (propertyGrid.SelectedObject is Transit transit && propertyGrid.Tag?.ToString()?.StartsWith("transit") == true)
         {
             if (MessageBox.Show($"Delete transit?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -212,6 +240,8 @@ public partial class AtlasClientForm : Form
                 await RefreshMap();
             }
         }
+        RestoreSelectedZoneId();
+        ExpandAllNodes(treeViewZones.Nodes);
     }
 
     private async Task RefreshPlot()
@@ -252,6 +282,7 @@ public partial class AtlasClientForm : Form
 
     private async void btnUpdate_Click(object sender, EventArgs e)
     {
+        SaveSelectedZoneId();
         if (propertyGrid.SelectedObject is Zone zone && propertyGrid.Tag?.ToString()?.StartsWith("zone") == true)
         {
             await _zoneClient.Update(zone.Id, zone);
@@ -269,6 +300,128 @@ public partial class AtlasClientForm : Form
         else
         {
             MessageBox.Show("Select a zone or transit to update.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        RestoreSelectedZoneId();
+        ExpandAllNodes(treeViewZones.Nodes);
+    }
+
+    // Handler for UP button
+    private void btnMoveUp_Click(object sender, EventArgs e)
+    {
+        MoveSelectedZone(-1);
+    }
+    // Handler for DOWN button
+    private void btnMoveDown_Click(object sender, EventArgs e)
+    {
+        MoveSelectedZone(1);
+    }
+    private void MoveSelectedZone(int direction)
+    {
+        SaveSelectedZoneId();
+        var zone = SelectedZone;
+        if (zone == null || zone.ParentId == null) return;
+        var siblings = _zones.Where(z => z.ParentId == zone.ParentId).ToList();
+        int idx = siblings.FindIndex(z => z.Id == zone.Id);
+        int newIdx = idx + direction;
+        if (newIdx < 0 || newIdx >= siblings.Count) return;
+        siblings.RemoveAt(idx);
+        siblings.Insert(newIdx, zone);
+        // Reorder in _zones
+        _zones.RemoveAll(z => z.ParentId == zone.ParentId);
+        _zones.AddRange(siblings);
+        BuildZoneTree();
+        RestoreSelectedZoneId();
+        ExpandAllNodes(treeViewZones.Nodes);
+    }
+    private void SaveSelectedId()
+    {
+        if (treeViewZones.SelectedNode?.Tag is Item zone)
+            _lastSelectedId = zone.GetId();
+        else if (treeViewZones.SelectedNode?.Tag is Transit transit)
+            _lastSelectedId = transit.Id;
+    }
+    private void RestoreSelectedId()
+    {
+        if (_lastSelectedId == null) return;
+        var node = FindNodeByZoneId(treeViewZones.Nodes, _lastSelectedId.Value);
+        if (node != null)
+            treeViewZones.SelectedNode = node;
+    }
+
+    private TreeNode? FindNodeById(TreeNodeCollection nodes, Guid id)
+    {
+        foreach (TreeNode node in nodes)
+        {
+            if (node.Tag is Zone z && z.Id == id)
+                return node;
+            var found = FindNodeById(node.Nodes, id);
+            if (found != null) return found;
+        }
+        return null;
+    }
+
+    private TreeNode? FindNodeByZoneId(TreeNodeCollection nodes, Guid id)
+    {
+        foreach (TreeNode node in nodes)
+        {
+            if (node.Tag is Zone z && z.Id == id)
+                return node;
+            var found = FindNodeByZoneId(node.Nodes, id);
+            if (found != null) return found;
+        }
+        return null;
+    }
+    private void ExpandAllNodes(TreeNodeCollection nodes)
+    {
+        foreach (TreeNode node in nodes)
+        {
+            node.Expand();
+            ExpandAllNodes(node.Nodes);
+        }
+    }
+
+    private async void btnSaveAll_Click(object sender, EventArgs e)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var settings = scope.ServiceProvider.GetRequiredService<Settings>();
+        var transits = await _transitClient.GetAll();
+        var zones = await _zoneClient.GetAll();
+
+        var saveType = settings.StorageType;
+        try
+        {
+            settings.StorageType = StorageType.Json;
+            settings.DataDir = DbSharedToolFolder;
+
+            var transitStorage = scope.ServiceProvider.GetRequiredService<ITransitStorage>();
+            transitStorage.SetAll(transits);
+
+            var zoneStorage = scope.ServiceProvider.GetRequiredService<IZoneStorage>();
+            zoneStorage.SetAll(zones);
+        }
+        finally
+        {
+            settings.StorageType = saveType;
+        }
+    }
+
+    private string DbSharedToolFolder
+    {
+        get
+        {
+            var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
+            while (dir != null)
+            {
+                var candidate = Path.Combine(dir.FullName, "src", "Shared.Db.Tool");
+                if (Directory.Exists(candidate))
+                    return candidate;
+                // Also check without "src" in case structure is different
+                candidate = Path.Combine(dir.FullName, "Shared.Db.Tool");
+                if (Directory.Exists(candidate))
+                    return candidate;
+                dir = dir.Parent;
+            }
+            return null; // Not found
         }
     }
 }

@@ -1,1 +1,0 @@
-select kl.kluch,pinf.name3,pinf.name2,pinf.name1,ps.mrs,kl.tmzname,kl.code,kl.kluch  from  tss_persons as ps, tss_persinfo         as pinf,  tss_keys              as kl  where ps.bpkeys=kl.myid  and pinf.bidpers=ps.myid  order by pinf.name3

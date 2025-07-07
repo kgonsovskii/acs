@@ -131,8 +131,8 @@ CREATE TABLE "actor"."pass" (
 );
 
 CREATE TABLE "atlas"."transit" (
-    "from_zone_id" UUID NOT NULL,
-    "to_zone_id" UUID NOT NULL,
+    "from_zone_id" UUID NOT NULL REFERENCES "atlas"."zone"("id"),
+    "to_zone_id" UUID NOT NULL REFERENCES "atlas"."zone"("id"),
     "is_bidirectional" BOOLEAN NOT NULL,
     "spot_id" UUID NULL REFERENCES "contour"."spot"("id"),
     "id" UUID PRIMARY KEY NOT NULL,

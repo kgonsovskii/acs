@@ -89,4 +89,23 @@ public class ContourController : ProtoStatefulController
             return result;
         }
     }
+
+    /// <summary>
+    /// Awaits for pass to be touched
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPut(nameof(WaitForPass))]
+    [ProducesResponseType(typeof(WaitForPassResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Produces("application/json")]
+    public async Task<ActionResult<WaitForPassResponse>> WaitForPass(WaitForPassRequest request)
+    {
+        var spot = await _contourHub.GetContour(request);
+        var keyNumber = spot.WaitForPass();
+        return OkProto(new WaitForPassResponse()
+        {
+            KeyNumber = keyNumber
+        });
+    }
 }

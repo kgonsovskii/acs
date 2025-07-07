@@ -32,6 +32,6 @@ public class MemberTests : TestStorageBase<Member, Member, Guid, IMemberClient, 
             },
             Name = "Person A"
         };
-        var y = x.Serialize();
+        x.Serialize();
     }
 }

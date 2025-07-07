@@ -458,6 +458,11 @@ public class StorageForm<TItem, TId, TClient> : Form
         }
         return (baseUrl?.TrimEnd('/') ?? "") + "/swagger";
     }
+
+    protected void AddCustomButton(Control button)
+    {
+        _buttonsPanel.Controls.Add(button);
+    }
 }
 
 // Helper classes for the search requests

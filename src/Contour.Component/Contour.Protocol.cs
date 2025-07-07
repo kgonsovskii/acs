@@ -74,8 +74,11 @@ public partial class Contour
 
         void _processEvt(byte[] buf)
         {
-            if (buf[16] != Cs8(buf, 16))
-                throw new ContourException("Error", "CheckSum Error");
+            if (_options.CheckSum)
+            {
+                if (buf[16] != Cs8(buf, 16))
+                    throw new ContourException("Error", "CheckSum Error");
+            }
 
             if (buf[0] != Address)
                 throw new ContourException( "Error", "Unexpected response");
@@ -87,8 +90,17 @@ public partial class Contour
 
             var contourEvent = ContourEvent.Create(Channel.Id, buf);
             OnEvent?.Invoke(this, contourEvent);
+
+            if (contourEvent is ContourKeyEvent keyEvent)
+            {
+                LastPass = keyEvent.KeyNumber;
+                _waitForPassEvent.Set();
+            }
         }
     }
+
+
+    protected string LastPass { get; set; }
 
 
     private void ReadEvt2(bool isAuto)

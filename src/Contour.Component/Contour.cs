@@ -6,7 +6,7 @@ public partial class Contour: ProtoObject
 {
     public Channel Channel { get; }
     public override string Id => $"{Channel.Id}-{Address}";
-    public Byte Address { get; }
+    public Byte Address { get; set; }
 
 
     private Task? _pollingTask;
@@ -23,8 +23,11 @@ public partial class Contour: ProtoObject
 
     public Guid? SpotId {get; set;}
 
-    public Contour(Guid? spotId, Channel channel, byte addr)
+    private ContourOptions _options;
+
+    public Contour(Guid? spotId, Channel channel, byte addr, ContourOptions options)
     {
+        _options = options;
          Channel = channel;
          Address = addr;
         _polling = false;

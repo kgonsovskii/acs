@@ -14,6 +14,8 @@ public interface IContourClient: IProtoClient
     public Task<ContourResponse> RelayOff(RelayOffRequest request);
 
     public Task<StateResponse> State(StateRequest request);
+
+    public Task<WaitForPassResponse> WaitForPass(WaitForPassRequest request);
 }
 
 public class ContourClient: ProtoClient, IContourClient
@@ -34,4 +36,7 @@ public class ContourClient: ProtoClient, IContourClient
 
     public async Task<ContourResponse> RelayOff(RelayOffRequest request)
         => await PostAsync<RelayOffRequest, ContourResponse>(nameof(RelayOff), request);
+
+    public async Task<WaitForPassResponse> WaitForPass(WaitForPassRequest request)
+        => await PutAsync<WaitForPassRequest, WaitForPassResponse>(nameof(WaitForPass), request);
 }

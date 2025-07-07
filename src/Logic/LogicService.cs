@@ -102,7 +102,7 @@ public class LogicService: ILogicService, IHostedService
             }
             catch (Exception e)
             {
-                _logger.LogError("Error handling event");
+                _logger.LogError(e,"Logic: Error handling event");
             }
 
         }
@@ -193,7 +193,7 @@ public class LogicService: ILogicService, IHostedService
                 Pass = new Pass(),
             };
         }
-        _logger.LogInformation("PassTouchedClientEvent: {Reason}", reason);
+        _logger.LogWarning("PassTouchedClientEvent: {Reason}", reason);
         _clientEvents.Events.Add(clientEvent);
     }
 

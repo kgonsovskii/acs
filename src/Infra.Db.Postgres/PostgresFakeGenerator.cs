@@ -4,13 +4,13 @@ using Infra.Db.Attributes;
 
 namespace Infra.Db;
 
-public interface IFakeGenerator
+public interface IFakeDbGenerator
 {
     string GenerateFakeDataSql(string outputDir, Func<Type, bool>? onFilter = null);
     string GenerateFakeDataSqlForTypes(IList<Type> types, Func<Type, bool>? onFilter = null);
 }
 
-public class PostgresFakeGenerator : IFakeGenerator
+public class PostgresFakeGenerator : IFakeDbGenerator
 {
     protected readonly TypeCollector TypeCollector = new();
     public string GenerateFakeDataSql(string outputDir, Func<Type, bool>? onFilter = null)
@@ -82,7 +82,7 @@ public class PostgresFakeGenerator : IFakeGenerator
         // Generate tables in sorted order
         foreach (var key in sortedKeys)
         {
-            var (type, schema, table) = tableSchemas[key];
+            var (type, _, _) = tableSchemas[key];
             var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(p => p.GetCustomAttribute<DbPolymorphicTableAttribute>() == null &&
                            p.GetCustomAttribute<DbChildTableAttribute>() == null)
@@ -272,20 +272,6 @@ public class PostgresFakeGenerator : IFakeGenerator
         if (value is Enum e) return $"'{e.ToString().ToSnakeCase()}'";
         if (value is byte[] ba) return $"'\\x{BitConverter.ToString(ba).Replace("-", string.Empty).ToLower()}'";
         return value.ToString()!;
-    }
-
-    private static IEnumerable<Assembly> LoadAssembliesFromDirectory(string directory)
-    {
-        var dlls = Directory.GetFiles(directory, "*.dll");
-        foreach (var dll in dlls)
-        {
-            yield return Assembly.LoadFrom(dll);
-        }
-    }
-
-    private static IEnumerable<Type> SafeGetTypes(Assembly assembly)
-    {
-        try { return assembly.GetTypes(); } catch { return Array.Empty<Type>(); }
     }
 
     private static Type? GetChildTypeFromProperty(PropertyInfo prop)

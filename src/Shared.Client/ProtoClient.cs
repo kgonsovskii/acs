@@ -58,14 +58,18 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
         httpClient.BaseAddress = new Uri(options.Value.BaseUri);
     }
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     protected ProtoClient(HttpClient httpClient, string agent, ILogger logger)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
         _httpClient = httpClient;
         Agent = agent;
         _logger = logger;
     }
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     protected ProtoClient(string baseUri, string agent, Action<string> logAction)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
         Agent = agent;
         _httpClient = new HttpClient() { BaseAddress = new Uri(baseUri) };
@@ -74,7 +78,7 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
 
     protected virtual void Log(string message)
     {
-        _logger?.LogInformation(message);
+        _logger?.LogWarning(message);
         _loggerAction?.Invoke(message);
     }
 
@@ -94,13 +98,13 @@ public abstract class ProtoClient<TOptions> : IProtoClient<TOptions> where TOpti
     }
 
     protected async Task<TResponse> PostAsync<TRequest, TResponse>(string action, TRequest request)
-         where TResponse : notnull
+         where TResponse : notnull where TRequest : notnull
     {
         return await RequestAsync<TRequest, TResponse>(WebRequestMethods.Http.Post, action, request);
     }
 
     protected async Task<TResponse> PutAsync<TRequest, TResponse>(string action, TRequest request)
-        where TRequest : IProtoRequest
+        where TRequest : IProtoRequest where TResponse : notnull
     {
         return await RequestAsync<TRequest, TResponse>(WebRequestMethods.Http.Put, action, request);
     }

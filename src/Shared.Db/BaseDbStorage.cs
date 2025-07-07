@@ -13,6 +13,11 @@ public class BaseDbStorage<TItem, TId>: BaseStorageBase, IBaseStorage<TItem, TId
         _adapter = Adapters.GetAdapter<TItem, TId>(settings.SqlDialect, settings.ConnectionString);
     }
 
+    public void SetAll(IList<TItem> items)
+    {
+        throw new NotImplementedException();
+    }
+
     public virtual IList<TItem> GetAll()
     {
         return _adapter.GetAll();

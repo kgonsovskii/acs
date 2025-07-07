@@ -2,6 +2,7 @@
 
 public class ContourOptions
 {
+    public bool CheckSum { get; set; } = false;
     public bool AutoPoll { get; set; } = true;
     public TimeSpan PollTimeout { get; set; }
     public TimeSpan AliveTimeout { get; set; }

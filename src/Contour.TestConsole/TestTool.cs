@@ -21,7 +21,7 @@ public class TestTool
             CancellationToken.None
         );
         await channel.Open();
-        var spot = new SevenSeals.Tss.Contour.Contour(null, channel, 171);
+        var spot = new SevenSeals.Tss.Contour.Contour(null, channel, 171, new ContourOptions());
         spot.Poll();
         int eventCount = 0;
 
@@ -86,6 +86,6 @@ public class TestTool
 
     private void Log(string message)
     {
-        _logger.LogInformation(message);
+        _logger.LogWarning(message);
     }
 }

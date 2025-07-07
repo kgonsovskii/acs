@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CONFIG>
-  <Compiler Value="/usr/bin/fpc" Date="1625802185"/>
-  <Params Value=" -MObjFPC -Scghi -Cg -O1 -gw2 -godwarfsets -gl -l -vewnhibq -Fi/home/astra/common/doors/testmenu/lib/x86_64-linux -Fu/usr/share/lazarus/2.2.2/lcl/units/x86_64-linux/gtk2 -Fu/usr/share/lazarus/2.2.2/lcl/units/x86_64-linux -Fu/usr/share/lazarus/2.2.2/components/freetype/lib/x86_64-linux -Fu/usr/share/lazarus/2.2.2/components/lazutils/lib/x86_64-linux -Fu/usr/share/lazarus/2.2.2/packager/units/x86_64-linux -Fu/home/astra/common/doors/testmenu/ -FU/home/astra/common/doors/testmenu/lib/x86_64-linux/ -FE/home/astra/common/doors/testmenu/ -o/home/astra/common/doors/testmenu/testMenu -dLCL -dLCLgtk2 testMenu.lpr"/>
-  <Complete Value="False"/>
-</CONFIG>

@@ -1,10 +1,12 @@
 ﻿namespace SevenSeals.Tss.Contour;
+using System.Threading;
 
 public partial class Contour
 {
     private byte? _progId;
     private short? _progVer;
     private int? _sernum;
+    private readonly AutoResetEvent _waitForPassEvent = new(false);
 
     public byte ProgId => GetProgId();
     public short ProgVer => GetProgVer();
@@ -33,6 +35,12 @@ public partial class Contour
 
             return (byte)_progId;
         }
+    }
+
+    public string WaitForPass()
+    {
+        _waitForPassEvent.WaitOne();
+        return LastPass;
     }
 
     public short GetProgVer()
@@ -163,4 +171,6 @@ public partial class Contour
             ExpandMask(ports, buf[2]);
         }
     }
+
+
 }

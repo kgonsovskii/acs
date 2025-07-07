@@ -1,66 +1,72 @@
 [
-	{
-		"Type": "Building",
-		"ParentId": null,
-		"Id": "f9918759-9a99-40e9-9fbb-e06d57e07677",
-		"Name": "Seven Seals HQ",
-		"Hint": "Feodosiyskaya, building 1",
-		"IsActive": false
-	},
-	{
-		"Type": "Floor",
-		"ParentId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
-		"Id": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
-		"Name": "Second floor",
-		"Hint": null,
-		"IsActive": false
-	},
-	{
-		"Type": "Corridor",
-		"ParentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
-		"Id": "26cf4711-9880-4a57-bcc5-6da0569df512",
-		"Name": "Corridor",
-		"Hint": null,
-		"IsActive": false
-	},
-	{
-		"Type": "Room",
-		"ParentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
-		"Id": "4cb69f84-9d1c-4135-9421-e970054048da",
-		"Name": "Storage",
-		"Hint": null,
-		"IsActive": false
-	},
-	{
-		"Type": "Room",
-		"ParentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
-		"Id": "22bd61c5-967f-4457-82ce-573368774e71",
-		"Name": "Chief Accountant",
-		"Hint": null,
-		"IsActive": false
-	},
-	{
-		"Type": "Room",
-		"ParentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
-		"Id": "cd33e3e1-a977-45d8-bf81-2deacd978c52",
-		"Name": "Staff Room",
-		"Hint": null,
-		"IsActive": false
-	},
-	{
-		"Type": "Room",
-		"ParentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
-		"Id": "336bb7c8-379f-44c0-9526-96077f4da03c",
-		"Name": "Programmers",
-		"Hint": null,
-		"IsActive": false
-	},
-	{
-		"Type": "ExternalArea",
-		"ParentId": null,
-		"Id": "7b335e42-2c34-455b-8041-86111c50aac1",
-		"Name": "Outside World",
-		"Hint": null,
-		"IsActive": false
-	}
+  {
+    "type": "building",
+    "parentId": "7b335e42-2c34-455b-8041-86111c50aac1",
+    "id": "f9918759-9a99-40e9-9fbb-e06d57e07677",
+    "name": "Seven Seals HQ",
+    "hint": "Feodosiyskaya, building 1",
+    "isActive": false
+  },
+  {
+    "type": "floor",
+    "parentId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
+    "id": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+    "name": "Second floor",
+    "isActive": false
+  },
+  {
+    "type": "corridor",
+    "parentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+    "id": "26cf4711-9880-4a57-bcc5-6da0569df512",
+    "name": "Corridor",
+    "isActive": false
+  },
+  {
+    "type": "room",
+    "parentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+    "id": "4cb69f84-9d1c-4135-9421-e970054048da",
+    "name": "Storage",
+    "isActive": false
+  },
+  {
+    "type": "room",
+    "parentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+    "id": "22bd61c5-967f-4457-82ce-573368774e71",
+    "name": "Chief Accountant",
+    "isActive": false
+  },
+  {
+    "type": "room",
+    "parentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+    "id": "cd33e3e1-a977-45d8-bf81-2deacd978c52",
+    "name": "Staff Room",
+    "isActive": false
+  },
+  {
+    "type": "room",
+    "parentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+    "id": "336bb7c8-379f-44c0-9526-96077f4da03c",
+    "name": "Programmers",
+    "isActive": false
+  },
+  {
+    "type": "externalArea",
+    "id": "7b335e42-2c34-455b-8041-86111c50aac1",
+    "name": "Outside World",
+    "isActive": false
+  },
+  {
+    "type": "floor",
+    "parentId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
+    "id": "74ea2417-a157-4852-b91a-4646aa35e779",
+    "name": "1-st floor",
+    "isActive": true
+  },
+  {
+    "type": "lobby",
+    "parentId": "74ea2417-a157-4852-b91a-4646aa35e779",
+    "id": "d577dc09-029d-447c-873c-4bf90f6f043d",
+    "name": "\u0422\u0430\u043C\u0431\u0443\u0440",
+    "isActive": true
+  }
 ]

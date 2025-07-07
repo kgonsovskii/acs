@@ -49,29 +49,38 @@ public class AppHost : IHostedService
 
     private async Task Initialize()
     {
-        if (_contourOptions.AutoPoll)
+        try
         {
-            var spots = _spotStorage.GetAll().Where(a => a.IsActive).ToList();
-            Parallel.ForEach(spots, async spot =>
+            if (_contourOptions.AutoPoll)
             {
-                foreach (var adr in spot.Addresses)
+                var spots = _spotStorage.GetAll().Where(a => a.IsActive).ToList();
+                Parallel.ForEach(spots, async spot =>
                 {
-                    var request = new ContourRequest()
+                    foreach (var adr in spot.Addresses)
                     {
-                        SpotId = spot.Id,
-                        Address = adr,
-                        Options = spot.Options
-                    };
-                    try
-                    {
-                        await _contourHub.GetContour(request);
+                        var request = new ContourRequest()
+                        {
+                            SpotId = spot.Id,
+                            Address = adr,
+                            Options = spot.Options
+                        };
+                        try
+                        {
+                            await _contourHub.GetContour(request);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.LogCritical(e, "Can't activate spot: {CoName} with {CoId} ", spot.Name, spot.Id);
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        _logger.LogCritical(e, "Can't activate spot: {CoName} with {CoId} ", spot.Name, spot.Id);
-                    }
-                }
-            });
+                });
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogCritical(e, "Error initializing contour. Exiting...");
+            await Task.Delay(5000);
+            Environment.Exit(0);
         }
     }
 
@@ -86,7 +95,7 @@ public class AppHost : IHostedService
         {
             try
             {
-                await WorkerLoopIteration();
+                WorkerLoopIteration();
             }
             catch (Exception e)
             {
@@ -96,7 +105,7 @@ public class AppHost : IHostedService
         }
     }
 
-    private async Task WorkerLoopIteration()
+    private void WorkerLoopIteration()
     {
         Parallel.ForEach(_contourHub, item =>
         {
@@ -109,7 +118,7 @@ public class AppHost : IHostedService
             catch (Exception e)
             {
                 item.SuspendBefore = DateTime.Now.Add(_contourOptions.DeadTimeout);
-                _logger.LogCritical("Can't poll spot: {CoName} with {CoId} Delaying on {DeadTimeout}", item.Name,
+                _logger.LogCritical(e,"Can't poll spot: {CoName} with {CoId} Delaying on {DeadTimeout}", item.Name,
                     item.Id, _contourOptions.DeadTimeout);
             }
         });

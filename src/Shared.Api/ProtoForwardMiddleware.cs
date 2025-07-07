@@ -66,8 +66,6 @@ public class ProtoForwardMiddleware
                 throw new InvalidOperationException($"Recursive forwarding detected. I'm {_settings.Agent}'");
             }
 
-            _logger.LogInformation($"{requestAgent}: Forwarding to {targetUri}");
-
             if (context.Request.ContentLength > 0)
             {
                 context.Request.EnableBuffering();

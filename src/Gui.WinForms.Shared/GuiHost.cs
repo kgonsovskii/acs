@@ -24,7 +24,7 @@ public abstract class GuiHost<TMainFrom> : IHostedService where TMainFrom : Form
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Starting GUI application");
+        _logger.LogWarning("Starting GUI application");
 
         _uiCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
@@ -40,7 +40,7 @@ public abstract class GuiHost<TMainFrom> : IHostedService where TMainFrom : Form
 
                 mainForm.FormClosed += (s, e) =>
                 {
-                    _logger.LogInformation("Main form closed, stopping application");
+                    _logger.LogWarning("Main form closed, stopping application");
                     _applicationLifetime.StopApplication();
                 };
 
@@ -59,7 +59,7 @@ public abstract class GuiHost<TMainFrom> : IHostedService where TMainFrom : Form
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Stopping GUI application");
+        _logger.LogWarning("Stopping GUI application");
 
         if (_uiTask != null)
         {

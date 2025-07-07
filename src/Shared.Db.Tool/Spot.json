@@ -9,6 +9,7 @@
       "77"
     ],
     "isActive": true,
+    "name": "classrom",
     "id": "d414e607-964f-40a1-8b31-470d3b9d85ca"
   },
   {
@@ -21,6 +22,7 @@
       "171"
     ],
     "isActive": true,
+    "name": "progers",
     "id": "3037e535-87b3-46a4-8ece-349da4bb7bd4"
   },
   {
@@ -38,6 +40,7 @@
       "7"
     ],
     "isActive": true,
+    "name": "progers-comport",
     "id": "1d9f31e9-90e3-45ea-a85f-fb07f1b4b334"
   }
 ]

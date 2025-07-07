@@ -1107,8 +1107,7 @@ public class PostgresDbAdapter<TClass, TId> : IDbAdapter<TClass, TId>
         {
             // Regular field - check main table
             var whereClause = $"{resolvedFieldName} = @{fieldName}";
-            var parameters = new Dictionary<string, object> { { fieldName, convertedValue } };
-            
+
             using var connection = new NpgsqlConnection(_connectionString);
             connection.Open();
             

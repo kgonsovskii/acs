@@ -1,4 +1,4 @@
-INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('building', NULL, 'f9918759-9a99-40e9-9fbb-e06d57e07677', 'Seven Seals HQ', 'Feodosiyskaya, building 1', FALSE);
+INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('building', '7b335e42-2c34-455b-8041-86111c50aac1', 'f9918759-9a99-40e9-9fbb-e06d57e07677', 'Seven Seals HQ', 'Feodosiyskaya, building 1', FALSE);
 INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('floor', 'f9918759-9a99-40e9-9fbb-e06d57e07677', '4ba26900-7e80-4bb2-b916-38a24dd6a997', 'Second floor', NULL, FALSE);
 INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('corridor', '4ba26900-7e80-4bb2-b916-38a24dd6a997', '26cf4711-9880-4a57-bcc5-6da0569df512', 'Corridor', NULL, FALSE);
 INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('room', '4ba26900-7e80-4bb2-b916-38a24dd6a997', '4cb69f84-9d1c-4135-9421-e970054048da', 'Storage', NULL, FALSE);

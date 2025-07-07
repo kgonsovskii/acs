@@ -39,7 +39,11 @@ namespace Gui.WinForms.Forms
         {
             components = new System.ComponentModel.Container();
             splitContainerMain = new System.Windows.Forms.SplitContainer();
+            panel1 = new System.Windows.Forms.Panel();
             treeViewZones = new System.Windows.Forms.TreeView();
+            panel2 = new System.Windows.Forms.Panel();
+            btnDown = new System.Windows.Forms.Button();
+            btnUp = new System.Windows.Forms.Button();
             buttonPanel = new System.Windows.Forms.FlowLayoutPanel();
             btnAddZone = new System.Windows.Forms.Button();
             btnDeleteZone = new System.Windows.Forms.Button();
@@ -48,20 +52,24 @@ namespace Gui.WinForms.Forms
             splitContainerRight = new System.Windows.Forms.SplitContainer();
             pictureBoxPlot = new System.Windows.Forms.PictureBox();
             propertyGrid = new System.Windows.Forms.PropertyGrid();
-            toolTip = new System.Windows.Forms.ToolTip(components);
             rightButtonPanel = new System.Windows.Forms.FlowLayoutPanel();
+            btnSaveAll = new System.Windows.Forms.Button();
             btnUpdate = new System.Windows.Forms.Button();
             btnRefresh = new System.Windows.Forms.Button();
+            toolTip = new System.Windows.Forms.ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)splitContainerMain).BeginInit();
             splitContainerMain.Panel1.SuspendLayout();
             splitContainerMain.Panel2.SuspendLayout();
             splitContainerMain.SuspendLayout();
+            panel1.SuspendLayout();
+            panel2.SuspendLayout();
             buttonPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainerRight).BeginInit();
             splitContainerRight.Panel1.SuspendLayout();
             splitContainerRight.Panel2.SuspendLayout();
             splitContainerRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBoxPlot).BeginInit();
+            rightButtonPanel.SuspendLayout();
             SuspendLayout();
             // 
             // splitContainerMain
@@ -73,7 +81,7 @@ namespace Gui.WinForms.Forms
             // 
             // splitContainerMain.Panel1
             // 
-            splitContainerMain.Panel1.Controls.Add(treeViewZones);
+            splitContainerMain.Panel1.Controls.Add(panel1);
             splitContainerMain.Panel1.Controls.Add(buttonPanel);
             // 
             // splitContainerMain.Panel2
@@ -83,14 +91,60 @@ namespace Gui.WinForms.Forms
             splitContainerMain.SplitterDistance = 218;
             splitContainerMain.TabIndex = 0;
             // 
+            // panel1
+            // 
+            panel1.Controls.Add(treeViewZones);
+            panel1.Controls.Add(panel2);
+            panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            panel1.Location = new System.Drawing.Point(0, 40);
+            panel1.Name = "panel1";
+            panel1.Size = new System.Drawing.Size(218, 485);
+            panel1.TabIndex = 2;
+            // 
             // treeViewZones
             // 
             treeViewZones.Dock = System.Windows.Forms.DockStyle.Fill;
-            treeViewZones.Location = new System.Drawing.Point(0, 115);
+            treeViewZones.Location = new System.Drawing.Point(0, 0);
             treeViewZones.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             treeViewZones.Name = "treeViewZones";
-            treeViewZones.Size = new System.Drawing.Size(218, 410);
-            treeViewZones.TabIndex = 0;
+            treeViewZones.Size = new System.Drawing.Size(159, 485);
+            treeViewZones.TabIndex = 2;
+            // 
+            // panel2
+            // 
+            panel2.Controls.Add(btnDown);
+            panel2.Controls.Add(btnUp);
+            panel2.Dock = System.Windows.Forms.DockStyle.Right;
+            panel2.Location = new System.Drawing.Point(159, 0);
+            panel2.Margin = new System.Windows.Forms.Padding(4);
+            panel2.Name = "panel2";
+            panel2.Padding = new System.Windows.Forms.Padding(4);
+            panel2.Size = new System.Drawing.Size(59, 485);
+            panel2.TabIndex = 0;
+            // 
+            // btnDown
+            // 
+            btnDown.Dock = System.Windows.Forms.DockStyle.Top;
+            btnDown.Location = new System.Drawing.Point(4, 49);
+            btnDown.Margin = new System.Windows.Forms.Padding(4);
+            btnDown.Name = "btnDown";
+            btnDown.Padding = new System.Windows.Forms.Padding(4);
+            btnDown.Size = new System.Drawing.Size(51, 54);
+            btnDown.TabIndex = 1;
+            btnDown.Text = "DOWN";
+            btnDown.UseVisualStyleBackColor = true;
+            // 
+            // btnUp
+            // 
+            btnUp.Dock = System.Windows.Forms.DockStyle.Top;
+            btnUp.Location = new System.Drawing.Point(4, 4);
+            btnUp.Margin = new System.Windows.Forms.Padding(4);
+            btnUp.Name = "btnUp";
+            btnUp.Padding = new System.Windows.Forms.Padding(4);
+            btnUp.Size = new System.Drawing.Size(51, 45);
+            btnUp.TabIndex = 0;
+            btnUp.Text = "UP";
+            btnUp.UseVisualStyleBackColor = true;
             // 
             // buttonPanel
             // 
@@ -99,8 +153,6 @@ namespace Gui.WinForms.Forms
             buttonPanel.Controls.Add(btnAddTransit);
             buttonPanel.Controls.Add(btnDeleteTransit);
             buttonPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            buttonPanel.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
-            buttonPanel.Height = 40;
             buttonPanel.Location = new System.Drawing.Point(0, 0);
             buttonPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             buttonPanel.Name = "buttonPanel";
@@ -115,44 +167,36 @@ namespace Gui.WinForms.Forms
             btnAddZone.Size = new System.Drawing.Size(90, 32);
             btnAddZone.TabIndex = 0;
             btnAddZone.Text = "Add Zone";
-            btnAddZone.Width = 90;
-            btnAddZone.Height = 32;
             toolTip.SetToolTip(btnAddZone, "Add a new zone under the selected node");
             // 
             // btnDeleteZone
             // 
-            btnDeleteZone.Location = new System.Drawing.Point(88, 2);
+            btnDeleteZone.Location = new System.Drawing.Point(99, 2);
             btnDeleteZone.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             btnDeleteZone.Name = "btnDeleteZone";
             btnDeleteZone.Size = new System.Drawing.Size(90, 32);
             btnDeleteZone.TabIndex = 1;
             btnDeleteZone.Text = "Delete Zone";
-            btnDeleteZone.Width = 90;
-            btnDeleteZone.Height = 32;
             toolTip.SetToolTip(btnDeleteZone, "Delete the selected zone");
             // 
             // btnAddTransit
             // 
-            btnAddTransit.Location = new System.Drawing.Point(3, 23);
+            btnAddTransit.Location = new System.Drawing.Point(3, 38);
             btnAddTransit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             btnAddTransit.Name = "btnAddTransit";
             btnAddTransit.Size = new System.Drawing.Size(90, 32);
             btnAddTransit.TabIndex = 2;
             btnAddTransit.Text = "Add Transit";
-            btnAddTransit.Width = 90;
-            btnAddTransit.Height = 32;
             toolTip.SetToolTip(btnAddTransit, "Add a new transit for the selected zone");
             // 
             // btnDeleteTransit
             // 
-            btnDeleteTransit.Location = new System.Drawing.Point(88, 23);
+            btnDeleteTransit.Location = new System.Drawing.Point(99, 38);
             btnDeleteTransit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             btnDeleteTransit.Name = "btnDeleteTransit";
             btnDeleteTransit.Size = new System.Drawing.Size(90, 32);
             btnDeleteTransit.TabIndex = 3;
             btnDeleteTransit.Text = "Delete Transit";
-            btnDeleteTransit.Width = 90;
-            btnDeleteTransit.Height = 32;
             toolTip.SetToolTip(btnDeleteTransit, "Delete the selected transit");
             // 
             // splitContainerRight
@@ -193,47 +237,52 @@ namespace Gui.WinForms.Forms
             propertyGrid.Location = new System.Drawing.Point(0, 0);
             propertyGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             propertyGrid.Name = "propertyGrid";
-            propertyGrid.Size = new System.Drawing.Size(653, 222);
-            propertyGrid.TabIndex = 0;
             propertyGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            propertyGrid.HelpVisible = true;
-            propertyGrid.ToolbarVisible = true;
+            propertyGrid.Size = new System.Drawing.Size(653, 182);
+            propertyGrid.TabIndex = 0;
             // 
             // rightButtonPanel
             // 
+            rightButtonPanel.Controls.Add(btnSaveAll);
+            rightButtonPanel.Controls.Add(btnUpdate);
+            rightButtonPanel.Controls.Add(btnRefresh);
             rightButtonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            rightButtonPanel.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
-            rightButtonPanel.Height = 40;
-            rightButtonPanel.Location = new System.Drawing.Point(0, 222);
+            rightButtonPanel.Location = new System.Drawing.Point(0, 182);
             rightButtonPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             rightButtonPanel.Name = "rightButtonPanel";
             rightButtonPanel.Size = new System.Drawing.Size(653, 40);
             rightButtonPanel.TabIndex = 1;
-            rightButtonPanel.Controls.Add(btnUpdate);
-            rightButtonPanel.Controls.Add(btnRefresh);
+            // 
+            // btnSaveAll
+            // 
+            btnSaveAll.DialogResult = System.Windows.Forms.DialogResult.Ignore;
+            btnSaveAll.Location = new System.Drawing.Point(3, 2);
+            btnSaveAll.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            btnSaveAll.Name = "btnSaveAll";
+            btnSaveAll.Size = new System.Drawing.Size(186, 32);
+            btnSaveAll.TabIndex = 2;
+            btnSaveAll.Text = "Сохранить снимок данных";
+            toolTip.SetToolTip(btnSaveAll, "Refresh the client");
+            btnSaveAll.Click += btnSaveAll_Click;
             // 
             // btnUpdate
             // 
-            btnUpdate.Location = new System.Drawing.Point(3, 2);
+            btnUpdate.Location = new System.Drawing.Point(195, 2);
             btnUpdate.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             btnUpdate.Name = "btnUpdate";
             btnUpdate.Size = new System.Drawing.Size(90, 32);
             btnUpdate.TabIndex = 0;
             btnUpdate.Text = "Update";
-            btnUpdate.Width = 90;
-            btnUpdate.Height = 32;
             toolTip.SetToolTip(btnUpdate, "Update the selected object (zone or transit)");
             // 
             // btnRefresh
             // 
-            btnRefresh.Location = new System.Drawing.Point(88, 2);
+            btnRefresh.Location = new System.Drawing.Point(291, 2);
             btnRefresh.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new System.Drawing.Size(90, 32);
             btnRefresh.TabIndex = 1;
             btnRefresh.Text = "Refresh";
-            btnRefresh.Width = 90;
-            btnRefresh.Height = 32;
             toolTip.SetToolTip(btnRefresh, "Refresh the client");
             // 
             // AtlasClientForm
@@ -249,13 +298,24 @@ namespace Gui.WinForms.Forms
             splitContainerMain.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainerMain).EndInit();
             splitContainerMain.ResumeLayout(false);
+            panel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
             buttonPanel.ResumeLayout(false);
             splitContainerRight.Panel1.ResumeLayout(false);
             splitContainerRight.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainerRight).EndInit();
             splitContainerRight.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBoxPlot).EndInit();
+            rightButtonPanel.ResumeLayout(false);
             ResumeLayout(false);
         }
+
+        private System.Windows.Forms.Button btnSaveAll;
+
+        private System.Windows.Forms.Button btnUp;
+        private System.Windows.Forms.Button btnDown;
+
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
     }
-} 
+}

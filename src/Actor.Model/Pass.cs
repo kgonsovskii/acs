@@ -6,7 +6,7 @@ namespace SevenSeals.Tss.Actor;
 public class Pass: ActorBase
 {
     [DbIndex]
-    public string KeyNumber { get; set; }
+    public string KeyNumber { get; set; } = string.Empty;
     [DbEnumTable] public PassType Type { get; set; }
     [DbEnumTable] public PassStatus Status { get; set; }
     public DateTime IssueDate { get; set; }

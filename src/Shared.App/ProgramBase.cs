@@ -8,38 +8,36 @@ namespace SevenSeals.Tss.Shared;
 
 public abstract class ProgramBase
 {
-    public abstract int Run(string[] args);
+    public abstract Task Run(string[] args);
 }
 
 public abstract class ProgramBase<TStartup>: ProgramBase where TStartup : StartupBase<TStartup>
 {
     protected virtual Type AppId => GetType();
-    private AppHost AppHost => AppHost.GetOrCreate(AppId);
+    private GenericHost GenericHost => GenericHost.GetOrCreate(AppId);
 
-    public override int Run(string[] args)
+    public override async Task Run(string[] args)
     {
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
+            .MinimumLevel.Warning()
             .Enrich.FromLogContext()
             .CreateLogger();
 
         try
         {
-            Log.Information("Starting up the host {AppId}...", AppId);
+            Log.Warning("Starting up the host {AppId}...", AppId);
             var host = CreateHostBuilder(args).Build();
-            AppHost.Initialize(host);
-            host.RunAsync(AppHost.ShutdownToken).GetAwaiter().GetResult();
-            return 0;
+            GenericHost.Initialize(host);
+            await host.RunAsync(GenericHost.ShutdownToken);
         }
         catch (OperationCanceledException)
         {
-            Log.Information("Host {AppId} shutdown requested.", AppId);
-            return 0;
+            Log.Warning("Host {AppId} shutdown requested.", AppId);
         }
         catch (Exception ex)
         {
             Log.Fatal(ex, "Host {AppId} terminated unexpectedly.", AppId);
-            return 1;
         }
         finally
         {

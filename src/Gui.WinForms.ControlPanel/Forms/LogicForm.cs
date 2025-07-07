@@ -53,7 +53,7 @@ public partial class LogicForm : Form
 
     private async void firePassTouchedButton_Click(object sender, EventArgs e)
     {
-        if (propertyGridRequest.SelectedObject is not PassTouchedClientEvent req)
+        if (propertyGridRequest.SelectedObject is not PassTouchedClientEvent)
         {
             MessageBox.Show("Invalid request object.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;

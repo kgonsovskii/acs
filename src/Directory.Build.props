@@ -28,6 +28,8 @@
     
         '$(MSBuildProjectName)' == 'Shared.Db.Tool'
         or
+            '$(MSBuildProjectName)' == 'Web.Api'
+        or
         (
              '$([System.String]::new($(MSBuildProjectName)).StartsWith(`Gui`))' == 'true'
              and

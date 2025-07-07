@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SevenSeals.Tss.Contour;
-using SevenSeals.Tss.Contour.Api;
 using SevenSeals.Tss.Logic.Api;
 using SevenSeals.Tss.Shared;
 

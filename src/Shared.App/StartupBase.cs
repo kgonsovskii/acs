@@ -43,6 +43,11 @@ public abstract class StartupBase<TStartup> where TStartup : class
                 ConfigureJsonInternal(options.JsonSerializerOptions);
             });
 
+        services.Configure<Serilog.AspNetCore.RequestLoggingOptions>(opts =>
+        {
+            opts.GetLevel = (httpContext, elapsed, ex) => Serilog.Events.LogEventLevel.Warning;
+        });
+
         services
             .AddEndpointsApiExplorer()
             .AddSwaggerGen(c =>
@@ -84,7 +89,7 @@ public abstract class StartupBase<TStartup> where TStartup : class
     {
         app.UseApi();
 
-        logger.LogInformation("Environment: {EnvironmentName}", env.EnvironmentName);
+        logger.LogWarning("Environment: {EnvironmentName}", env.EnvironmentName);
 
         if (env.IsDevelopment())
         {

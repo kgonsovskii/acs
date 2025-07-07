@@ -8,11 +8,11 @@ public class ItemDataTable<T> : DataTable
     private readonly List<PropertyPath> _propertyPaths = new();
     private const string ItemColumnName = "_Item";
 
-    public ItemDataTable(IEnumerable<T> items)
+    public ItemDataTable(IList<T> items)
     {
         BuildColumns(items);
         Columns.Add(ItemColumnName, typeof(T)); // hidden column for the item reference
-        Columns[ItemColumnName].ColumnMapping = MappingType.Hidden;
+        Columns[ItemColumnName]!.ColumnMapping = MappingType.Hidden;
         foreach (var item in items)
         {
             var row = NewRow();

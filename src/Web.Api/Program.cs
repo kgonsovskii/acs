@@ -1,0 +1,19 @@
+using Microsoft.Extensions.Hosting;
+using SevenSeals.Tss.Shared;
+
+namespace SevenSeals.Tss.Web.Api;
+
+public class Program : ProgramBase<Startup>
+{
+    protected override string ServiceGroup => "Web.Api";
+    public static async Task Main(string[] args)
+    {
+        await new Program().Run(args);
+    }
+
+    protected override IHostBuilder CreateHostBuilder(string[] args)
+    {
+        var builder = base.CreateHostBuilder(args);
+        return builder;
+    }
+}

@@ -1,3 +1,0 @@
--rwxrwxrwx 1 astra astra 335K ноя 28 07:50 /home/astra/common/altss/arcpgs/gonso.backup
--rwxrwxrwx 1 astra astra 466K ноя 28 08:29 /home/astra/common/altss/arcpgs/pg2023_11_28__08:29:04.backup
--rwxrwxrwx 1 astra astra 335K ноя 28 08:19 /home/astra/common/altss/arcpgs/pglast.backup

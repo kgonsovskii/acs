@@ -1,7 +1,7 @@
 [
 	{
 		"Type": "Building",
-		"ParentId": null,
+		"ParentId": "7b335e42-2c34-455b-8041-86111c50aac1",
 		"Id": "f9918759-9a99-40e9-9fbb-e06d57e07677",
 		"Name": "Seven Seals HQ",
 		"Hint": "Feodosiyskaya, building 1",

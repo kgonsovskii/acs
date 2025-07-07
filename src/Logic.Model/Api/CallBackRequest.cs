@@ -1,5 +1,4 @@
 ﻿using SevenSeals.Tss.Contour;
-using SevenSeals.Tss.Contour.Events;
 using SevenSeals.Tss.Shared;
 
 namespace SevenSeals.Tss.Logic.Api;

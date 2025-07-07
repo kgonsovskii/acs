@@ -12,6 +12,7 @@ using SevenSeals.Tss.Chronicle;
 using SevenSeals.Tss.Codex;
 using SevenSeals.Tss.Contour;
 using SevenSeals.Tss.Logic;
+using SevenSeals.Tss.Shared;
 
 namespace Gui.WinForms;
 
@@ -31,7 +32,10 @@ public class Startup : GuiStartupBase<Startup>
         services.AddCodexClients(Configuration);
         services.AddChronicleClients(Configuration);
         services.AddLogicClients(Configuration);
+        services.AddAtlasStorage();
         services.AddScoped<MainForm>(provider => new MainForm(
+            provider,
+            provider.GetRequiredService<Settings>(),
             provider.GetRequiredService<IMemberClient>(),
             provider.GetRequiredService<IPassClient>(),
             provider.GetRequiredService<IAtlasClient>(),

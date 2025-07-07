@@ -4,6 +4,7 @@ using SevenSeals.Tss.Shared;
 using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SevenSeals.Tss.Logic;
 using SevenSeals.Tss.Logic.Api;
 
@@ -19,9 +20,11 @@ public class ContourHub : HubBase<string, Contour>
 
     private ISpotStorage _spotStorage;
 
+    private readonly ContourOptions _options;
 
-    public ContourHub(ChannelHub channelHub, ISpotStorage spotStorage, IServiceProvider serviceProvider, ILogger<ContourHub> logger)
+    public ContourHub(ChannelHub channelHub, IOptions<ContourOptions> contourOptions, ISpotStorage spotStorage, IServiceProvider serviceProvider, ILogger<ContourHub> logger)
     {
+        _options = contourOptions.Value;
         _logger = logger;
         _spotStorage = spotStorage;
         _serviceProvider = serviceProvider;
@@ -32,6 +35,11 @@ public class ContourHub : HubBase<string, Contour>
 
     private async Task OnContourEvent(Contour sender, ContourEvent evt)
     {
+        if (sender.SpotId !=null && sender.SpotId != Guid.Empty)
+            evt.SpotId = (Guid)sender.SpotId;
+        evt.Address = sender.Address;
+        Events.Enqueue(evt);
+
         var logMessage = $"ContourEvent: {evt.Kind} Controller: {evt.ChannelId}, Address: {evt.Address}, Time: {evt.ControllerTimestamp}";
 
         if (evt is ContourKeyEvent keyEvent)
@@ -39,12 +47,7 @@ public class ContourHub : HubBase<string, Contour>
             logMessage += $", Key: {keyEvent.KeyNumber}";
         }
 
-        _logger.LogInformation(logMessage);
-
-        if (sender.SpotId !=null && sender.SpotId != Guid.Empty)
-            evt.SpotId = (Guid)sender.SpotId;
-        evt.Address = sender.Address;
-        Events.Enqueue(evt);
+        _logger.LogWarning(logMessage);
 
         using var scope = _serviceProvider.CreateScope();
         var logicClient = scope.ServiceProvider.GetRequiredService<ILogicCallbackClient>();
@@ -80,7 +83,7 @@ public class ContourHub : HubBase<string, Contour>
     public async Task<Contour> GetContour(ContourRequest request)
     {
         var channel = await ChannelHub.OpenChannel(request, true);
-        var contour = new Contour(request.SpotId, channel, request.AddressByte);
+        var contour = new Contour(request.SpotId, channel, request.AddressByte, _options);
         if (Map.TryGetValue(contour.Id, out var value))
         {
             contour = value;

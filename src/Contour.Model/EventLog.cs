@@ -4,7 +4,7 @@ using SevenSeals.Tss.Shared;
 namespace SevenSeals.Tss.Contour;
 
 [DbTable]
-public class EventLog: IItem<int>
+public class EventLog: Item<int>
 {
     public byte[] Ch { get; set; }
     public byte[] ControllerTimestamp { get; set; }
@@ -20,7 +20,4 @@ public class EventLog: IItem<int>
         Addr = 0;
         ControllerTimestamp = new byte[6];
     }
-
-    [DbPrimaryKey]
-    public int Id { get; set; }
 }

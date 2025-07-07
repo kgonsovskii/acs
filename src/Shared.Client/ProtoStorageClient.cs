@@ -8,7 +8,6 @@ public interface IProtoStorageClient<in TRequest, TResponse, in TId> : IProtoCli
     where TRequest : IProtoRequest where TResponse : IProtoResponse
 {
     public Task<List<TResponse>> GetAll();
-
     public Task<TResponse> GetById(TId id);
 
     public Task<TResponse> Add(TRequest request);

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CONFIG>
-  <Compiler Value="/usr/bin/fpc" Date="1625802185"/>
-  <Params Value=" -MObjFPC -Scghi -Cg -O1 -gw3 -gl -l -vewnhibq -Fi/home/astra/common/laz_run_app_lnx/lib/x86_64-linux -Fu/home/astra/common/laz_run_app_lnx/ -FU/home/astra/common/laz_run_app_lnx/lib/x86_64-linux/ -FE/home/astra/common/laz_run_app_lnx/ -o/home/astra/common/laz_run_app_lnx/laz_run_app_lnx laz_run_app_lnx.lpr"/>
-</CONFIG>

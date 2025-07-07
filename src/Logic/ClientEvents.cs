@@ -1,5 +1,4 @@
-﻿using SevenSeals.Tss.Actor;
-using SevenSeals.Tss.Logic.Api;
+﻿using SevenSeals.Tss.Logic.Api;
 
 namespace SevenSeals.Tss.Logic;
 
