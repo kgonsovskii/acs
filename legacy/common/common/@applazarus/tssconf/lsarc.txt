@@ -1,4 +1,0 @@
--rw-r--r-- 1 gonso gonso 304K ноя 22 04:32 /home/gonso/common/altss/arcpgs/pg2023_11_22__04:32:10.backup
--rw-r--r-- 1 gonso gonso 304K ноя 24 07:47 /home/gonso/common/altss/arcpgs/pg2023_11_24__07:47:19.backup
--rw-r--r-- 1 gonso gonso 308K ноя 25 11:04 /home/gonso/common/altss/arcpgs/pg2023_11_25__11:04:15.backup
--rw-r--r-- 1 root  root  304K ноя 24 05:25 /home/gonso/common/altss/arcpgs/pglast.backup

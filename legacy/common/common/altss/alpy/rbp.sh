@@ -1,1 +1,0 @@
-sudo kill +4341; python3 tzx1.py -ch  192.168.0.96; -start poll  -startdms n -startwrlog n &

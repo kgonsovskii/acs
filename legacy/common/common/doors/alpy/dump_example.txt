@@ -1,4 +1,0 @@
-/home/astra/common/Postgres# pg_restore -d mushrooms -C --role=postgres /home/astra/common/MR/mr.dump
-
-/home/astra/common/Postgres# pg_dump "host=localhost port=5432 dbname=postgres user=postgres password=postgres" > /home/astra/common/123.sql
-

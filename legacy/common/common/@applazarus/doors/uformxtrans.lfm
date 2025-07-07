@@ -1,9 +1,0 @@
-object formxtrans: Tformxtrans
-  Left = 822
-  Height = 434
-  Top = 150
-  Width = 628
-  Caption = 'formxtrans'
-  OnCreate = FormCreate
-  LCLVersion = '2.2.2.0'
-end
