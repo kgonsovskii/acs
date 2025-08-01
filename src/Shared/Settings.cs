@@ -23,9 +23,9 @@ public class Settings
 
     public Settings(CommandLineArgs args, IConfiguration configuration)
     {
-        ConnectionString = configuration.GetConnectionString("Default")!;
         StorageType = configuration.GetSection("storageType").Get<StorageType>();
         SqlDialect = configuration.GetSection("sqlDialect").Get<SqlDialect>();
+        ConnectionString = configuration.GetConnectionString(SqlDialect.ToString())!;
         var agent = configuration.GetValue<string>("Agent");
         Agent = MachineCode.GetMachineCode();
         if (agent != null)

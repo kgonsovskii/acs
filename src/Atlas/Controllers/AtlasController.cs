@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SevenSeals.Tss.Atlas.Api;
 using SevenSeals.Tss.Atlas.Services;
 using SevenSeals.Tss.Shared;
+using Atlas.Component;
 
 namespace SevenSeals.Tss.Atlas.Controllers;
 
@@ -33,9 +34,9 @@ public class AtlasController : ProtoController<Map, Map>
     [Description("Plot atlas Schema")]
     [ProducesResponseType(typeof(PlotResponse), StatusCodes.Status200OK)]
     [Produces("application/json")]
-    public ActionResult Plot()
+    public ActionResult Plot([FromQuery] PlotOrientation orientation = PlotOrientation.Horizontal)
     {
-        var response = _atlasService.Plot();
+        var response = _atlasService.Plot(orientation);
         return OkProto(response);
     }
 }

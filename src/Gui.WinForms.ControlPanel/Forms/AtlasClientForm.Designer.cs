@@ -209,15 +209,15 @@ namespace Gui.WinForms.Forms
             // 
             // splitContainerRight.Panel1
             // 
-            splitContainerRight.Panel1.Controls.Add(pictureBoxPlot);
+            splitContainerRight.Panel1.Controls.Add(propertyGrid);
+            splitContainerRight.Panel1.Controls.Add(rightButtonPanel);
             // 
             // splitContainerRight.Panel2
             // 
-            splitContainerRight.Panel2.Controls.Add(propertyGrid);
-            splitContainerRight.Panel2.Controls.Add(rightButtonPanel);
-            splitContainerRight.Size = new System.Drawing.Size(653, 525);
-            splitContainerRight.SplitterDistance = 300;
-            splitContainerRight.SplitterWidth = 3;
+            splitContainerRight.Panel2.Controls.Add(pictureBoxPlot);
+                         splitContainerRight.Size = new System.Drawing.Size(653, 525);
+             splitContainerRight.SplitterDistance = 240;
+             splitContainerRight.SplitterWidth = 3;
             splitContainerRight.TabIndex = 1;
             // 
             // pictureBoxPlot
@@ -226,7 +226,7 @@ namespace Gui.WinForms.Forms
             pictureBoxPlot.Location = new System.Drawing.Point(0, 0);
             pictureBoxPlot.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             pictureBoxPlot.Name = "pictureBoxPlot";
-            pictureBoxPlot.Size = new System.Drawing.Size(653, 300);
+            pictureBoxPlot.Size = new System.Drawing.Size(653, 402);
             pictureBoxPlot.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             pictureBoxPlot.TabIndex = 0;
             pictureBoxPlot.TabStop = false;
@@ -238,7 +238,7 @@ namespace Gui.WinForms.Forms
             propertyGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             propertyGrid.Name = "propertyGrid";
             propertyGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            propertyGrid.Size = new System.Drawing.Size(653, 182);
+            propertyGrid.Size = new System.Drawing.Size(653, 80);
             propertyGrid.TabIndex = 0;
             // 
             // rightButtonPanel
@@ -247,7 +247,7 @@ namespace Gui.WinForms.Forms
             rightButtonPanel.Controls.Add(btnUpdate);
             rightButtonPanel.Controls.Add(btnRefresh);
             rightButtonPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            rightButtonPanel.Location = new System.Drawing.Point(0, 182);
+            rightButtonPanel.Location = new System.Drawing.Point(0, 40);
             rightButtonPanel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             rightButtonPanel.Name = "rightButtonPanel";
             rightButtonPanel.Size = new System.Drawing.Size(653, 40);

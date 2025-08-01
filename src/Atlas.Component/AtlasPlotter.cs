@@ -1,249 +1,242 @@
+using System;
+using System.Collections.Generic;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
+using SevenSeals.Tss.Atlas;
 
-namespace SevenSeals.Tss.Atlas;
-
-public class AtlasPlotter
+namespace Atlas.Component
 {
-    private readonly Map _map;
-
-    public AtlasPlotter(Map map)
+    public enum PlotOrientation
     {
-        _map = map;
+        Horizontal,
+        Vertical
     }
 
-    public string GeneratePlantUml()
+    public class AtlasPlotter
     {
-        var sb = new StringBuilder();
-        sb.AppendLine("@startuml");
-        sb.AppendLine("skinparam backgroundColor white");
-        sb.AppendLine("skinparam defaultFontName Arial");
-        sb.AppendLine("skinparam defaultFontSize 12");
-        sb.AppendLine("skinparam roundcorner 10");
-        sb.AppendLine("skinparam shadowing false");
-        sb.AppendLine("skinparam ArrowColor #666666");
-        sb.AppendLine("skinparam NodeBackgroundColor #FFFFFF");
-        sb.AppendLine("skinparam NodeBorderColor #666666");
+        private readonly Map _map;
+        private readonly PlotOrientation _orientation;
 
-        // Add zones
-        var topLevelZones = _map.Zones.Where(z => z.ParentId == null).ToList();
-        foreach (var zone in topLevelZones)
+        public AtlasPlotter(Map map, PlotOrientation orientation = PlotOrientation.Horizontal)
         {
-            AppendZoneHierarchy(sb, zone, 0);
+            _map = map ?? throw new ArgumentNullException(nameof(map));
+            _orientation = orientation;
         }
 
-        // Add transits
-        foreach (var transit in _map.Transits)
+        public string GeneratePlantUml()
         {
-            var fromZone = _map.Zones.FirstOrDefault(z => z.Id == transit.FromZoneId);
-            var toZone = _map.Zones.FirstOrDefault(z => z.Id == transit.ToZoneId);
+            var sb = new StringBuilder();
+            sb.AppendLine("@startuml");
+            sb.AppendLine("skinparam backgroundColor white");
+            sb.AppendLine("skinparam defaultFontName Arial");
+            sb.AppendLine("skinparam defaultFontSize 16");
+            sb.AppendLine("skinparam defaultFontStyle bold");
+            sb.AppendLine("skinparam roundcorner 10");
+            sb.AppendLine("skinparam shadowing false");
+            sb.AppendLine("skinparam ArrowColor #666666");
+            sb.AppendLine("skinparam NodeBackgroundColor #FFFFFF");
+            sb.AppendLine("skinparam NodeBorderColor #666666");
 
-            if (fromZone != null && toZone != null)
+            // Add orientation-specific layout hints
+            if (_orientation == PlotOrientation.Vertical)
             {
-                var transitLabel = GetTransitLabel(transit);
-                if (transit.IsBidirectional)
-                {
-                    sb.AppendLine($"{GetZoneId(fromZone)} <--> {GetZoneId(toZone)} : {transitLabel}");
-                }
-                else
-                {
-                    sb.AppendLine($"{GetZoneId(fromZone)} --> {GetZoneId(toZone)} : {transitLabel}");
-                }
-            }
-        }
-
-        sb.Append("@enduml");
-        return sb.ToString();
-    }
-
-    private string GeneratePlantUmlUrlBase64()
-    {
-        var plantUmlText = GeneratePlantUml();
-
-        // Convert to UTF-8 bytes
-        var bytes = Encoding.UTF8.GetBytes(plantUmlText);
-
-        // Compress using DEFLATE
-        using var output = new MemoryStream();
-        using (var deflate = new DeflateStream(output, CompressionLevel.Optimal, true)) // 'true' means leave the base stream open
-        {
-            deflate.Write(bytes, 0, bytes.Length);
-        }
-
-        // Convert to custom PlantUML Base64
-        var base64 = Encode64(output.ToArray());
-
-        return base64;
-    }
-
-    public string GeneratePlantUmlUrl()
-    {
-        return $"https://www.plantuml.com/plantuml/uml/{GeneratePlantUmlUrlBase64()}";
-    }
-
-    public string GeneratePlantUmlImageUrl()
-    {
-        return $"https://www.plantuml.com/plantuml/png/{GeneratePlantUmlUrlBase64()}";
-    }
-
-    private static string Encode6Bit(byte b)
-    {
-        if (b < 10)
-        {
-            return ((char)(48 + b)).ToString();
-        }
-        b -= 10;
-        if (b < 26)
-        {
-            return ((char)(65 + b)).ToString();
-        }
-        b -= 26;
-        if (b < 26)
-        {
-            return ((char)(97 + b)).ToString();
-        }
-        b -= 26;
-        if (b == 0)
-        {
-            return "-";
-        }
-        if (b == 1)
-        {
-            return "_";
-        }
-        return "?";
-    }
-
-    private static string Append3Bytes(byte b1, byte b2, byte b3)
-    {
-        var c1 = (byte)(b1 >> 2);
-        var c2 = (byte)(((b1 & 0x3) << 4) | (b2 >> 4));
-        var c3 = (byte)(((b2 & 0xF) << 2) | (b3 >> 6));
-        var c4 = (byte)(b3 & 0x3F);
-
-        var r = new StringBuilder();
-        r.Append(Encode6Bit((byte)(c1 & 0x3F)));
-        r.Append(Encode6Bit((byte)(c2 & 0x3F)));
-        r.Append(Encode6Bit((byte)(c3 & 0x3F)));
-        r.Append(Encode6Bit((byte)(c4 & 0x3F)));
-        return r.ToString();
-    }
-
-    private static string Encode64(byte[] data)
-    {
-        var str = new StringBuilder();
-        var len = data.Length;
-        for (var i = 0; i < len; i += 3)
-        {
-            if (i + 2 == len)
-            {
-                str.Append(Append3Bytes(data[i], data[i + 1], 0));
-            }
-            else if (i + 1 == len)
-            {
-                str.Append(Append3Bytes(data[i], 0, 0));
+                sb.AppendLine("skinparam rankdir TB"); // Top to Bottom
             }
             else
             {
-                str.Append(Append3Bytes(data[i], data[i + 1], data[i + 2]));
+                sb.AppendLine("skinparam rankdir LR"); // Left to Right
             }
-        }
-        return str.ToString();
-    }
 
-    public void SavePlantUmlToFile(string filePath)
-    {
-        var plantUml = GeneratePlantUml();
-        File.WriteAllText(filePath, plantUml);
-    }
-
-    private void AppendZoneHierarchy(StringBuilder sb, Zone zone, int indentLevel)
-    {
-        // Do not skip ExternalArea zones from the main hierarchy; render them as components.
-
-        var indent = new string(' ', indentLevel * 2);
-        var color = GetZoneColor(zone.Type);
-        var zoneId = GetZoneId(zone);
-        var zoneDisplayName = GetZoneDisplayName(zone);
-
-        if (zone.Type == ZoneType.Building || zone.Type == ZoneType.Floor)
-        {
-            sb.AppendLine($@"{indent}package ""{zoneDisplayName}"" as {zoneId} {color} {{");
-            var children = _map.Zones.Where(z => z.ParentId == zone.Id).ToList();
-            foreach (var child in children)
+            // First, declare all zones as components
+            foreach (var zone in _map.Zones.OrderBy(z => z.Order))
             {
-                AppendZoneHierarchy(sb, child, indentLevel + 1);
+                var zoneId = GetZoneId(zone);
+                var zoneDisplayName = GetZoneDisplayName(zone);
+                sb.AppendLine($"component \"{zoneDisplayName}\" as {zoneId}");
+                
+                if (!string.IsNullOrEmpty(zone.Hint))
+                {
+                    sb.AppendLine($"note left of {zoneId} : {zone.Hint}");
+                }
             }
-            sb.AppendLine($@"{indent}}}");
-        }
-        else
-        {
-            // Render all other zone types, including ExternalArea, as components
-            sb.AppendLine($@"{indent}component ""{zoneDisplayName}"" as {zoneId} {color}");
+
+            // Add explicit transits
+            foreach (var transit in _map.Transits.OrderBy(t => t.Order))
+            {
+                var fromZone = _map.Zones.FirstOrDefault(z => z.Id == transit.FromZoneId);
+                var toZone = _map.Zones.FirstOrDefault(z => z.Id == transit.ToZoneId);
+
+                if (fromZone != null && toZone != null)
+                {
+                    var transitLabel = GetTransitLabel(transit);
+                    if (transit.IsBidirectional)
+                    {
+                        sb.AppendLine($"{GetZoneId(fromZone)} <--> {GetZoneId(toZone)} : {transitLabel}");
+                    }
+                    else
+                    {
+                        sb.AppendLine($"{GetZoneId(fromZone)} --> {GetZoneId(toZone)} : {transitLabel}");
+                    }
+                }
+            }
+
+            // Add parent-child relationships as implicit connections
+            foreach (var zone in _map.Zones.Where(z => z.ParentId.HasValue))
+            {
+                var parentZone = _map.Zones.FirstOrDefault(z => z.Id == zone.ParentId.Value);
+                if (parentZone != null)
+                {
+                    // Check if there's already an explicit transit between these zones
+                    var existingTransit = _map.Transits.FirstOrDefault(t => 
+                        (t.FromZoneId == parentZone.Id && t.ToZoneId == zone.Id) ||
+                        (t.FromZoneId == zone.Id && t.ToZoneId == parentZone.Id));
+                    
+                    // Only add parent-child connection if there's NO explicit transit
+                    if (existingTransit == null)
+                    {
+                        // Add implicit parent-child connection (no label)
+                        sb.AppendLine($"{GetZoneId(parentZone)} --> {GetZoneId(zone)}");
+                    }
+                    // If there IS an explicit transit, we skip the parent-child relationship
+                    // because the transit will be handled in the transits loop above
+                }
+            }
+
+            sb.AppendLine("@enduml");
+            return sb.ToString();
         }
 
-        if (!string.IsNullOrEmpty(zone.Hint))
+        private string GeneratePlantUmlUrlBase64()
         {
-            sb.AppendLine($@"{indent}note left of {zoneId} : {zone.Hint}");
-        }
-    }
+            var plantUmlText = GeneratePlantUml();
 
-    private static string GetTransitLabel(Transit transit)
-    {
-        // Assuming Transit has Name and Hint properties from AtlasBase
-        if (!string.IsNullOrEmpty(transit.Name))
-        {
-            return transit.Name;
-        }
-        if (!string.IsNullOrEmpty(transit.Hint))
-        {
-            return transit.Hint;
-        }
-        return transit.GetType().Name; // Fallback to ClassName if no Name or Hint
-    }
+            // Convert to UTF-8 bytes
+            var bytes = Encoding.UTF8.GetBytes(plantUmlText);
 
-    private static string GetZoneDisplayName(Zone zone)
-    {
-        if (!string.IsNullOrEmpty(zone.Name))
-        {
-            return zone.Name;
-        }
-        if (!string.IsNullOrEmpty(zone.Hint))
-        {
-            return zone.Hint;
-        }
-        return $"{zone.GetType().Name} ({zone.Type})"; // Fallback to ClassName and ZoneType
-    }
+            // Compress using DEFLATE
+            using var output = new MemoryStream();
+            using (var deflate = new DeflateStream(output, CompressionLevel.Optimal, true))
+            {
+                deflate.Write(bytes, 0, bytes.Length);
+            }
 
-    private static string GetZoneId(Zone zone)
-    {
-        // Sanitize zone name to create a valid PlantUML ID, allowing Unicode letters and numbers
-        var sanitizedName = Regex.Replace(zone.Name, @"[^\p{L}\p{N}_]", "_");
-        var uniqueSuffix = zone.Id.ToString().Replace("-", "_").Substring(0, 8); // Use a portion of GUID for uniqueness
+            // Convert to custom PlantUML Base64
+            var base64 = Encode64(output.ToArray());
 
-        // If sanitized name is empty or very generic, ensure uniqueness with the GUID suffix
-        if (string.IsNullOrEmpty(sanitizedName) || sanitizedName == "_")
-        {
-            return $"zone_{uniqueSuffix}";
+            return base64;
         }
-        return $"zone_{sanitizedName}_{uniqueSuffix}";
-    }
 
-    private static string GetZoneColor(ZoneType type)
-    {
-        return type switch
+        public string GeneratePlantUmlUrl()
         {
-            ZoneType.Building => "#FFE4E1", // Misty Rose
-            ZoneType.Floor => "#E6E6FA",    // Lavender
-            ZoneType.Room => "#F0FFF0",     // Honeydew
-            ZoneType.Corridor => "#F5F5DC", // Beige
-            ZoneType.Lobby => "#FFDAB9",    // Peach Puff
-            ZoneType.Elevator => "#D8BFD8", // Thistle
-            ZoneType.Staircase => "#F0F8FF",// Alice Blue
-            ZoneType.Parking => "#E0FFFF",  // Light Cyan
-            ZoneType.ExternalArea => "#F5F5F5", // White Smoke
-            _ => "#FFFFFF"                      // White
-        };
+            return $"https://www.plantuml.com/plantuml/uml/{GeneratePlantUmlUrlBase64()}";
+        }
+
+        public string GeneratePlantUmlImageUrl()
+        {
+            return $"https://www.plantuml.com/plantuml/png/{GeneratePlantUmlUrlBase64()}";
+        }
+
+        private static string Encode6Bit(byte b)
+        {
+            if (b < 10)
+            {
+                return ((char)(48 + b)).ToString();
+            }
+            b -= 10;
+            if (b < 26)
+            {
+                return ((char)(65 + b)).ToString();
+            }
+            b -= 26;
+            if (b < 26)
+            {
+                return ((char)(97 + b)).ToString();
+            }
+            b -= 26;
+            if (b == 0)
+            {
+                return "-";
+            }
+            if (b == 1)
+            {
+                return "_";
+            }
+            return "?";
+        }
+
+        private static string Append3Bytes(byte b1, byte b2, byte b3)
+        {
+            var c1 = (byte)(b1 >> 2);
+            var c2 = (byte)(((b1 & 0x3) << 4) | (b2 >> 4));
+            var c3 = (byte)(((b2 & 0xF) << 2) | (b3 >> 6));
+            var c4 = (byte)(b3 & 0x3F);
+
+            var r = new StringBuilder();
+            r.Append(Encode6Bit((byte)(c1 & 0x3F)));
+            r.Append(Encode6Bit((byte)(c2 & 0x3F)));
+            r.Append(Encode6Bit((byte)(c3 & 0x3F)));
+            r.Append(Encode6Bit((byte)(c4 & 0x3F)));
+            return r.ToString();
+        }
+
+        private static string Encode64(byte[] data)
+        {
+            var str = new StringBuilder();
+            var len = data.Length;
+            for (var i = 0; i < len; i += 3)
+            {
+                if (i + 2 == len)
+                {
+                    str.Append(Append3Bytes(data[i], data[i + 1], 0));
+                }
+                else if (i + 1 == len)
+                {
+                    str.Append(Append3Bytes(data[i], 0, 0));
+                }
+                else
+                {
+                    str.Append(Append3Bytes(data[i], data[i + 1], data[i + 2]));
+                }
+            }
+            return str.ToString();
+        }
+
+        private string GetZoneId(Zone zone)
+        {
+            return $"zone_{zone.Name?.Replace(" ", "_").Replace("-", "_")}";
+        }
+
+        private string GetZoneDisplayName(Zone zone)
+        {
+            return zone.Name ?? string.Empty;
+        }
+
+        private string GetZoneColor(ZoneType zoneType)
+        {
+            return zoneType switch
+            {
+                ZoneType.ExternalArea => "#F5F5F5",
+                ZoneType.Building => "#FFE4E1",
+                ZoneType.Floor => "#E6E6FA",
+                ZoneType.Room => "#F0FFF0",
+                ZoneType.Corridor => "#F5F5DC",
+                _ => "#FFFFFF"
+            };
+        }
+
+        private string GetTransitLabel(Transit transit)
+        {
+            var name = string.IsNullOrEmpty(transit.Name) ? "transit" : transit.Name;
+            var hint = transit.Hint;
+            
+            if (!string.IsNullOrEmpty(hint))
+            {
+                // Show both name and hint separated by a dash
+                return $"{name} - {hint}";
+            }
+            
+            return name;
+        }
     }
 }

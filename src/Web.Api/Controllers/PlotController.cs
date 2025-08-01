@@ -41,17 +41,21 @@ namespace SevenSeals.Tss.Web.Api.Controllers
             var buildings = zones.Where(z => z["type"].ToString() == "building" && z["parentId"] != null && z["parentId"].ToString() == external["id"].ToString()).ToList();
             // For each building, find floors
             var buildingNodes = buildings.Select(b => {
-                var floors = zones.Where(z => z["type"].ToString() == "floor" && z["parentId"] != null && z["parentId"].ToString() == b["id"].ToString()).ToList();
+                var floors = zones.Where(z => (z["type"].ToString() == "floor" || z["type"].ToString().Contains("floor")) && z["parentId"] != null && z["parentId"].ToString() == b["id"].ToString())
+                    .OrderBy(z => z["order"]?.GetValue<int>() ?? 0)
+                    .ToList();
                 // For each floor, find all other zones (rooms, corridors, etc.)
                 var floorNodes = floors.Select(f => new {
                     id = f["id"].ToString(),
                     name = f["name"].ToString(),
                     type = f["type"].ToString(),
-                    children = zones.Where(z => z["parentId"] != null && z["parentId"].ToString() == f["id"].ToString() && z["type"].ToString() != "floor").Select(z => new {
-                        id = z["id"].ToString(),
-                        name = z["name"].ToString(),
-                        type = z["type"].ToString()
-                    }).ToList()
+                    children = zones.Where(z => z["parentId"] != null && z["parentId"].ToString() == f["id"].ToString() && z["type"].ToString() != "floor" && !z["type"].ToString().Contains("floor"))
+                        .OrderBy(z => z["order"]?.GetValue<int>() ?? 0)
+                        .Select(z => new {
+                            id = z["id"].ToString(),
+                            name = z["name"].ToString(),
+                            type = z["type"].ToString()
+                        }).ToList()
                 }).ToList();
                 return new {
                     id = b["id"].ToString(),

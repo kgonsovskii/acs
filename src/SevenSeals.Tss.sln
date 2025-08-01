@@ -9,11 +9,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{152C81E3-0
 		..\Dockerfile = ..\Dockerfile
 		..\install.ps1 = ..\install.ps1
 		..\docker-compose.base.yml = ..\docker-compose.base.yml
-		..\migrations\schema.generated.sql = ..\migrations\schema.generated.sql
-		..\migrations\create-acs-db.bat = ..\migrations\create-acs-db.bat
-		..\migrations\create-acs-db.sh = ..\migrations\create-acs-db.sh
-		..\migrations\recreate-acs-db.bat = ..\migrations\recreate-acs-db.bat
 		..\migrations\recreate-acs-db.sh = ..\migrations\recreate-acs-db.sh
+		..\migrations\postgres.bat = ..\migrations\postgres.bat
+		..\migrations\postgres.re.bat = ..\migrations\postgres.re.bat
+		..\migrations\postgres.sh = ..\migrations\postgres.sh
+		..\migrations\firebird.bat = ..\migrations\firebird.bat
+		..\migrations\firebird.re.bat = ..\migrations\firebird.re.bat
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{C0229C78-FD7A-4142-877A-A09620D2A73D}"
@@ -84,8 +85,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chronicle.Tests", "Chronicl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chronicle.Model", "Chronicle.Model\Chronicle.Model.csproj", "{C5ADF990-A734-41E3-9398-3A4EB3AF39D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Api", "Web.Api\Web.Api.csproj", "{43A76940-BED5-4D78-9B2A-CB055B25B2DE}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logic", "Logic", "{42D98721-AE72-4E68-B2A2-D258D81A4037}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic", "Logic\Logic.csproj", "{2846A21C-B440-4E66-9FA2-2136D6CD205E}"
@@ -143,6 +142,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codex.Storage", "Codex.Storage\Codex.Storage.csproj", "{A0971A94-88D5-4C93-A03A-EED821FBDFBB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contour.Storage", "Contour.Storage\Contour.Storage.csproj", "{3FD11D3F-FEFB-41E1-A175-4939EACE3274}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Api", "Web.Api\Web.Api.csproj", "{0E92FFC7-E38F-43D0-BED9-D737D08F6277}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -490,18 +491,6 @@ Global
 		{C5ADF990-A734-41E3-9398-3A4EB3AF39D2}.Release|x64.Build.0 = Release|Any CPU
 		{C5ADF990-A734-41E3-9398-3A4EB3AF39D2}.Release|x86.ActiveCfg = Release|Any CPU
 		{C5ADF990-A734-41E3-9398-3A4EB3AF39D2}.Release|x86.Build.0 = Release|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Debug|x64.Build.0 = Debug|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Debug|x86.Build.0 = Debug|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Release|x64.ActiveCfg = Release|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Release|x64.Build.0 = Release|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Release|x86.ActiveCfg = Release|Any CPU
-		{43A76940-BED5-4D78-9B2A-CB055B25B2DE}.Release|x86.Build.0 = Release|Any CPU
 		{2846A21C-B440-4E66-9FA2-2136D6CD205E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2846A21C-B440-4E66-9FA2-2136D6CD205E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2846A21C-B440-4E66-9FA2-2136D6CD205E}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -826,6 +815,18 @@ Global
 		{3FD11D3F-FEFB-41E1-A175-4939EACE3274}.Release|x64.Build.0 = Release|Any CPU
 		{3FD11D3F-FEFB-41E1-A175-4939EACE3274}.Release|x86.ActiveCfg = Release|Any CPU
 		{3FD11D3F-FEFB-41E1-A175-4939EACE3274}.Release|x86.Build.0 = Release|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Debug|x64.Build.0 = Debug|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Debug|x86.Build.0 = Debug|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Release|x64.ActiveCfg = Release|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Release|x64.Build.0 = Release|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Release|x86.ActiveCfg = Release|Any CPU
+		{0E92FFC7-E38F-43D0-BED9-D737D08F6277}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

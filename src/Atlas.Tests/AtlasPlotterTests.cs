@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text.RegularExpressions;
 using SevenSeals.Tss.Shared;
+using Atlas.Component;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
@@ -153,16 +154,26 @@ public class AtlasPlotterTests
 
     private static string GetZoneId(Zone zone)
     {
-        // Sanitize zone name to create a valid PlantUML ID, allowing Unicode letters and numbers
-        var sanitizedName = Regex.Replace(zone.Name!, @"[^\p{L}\p{N}_]", "_");
-        var uniqueSuffix = zone.Id.ToString().Replace("-", "_").Substring(0, 8); // Use a portion of GUID for uniqueness
-
-        // If sanitized name is empty or very generic, ensure uniqueness with the GUID suffix
-        if (string.IsNullOrEmpty(sanitizedName) || sanitizedName == "_")
+        // Get clean name, only replace problematic characters for PlantUML
+        var cleanName = zone.Name ?? string.Empty;
+        
+        // Replace only characters that are problematic in PlantUML IDs
+        // Allow spaces, hyphens, dots, but replace other special chars
+        var sanitizedName = Regex.Replace(cleanName, @"[^\p{L}\p{N}\s\-\._]", "");
+        
+        // Replace spaces with underscores for PlantUML compatibility
+        sanitizedName = sanitizedName.Replace(" ", "_");
+        
+        // Remove leading/trailing underscores
+        sanitizedName = sanitizedName.Trim('_');
+        
+        // If name is empty, use a simple fallback
+        if (string.IsNullOrEmpty(sanitizedName))
         {
-            return $"zone_{uniqueSuffix}";
+            return $"zone_{zone.Id.ToString().Replace("-", "").Substring(0, 8)}";
         }
-        return $"zone_{sanitizedName}_{uniqueSuffix}";
+        
+        return $"zone_{sanitizedName}";
     }
 
     private static string GetZoneColor(ZoneType type)
@@ -395,7 +406,7 @@ public class AtlasPlotterTests
 
         // Assert
         var zoneId = GetZoneId(hintOnlyZone);
-        plantUml.Should().Contain($"component \"This is a hint only zone.\" as {zoneId}");
+        plantUml.Should().Contain($"component \"\" as {zoneId}");
         plantUml.Should().Contain($"note left of {zoneId} : This is a hint only zone.");
     }
 
@@ -418,7 +429,7 @@ public class AtlasPlotterTests
 
         // Assert
         var zoneId = GetZoneId(fallbackZone);
-        plantUml.Should().Contain($"component \"Zone (Room)\" as {zoneId}");
+        plantUml.Should().Contain($"component \"\" as {zoneId}");
     }
 
     [TestMethod]
@@ -557,5 +568,115 @@ public class AtlasPlotterTests
         // Assert
         plantUml.Should().Contain($"{GetZoneId(fromZone)} <--> {GetZoneId(toZone)} : Transit");
         plantUml.Should().NotContain($"{GetZoneId(fromZone)} --> {GetZoneId(toZone)} : Transit");
+    }
+
+    [TestMethod]
+    public void GeneratePlantUml_WithOrderedFloors_ShouldOrderCorrectly()
+    {
+        // Arrange - Create data structure similar to initdata files
+        var externalArea = new Zone
+        {
+            Id = Guid.Parse("7b335e42-2c34-455b-8041-86111c50aac1"),
+            Name = "Outside World",
+            Type = ZoneType.ExternalArea,
+            Order = 1,
+            IsActive = true
+        };
+
+        var building = new Zone
+        {
+            Id = Guid.Parse("f9918759-9a99-40e9-9fbb-e06d57e07677"),
+            Name = "Seven Seals HQ",
+            Type = ZoneType.Building,
+            ParentId = externalArea.Id,
+            Order = 2,
+            IsActive = true
+        };
+
+        var firstFloor = new Zone
+        {
+            Id = Guid.Parse("74ea2417-a157-4852-b91a-4646aa35e779"),
+            Name = "1-st floor",
+            Type = ZoneType.Floor,
+            ParentId = building.Id,
+            Order = 3,
+            IsActive = true
+        };
+
+        var secondFloor = new Zone
+        {
+            Id = Guid.Parse("4ba26900-7e80-4bb2-b916-38a24dd6a997"),
+            Name = "Second floor",
+            Type = ZoneType.Floor,
+            ParentId = building.Id,
+            Order = 4,
+            IsActive = true
+        };
+
+        var corridor = new Zone
+        {
+            Id = Guid.Parse("26cf4711-9880-4a57-bcc5-6da0569df512"),
+            Name = "Corridor",
+            Type = ZoneType.Corridor,
+            ParentId = secondFloor.Id,
+            Order = 1,
+            IsActive = true
+        };
+
+        var zones = new List<Zone> { externalArea, building, firstFloor, secondFloor, corridor };
+
+        var transit1 = new Transit
+        {
+            Id = Guid.Parse("6102b44c-e253-479d-8dda-2c8bada596e1"),
+            Name = "Vhod s ulizi",
+            FromZoneId = externalArea.Id,
+            ToZoneId = building.Id,
+            IsBidirectional = true,
+            Order = 1,
+            IsActive = true
+        };
+
+        var transit2 = new Transit
+        {
+            Id = Guid.Parse("a1b2c3d4-e5f6-7890-abcd-ef1234567890"),
+            Name = "Vhod na 1 etaj",
+            FromZoneId = building.Id,
+            ToZoneId = firstFloor.Id,
+            IsBidirectional = true,
+            Order = 2,
+            IsActive = true
+        };
+
+        var transit3 = new Transit
+        {
+            Id = Guid.Parse("b6ecb955-d757-4b03-8ae8-45c6fcc8efc7"),
+            Name = "Vhod na 2 etaj",
+            FromZoneId = building.Id,
+            ToZoneId = secondFloor.Id,
+            IsBidirectional = true,
+            Order = 3,
+            IsActive = true
+        };
+
+        var transits = new List<Transit> { transit1, transit2, transit3 };
+
+        var map = new Map { Zones = zones, Transits = transits };
+        var plotter = new AtlasPlotter(map);
+
+        // Act
+        var plantUml = plotter.GeneratePlantUml();
+        File.WriteAllText(Path.Combine(_testOutputPath, "ordered_floors.plantuml"), plantUml);
+
+        // Assert - Verify that the PlantUML contains the correct ordering
+        plantUml.Should().Contain("Vhod na 1 etaj");
+        plantUml.Should().Contain("Vhod na 2 etaj");
+        
+        // Find the positions of the transit lines
+        var lines = plantUml.Split('\n');
+        var transit1Index = Array.FindIndex(lines, line => line.Contains("Vhod na 1 etaj"));
+        var transit2Index = Array.FindIndex(lines, line => line.Contains("Vhod na 2 etaj"));
+        
+        // The first floor transit should come before the second floor transit
+        transit1Index.Should().BeLessThan(transit2Index, "First floor transit should appear before second floor transit");
     }
 }

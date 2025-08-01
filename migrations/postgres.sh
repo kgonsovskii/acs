@@ -26,9 +26,9 @@ psql -U postgres -c "CREATE DATABASE acs OWNER tss;" || echo 'Database acs may a
 
 # Run generated schema as tss user
 export PGPASSWORD=123
-if [ -f "$(dirname "$0")/schema.sql" ]; then
+if [ -f "$(dirname "$0")/sql/schema.Postgres.sql" ]; then
   echo "Applying schema.sql to acs database..."
-  psql -U tss -d acs -f "$(dirname "$0")/schema.sql"
+  psql -U tss -d acs -f "$(dirname "$0")/sql/schema.Postgres.sql"
 else
-  echo "schema.sql not found in $(dirname "$0")!"
+  echo "sql/schema.Postgres.sql not found in $(dirname "$0")!"
 fi 

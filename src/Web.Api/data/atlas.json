@@ -4,14 +4,24 @@
       "type": "externalArea",
       "id": "7b335e42-2c34-455b-8041-86111c50aac1",
       "name": "Outside World",
-      "isActive": false
+      "isActive": false,
+      "order": 0
     },
     {
       "type": "building",
       "parentId": "7b335e42-2c34-455b-8041-86111c50aac1",
       "id": "f9918759-9a99-40e9-9fbb-e06d57e07677",
       "name": "Seven Seals HQ",
-      "isActive": false
+      "isActive": false,
+      "order": 0
+    },
+    {
+      "type": "1-st floor",
+      "parentId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
+      "id": "f9918758-9a99-40e9-9fbb-e06d57e07677",
+      "name": "1-st floor",
+      "isActive": false,
+      "order": 0
     },
     {
       "type": "2-nd floor",
@@ -19,49 +29,48 @@
       "id": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
       "name": "2-nd floor",
       "isActive": false,
-      "design": "second_floor_design.json"
-    },
-    {
-      "type": "1-st floor",
-      "parentId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
-      "id": "f9918758-9a99-40e9-9fbb-e06d57e07677",
-      "name": "1-st floor",
-      "isActive": false
+      "design": "second_floor_design.json",
+      "order": 1
     },
     {
       "type": "corridor",
       "parentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
       "id": "26cf4711-9880-4a57-bcc5-6da0569df512",
       "name": "Corridor",
-      "isActive": false
+      "isActive": false,
+      "order": 0
     },
     {
       "type": "room",
       "parentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
       "id": "4cb69f84-9d1c-4135-9421-e970054048da",
       "name": "Storage",
-      "isActive": false
+      "isActive": false,
+      "order": 1
     },
     {
       "type": "room",
       "parentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
       "id": "22bd61c5-967f-4457-82ce-573368774e71",
       "name": "Chief Accountant",
-      "isActive": false
+      "isActive": false,
+      "order": 2
     },
     {
       "type": "room",
       "parentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
       "id": "cd33e3e1-a977-45d8-bf81-2deacd978c52",
       "name": "Staff Room",
-      "isActive": false
+      "isActive": false,
+      "order": 3
     },
     {
       "type": "room",
       "parentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
       "id": "336bb7c8-379f-44c0-9526-96077f4da03c",
       "name": "Programmers",
-      "isActive": false
+      "isActive": false,
+      "order": 4
     }
   ],
   "transits": [
@@ -71,7 +80,8 @@
       "isBidirectional": true,
       "id": "6102b44c-e253-479d-8dda-2c8bada596e1",
       "name": "Вход с улицы",
-      "isActive": false
+      "isActive": false,
+      "order": 0
     },
     {
       "fromZoneId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
@@ -79,7 +89,8 @@
       "isBidirectional": true,
       "id": "b6ecb955-d757-4b03-8ae8-45c6fcc8efc7",
       "name": "Главный вход",
-      "isActive": false
+      "isActive": false,
+      "order": 0
     },
     {
       "fromZoneId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
@@ -87,7 +98,8 @@
       "isBidirectional": true,
       "id": "f1db5bb3-2d2a-47ba-83c2-c0dd6fe1a403",
       "name": "Вход в склад",
-      "isActive": false
+      "isActive": false,
+      "order": 1
     },
     {
       "fromZoneId": "26cf4711-9880-4a57-bcc5-6da0569df512",
@@ -95,7 +107,8 @@
       "isBidirectional": true,
       "id": "bec4e8e7-1711-43f6-aeb9-deac352912ba",
       "name": "Дверь",
-      "isActive": false
+      "isActive": false,
+      "order": 0
     },
     {
       "fromZoneId": "26cf4711-9880-4a57-bcc5-6da0569df512",
@@ -103,7 +116,8 @@
       "isBidirectional": true,
       "id": "4000fed0-cfdb-41e4-aaa5-5ebe280a0285",
       "name": "office.sevenseals.ru:5087",
-      "isActive": false
+      "isActive": false,
+      "order": 1
     },
     {
       "fromZoneId": "26cf4711-9880-4a57-bcc5-6da0569df512",
@@ -111,7 +125,8 @@
       "isBidirectional": true,
       "id": "e58442cd-7d81-4bb4-968f-5e5703815c52",
       "name": "office.sevenseals.ru:5086",
-      "isActive": false
+      "isActive": false,
+      "order": 2
     }
   ]
 }

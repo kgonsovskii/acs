@@ -1,0 +1,77 @@
+[
+  {
+    "type": "externalArea",
+    "id": "7b335e42-2c34-455b-8041-86111c50aac1",
+    "name": "Outside World",
+    "order": 1,
+    "isActive": true
+  },
+  {
+    "type": "building",
+    "id": "f9918759-9a99-40e9-9fbb-e06d57e07677",
+    "parentId": "7b335e42-2c34-455b-8041-86111c50aac1",
+    "name": "Seven Seals HQ",
+    "hint": "Feodosiyskaya, building 1",
+    "order": 2,
+    "isActive": true
+  },
+  {
+    "type": "floor",
+    "id": "74ea2417-a157-4852-b91a-4646aa35e779",
+    "parentId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
+    "name": "1-st floor",
+    "order": 3,
+    "isActive": true
+  },
+  {
+    "type": "floor",
+    "id": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+    "parentId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
+    "name": "Second floor",
+    "order": 4,
+    "isActive": true
+  },
+  {
+    "type": "corridor",
+    "id": "26cf4711-9880-4a57-bcc5-6da0569df512",
+    "parentId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+    "name": "Corridor",
+    "order": 1,
+    "isActive": true
+  },
+  {
+    "type": "room",
+    "id": "22bd61c5-967f-4457-82ce-573368774e71",
+    "parentId": "26cf4711-9880-4a57-bcc5-6da0569df512",
+    "name": "Chief Accountant",
+    "hint": "Galina Ivanovna",
+    "order": 2,
+    "isActive": true
+  },
+  {
+    "type": "room",
+    "id": "336bb7c8-379f-44c0-9526-96077f4da03c",
+    "parentId": "26cf4711-9880-4a57-bcc5-6da0569df512",
+    "name": "Programmers",
+    "hint": "Kostya, Vadik",
+    "order": 3,
+    "isActive": true
+  },
+  {
+    "type": "room",
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567891",
+    "parentId": "26cf4711-9880-4a57-bcc5-6da0569df512",
+    "name": "Director",
+    "hint": "Arkadiy Efimovich",
+    "order": 4,
+    "isActive": true
+  },
+  {
+    "type": "room",
+    "id": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+    "parentId": "26cf4711-9880-4a57-bcc5-6da0569df512",
+    "name": "Class Room",
+    "order": 5,
+    "isActive": true
+  }
+]

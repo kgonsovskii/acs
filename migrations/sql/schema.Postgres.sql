@@ -67,39 +67,43 @@ CREATE TABLE IF NOT EXISTS "contour"."com_port_stop_bits" (
 
 -- Regular tables
 CREATE TABLE "actor"."member" (
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "atlas"."zone" (
     "type" TEXT NOT NULL,
     "parent_id" UUID NULL,
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "codex"."route_rule" (
     "from_zone_id" UUID NOT NULL,
     "to_zone_id" UUID NOT NULL,
     "is_bidirectional" BOOLEAN NOT NULL,
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "codex"."time_zone_rule" (
     "day_of_week" TEXT NOT NULL,
     "start_time" TEXT NOT NULL,
     "end_time" TEXT NOT NULL,
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "contour"."event_log" (
@@ -112,10 +116,11 @@ CREATE TABLE "contour"."event_log" (
 );
 
 CREATE TABLE "contour"."spot" (
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "actor"."pass" (
@@ -125,10 +130,11 @@ CREATE TABLE "actor"."pass" (
     "issue_date" TIMESTAMP NOT NULL,
     "expiry_date" TIMESTAMP NULL,
     "member_id" UUID NULL REFERENCES "actor"."member"("id"),
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "atlas"."transit" (
@@ -136,10 +142,11 @@ CREATE TABLE "atlas"."transit" (
     "to_zone_id" UUID NOT NULL REFERENCES "atlas"."zone"("id"),
     "is_bidirectional" BOOLEAN NOT NULL,
     "spot_id" UUID NULL REFERENCES "contour"."spot"("id"),
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 -- Polymorphic tables
@@ -237,56 +244,56 @@ ALTER TABLE "contour"."spot_com_port" ADD CONSTRAINT "fk_spot_com_port_type" FOR
 ALTER TABLE "contour"."spot_com_port" ADD CONSTRAINT "fk_spot_com_port_parity" FOREIGN KEY ("parity") REFERENCES "contour"."com_port_parity"("name");
 ALTER TABLE "contour"."spot_com_port" ADD CONSTRAINT "fk_spot_com_port_stop_bits" FOREIGN KEY ("stop_bits") REFERENCES "contour"."com_port_stop_bits"("name");
 
-INSERT INTO "actor"."member" ("id", "name", "hint", "is_active") VALUES ('45c8352e-3cb0-4dab-96dd-9cb7093e2a85', 'str_65816c5c', 'str_00e389d7', TRUE);
-INSERT INTO "actor"."member" ("id", "name", "hint", "is_active") VALUES ('b71619b9-d4b8-467a-a9b6-2a4dae128688', 'str_53f96906', 'str_8b9a1dc2', FALSE);
-INSERT INTO "actor"."member" ("id", "name", "hint", "is_active") VALUES ('e534be14-001f-47c4-9f04-f5621a58ddec', 'str_7463860e', 'str_dbe26fba', TRUE);
-INSERT INTO "codex"."route_rule" ("from_zone_id", "to_zone_id", "is_bidirectional", "id", "name", "hint", "is_active") VALUES ('d83ece25-4f13-4ab4-884a-61690f54db07', '53eed3f3-5181-4bd2-a930-21fb465d02c5', FALSE, '95e5e1d6-d25f-4bd5-b399-da48f44df410', 'str_a1919b58', 'str_4f875515', FALSE);
-INSERT INTO "codex"."route_rule" ("from_zone_id", "to_zone_id", "is_bidirectional", "id", "name", "hint", "is_active") VALUES ('3b438ddc-7e1c-4df2-a03f-928bff735de0', 'd413ba0f-61c3-4f82-b81b-1b9fa5c34a1c', TRUE, '660daf3d-3eba-4b0f-8b2c-d673411f5cde', 'str_87a65293', 'str_57756832', FALSE);
-INSERT INTO "codex"."route_rule" ("from_zone_id", "to_zone_id", "is_bidirectional", "id", "name", "hint", "is_active") VALUES ('f648b85d-eacd-46a9-9d96-e35c1feb7f34', '2ac1018d-fec7-4786-8f03-78435b07067d', FALSE, 'a45e99ce-a709-4838-b03e-5c01850597d5', 'str_f818cfaa', 'str_54ec155d', TRUE);
-INSERT INTO "codex"."time_zone_rule" ("day_of_week", "start_time", "end_time", "id", "name", "hint", "is_active") VALUES ('wednesday', 'str_7c08e634', 'str_9bc29770', 'a3e09263-5ea8-4a40-b3c3-a1282d002801', 'str_8930f66e', 'str_d99c59b4', FALSE);
-INSERT INTO "codex"."time_zone_rule" ("day_of_week", "start_time", "end_time", "id", "name", "hint", "is_active") VALUES ('tuesday', 'str_79647fea', 'str_c8357d11', 'e9d5484d-4573-4547-9803-02e3cbb22733', 'str_9d2a1ae1', 'str_4c0e4915', FALSE);
-INSERT INTO "codex"."time_zone_rule" ("day_of_week", "start_time", "end_time", "id", "name", "hint", "is_active") VALUES ('saturday', 'str_724debd1', 'str_a16e52fa', '294cc79e-91a9-4089-9d2e-2df5b096a309', 'str_51782dbe', 'str_3fc2a633', TRUE);
-INSERT INTO "contour"."event_log" ("ch", "controller_timestamp", "timestamp", "addr", "data", "id") VALUES ('\x861464e1b704b4741e43708bfd84', '\xc3f137ff877f63f6783bac80a5da', '\xe43cb8f739', 185, '\x35d806ce92a0b7', 1126415403);
-INSERT INTO "contour"."event_log" ("ch", "controller_timestamp", "timestamp", "addr", "data", "id") VALUES ('\x9c1020a1d0b8b927', '\x73fa4db0a0e10e1e555e', '\x80736c4b948e3808e77324cc43cb', 35, '\x6fc5a3d0d3', 1412835035);
-INSERT INTO "contour"."event_log" ("ch", "controller_timestamp", "timestamp", "addr", "data", "id") VALUES ('\x937e87aa647ead6f1ee78f14ee4980', '\x3381', '\xa2', 12, '\x4b16', 57404383);
-INSERT INTO "actor"."pass" ("key_number", "type", "status", "issue_date", "expiry_date", "member_id", "id", "name", "hint", "is_active") VALUES ('str_95717cc5', 'mobile', 'deactivated', '2025-07-16 14:32:54', '2025-07-02 00:30:23', 'e534be14-001f-47c4-9f04-f5621a58ddec', '218f18a4-bfde-4d77-8877-c73a5058d22d', 'str_313cea5d', 'str_26064322', FALSE);
-INSERT INTO "actor"."pass" ("key_number", "type", "status", "issue_date", "expiry_date", "member_id", "id", "name", "hint", "is_active") VALUES ('str_3f4931da', 'card', 'stolen', '2025-07-02 22:46:21', '2025-07-05 13:01:25', 'e534be14-001f-47c4-9f04-f5621a58ddec', 'a80bcc9e-b189-4330-8eda-3aa085a9df61', 'str_9b648ec9', 'str_a6512e46', FALSE);
-INSERT INTO "actor"."pass" ("key_number", "type", "status", "issue_date", "expiry_date", "member_id", "id", "name", "hint", "is_active") VALUES ('str_0da5b0f3', 'physical', 'lost', '2025-07-13 05:17:36', '2025-07-18 22:00:42', 'b71619b9-d4b8-467a-a9b6-2a4dae128688', 'eea2f600-b9b6-46c6-9c7f-3925abb64a1c', 'str_4204f7bb', 'str_ad03a816', FALSE);
-INSERT INTO "actor"."member_person" ("member_id", "type", "email", "phone") VALUES ('e534be14-001f-47c4-9f04-f5621a58ddec', 'person', 'str_9c034ffd', 'str_4d3ba875');
-INSERT INTO "actor"."member_drone" ("member_id", "type", "serial_number", "firmware_version") VALUES ('45c8352e-3cb0-4dab-96dd-9cb7093e2a85', 'drone', 'str_cfcfc39e', 'str_f8edda54');
-INSERT INTO "actor"."member_drone" ("member_id", "type", "serial_number", "firmware_version") VALUES ('b71619b9-d4b8-467a-a9b6-2a4dae128688', 'drone', 'str_2e4e8fd5', 'str_bde96f22');
+INSERT INTO "actor"."member" ("name", "hint", "is_active", "order", "id") VALUES ('str_b3891091', 'str_7296b93c', FALSE, 60526190, 'a3fd6081-d3c4-45b7-9aeb-0ae8f7b2db4f');
+INSERT INTO "actor"."member" ("name", "hint", "is_active", "order", "id") VALUES ('str_9949ecf6', 'str_1070cc5c', TRUE, 354115591, '4bb7b098-6860-403b-8d94-b9b1164845db');
+INSERT INTO "actor"."member" ("name", "hint", "is_active", "order", "id") VALUES ('str_7f1152d2', 'str_d435da50', FALSE, 75608279, '443dbeca-74d3-4334-a2b6-5378d7de2b0e');
+INSERT INTO "codex"."route_rule" ("from_zone_id", "to_zone_id", "is_bidirectional", "name", "hint", "is_active", "order", "id") VALUES ('1d8b878a-9fc3-4538-b41d-6920a32bcdc8', 'e8e2361c-1e36-4693-90f2-cb65cfcd1527', FALSE, 'str_51bf62c1', 'str_e42f99d1', FALSE, 999677171, '59c26fc6-36f4-4358-af4a-898e4e56a5c8');
+INSERT INTO "codex"."route_rule" ("from_zone_id", "to_zone_id", "is_bidirectional", "name", "hint", "is_active", "order", "id") VALUES ('b22f3941-ffb5-46dc-a3f7-1baa0a24f14c', 'f9d369e5-a29e-43ad-9b3d-46004b14a7a3', FALSE, 'str_82278a49', 'str_75cba17f', FALSE, 378538949, 'bf2346cb-ad62-4f56-bca7-f2ec2997b641');
+INSERT INTO "codex"."route_rule" ("from_zone_id", "to_zone_id", "is_bidirectional", "name", "hint", "is_active", "order", "id") VALUES ('8c73ca2b-32fb-4f2e-938f-a3dcfbe4e86c', 'c6b3680d-710f-415e-8a7b-853eddd98cbc', FALSE, 'str_00d2f957', 'str_c5bda8b2', TRUE, 896505128, 'd9dde402-e096-46e9-8292-5e04a721e522');
+INSERT INTO "codex"."time_zone_rule" ("day_of_week", "start_time", "end_time", "name", "hint", "is_active", "order", "id") VALUES ('thursday', 'str_ad93ec07', 'str_4695122d', 'str_d3eaf336', 'str_c5731e03', TRUE, 1150187854, 'd185c0aa-ede0-4a98-b0d3-1101e9e94ae9');
+INSERT INTO "codex"."time_zone_rule" ("day_of_week", "start_time", "end_time", "name", "hint", "is_active", "order", "id") VALUES ('monday', 'str_7b6893e3', 'str_dad42be2', 'str_1411646f', 'str_f716ddc3', FALSE, 924278353, '0068263a-6c8c-4d0f-ae01-f67ed8cb771c');
+INSERT INTO "codex"."time_zone_rule" ("day_of_week", "start_time", "end_time", "name", "hint", "is_active", "order", "id") VALUES ('wednesday', 'str_3f07e0d8', 'str_050db108', 'str_c9c2d374', 'str_1c477861', FALSE, 544587696, '75c15b14-1d51-4d92-bdc1-a2a11aeb46eb');
+INSERT INTO "contour"."event_log" ("ch", "controller_timestamp", "timestamp", "addr", "data", "id") VALUES ('\x91ce96ccb406bcddafbe8d3361f4f59d', '\x1b991a32ec489e300599292c63e7', '\xc4b38dbdc53d0c', 111, '\x5347f7800f858d330740a608', 2015284120);
+INSERT INTO "contour"."event_log" ("ch", "controller_timestamp", "timestamp", "addr", "data", "id") VALUES ('\xfc3e3417dda4ebc39488fe330c4542', '\xac3fd0e7144008c351e7d956', '\x1faab453846efa', 198, '\x47c5bf1abababd73a50b0b9aab6576', 286377126);
+INSERT INTO "contour"."event_log" ("ch", "controller_timestamp", "timestamp", "addr", "data", "id") VALUES ('\x738a3d368986', '\xf8bd', '\xdf339685f8854f248954d176', 235, '\x7d8c6fcd7bf45bf7603f9b7e53ce', 42049920);
+INSERT INTO "actor"."pass" ("key_number", "type", "status", "issue_date", "expiry_date", "member_id", "name", "hint", "is_active", "order", "id") VALUES ('str_e7ff91c5', 'card', 'lost', '2025-08-07 07:49:58', '2025-08-20 15:51:02', '4bb7b098-6860-403b-8d94-b9b1164845db', 'str_7c7a5d04', 'str_26d733b8', TRUE, 419771375, 'e396bcad-bc4a-4be7-9419-862b2bb7d334');
+INSERT INTO "actor"."pass" ("key_number", "type", "status", "issue_date", "expiry_date", "member_id", "name", "hint", "is_active", "order", "id") VALUES ('str_03ae5f8c', 'physical', 'deactivated', '2025-08-10 22:11:30', '2025-08-11 03:30:10', '4bb7b098-6860-403b-8d94-b9b1164845db', 'str_32bea7b8', 'str_2f3bf194', FALSE, 85854926, '66f8383d-9918-4329-9fdb-ce24f71619dd');
+INSERT INTO "actor"."pass" ("key_number", "type", "status", "issue_date", "expiry_date", "member_id", "name", "hint", "is_active", "order", "id") VALUES ('str_d160fb1a', 'mobile', 'lost', '2025-08-11 22:26:56', '2025-08-22 17:05:10', 'a3fd6081-d3c4-45b7-9aeb-0ae8f7b2db4f', 'str_c442eb4f', 'str_8e8ec3be', TRUE, 275222578, '29f89d72-46fc-43aa-8466-1f862fd13ba8');
+INSERT INTO "actor"."member_person" ("member_id", "type", "email", "phone") VALUES ('4bb7b098-6860-403b-8d94-b9b1164845db', 'person', 'str_5efd55d5', 'str_33b664f7');
+INSERT INTO "actor"."member_drone" ("member_id", "type", "serial_number", "firmware_version") VALUES ('a3fd6081-d3c4-45b7-9aeb-0ae8f7b2db4f', 'drone', 'str_7daf7928', 'str_44197266');
+INSERT INTO "actor"."member_drone" ("member_id", "type", "serial_number", "firmware_version") VALUES ('443dbeca-74d3-4334-a2b6-5378d7de2b0e', 'drone', 'str_cb6d5856', 'str_50bca74a');
 
-INSERT INTO "actor"."member" ("id", "name", "hint", "is_active") VALUES ('db5a6024-eeb8-4c09-9314-86f8e4a04989', 'Person A', NULL, TRUE);
+INSERT INTO "atlas"."zone" ("type", "parent_id", "name", "hint", "is_active", "order", "id") VALUES ('external_area', NULL, 'Outside World', NULL, TRUE, 1, '7b335e42-2c34-455b-8041-86111c50aac1');
+INSERT INTO "atlas"."zone" ("type", "parent_id", "name", "hint", "is_active", "order", "id") VALUES ('building', '7b335e42-2c34-455b-8041-86111c50aac1', 'Seven Seals HQ', 'Feodosiyskaya, building 1', TRUE, 2, 'f9918759-9a99-40e9-9fbb-e06d57e07677');
+INSERT INTO "atlas"."zone" ("type", "parent_id", "name", "hint", "is_active", "order", "id") VALUES ('floor', 'f9918759-9a99-40e9-9fbb-e06d57e07677', '1-st floor', NULL, TRUE, 3, '74ea2417-a157-4852-b91a-4646aa35e779');
+INSERT INTO "atlas"."zone" ("type", "parent_id", "name", "hint", "is_active", "order", "id") VALUES ('floor', 'f9918759-9a99-40e9-9fbb-e06d57e07677', 'Second floor', NULL, TRUE, 4, '4ba26900-7e80-4bb2-b916-38a24dd6a997');
+INSERT INTO "atlas"."zone" ("type", "parent_id", "name", "hint", "is_active", "order", "id") VALUES ('corridor', '4ba26900-7e80-4bb2-b916-38a24dd6a997', 'Corridor', NULL, TRUE, 1, '26cf4711-9880-4a57-bcc5-6da0569df512');
+INSERT INTO "atlas"."zone" ("type", "parent_id", "name", "hint", "is_active", "order", "id") VALUES ('room', '26cf4711-9880-4a57-bcc5-6da0569df512', 'Chief Accountant', 'Galina Ivanovna', TRUE, 2, '22bd61c5-967f-4457-82ce-573368774e71');
+INSERT INTO "atlas"."zone" ("type", "parent_id", "name", "hint", "is_active", "order", "id") VALUES ('room', '26cf4711-9880-4a57-bcc5-6da0569df512', 'Programmers', 'Kostya, Vadik', TRUE, 3, '336bb7c8-379f-44c0-9526-96077f4da03c');
+INSERT INTO "atlas"."zone" ("type", "parent_id", "name", "hint", "is_active", "order", "id") VALUES ('room', '26cf4711-9880-4a57-bcc5-6da0569df512', 'Director', 'Arkadiy Efimovich', TRUE, 4, 'a1b2c3d4-e5f6-7890-abcd-ef1234567891');
+INSERT INTO "atlas"."zone" ("type", "parent_id", "name", "hint", "is_active", "order", "id") VALUES ('room', '26cf4711-9880-4a57-bcc5-6da0569df512', 'Class Room', NULL, TRUE, 5, 'b2c3d4e5-f6a7-8901-bcde-f23456789012');
+
+INSERT INTO "actor"."member" ("name", "hint", "is_active", "order", "id") VALUES ('Person A', NULL, TRUE, 0, 'db5a6024-eeb8-4c09-9314-86f8e4a04989');
 INSERT INTO "actor"."member_person" ("member_id", "type", "email", "phone") VALUES ('db5a6024-eeb8-4c09-9314-86f8e4a04989', 'person', 'PersonA@tss.com', NULL);
-INSERT INTO "actor"."member" ("id", "name", "hint", "is_active") VALUES ('5d5f9a6e-2b4c-49e9-82ee-083c7d0dd80b', 'Person B', NULL, TRUE);
+INSERT INTO "actor"."member" ("name", "hint", "is_active", "order", "id") VALUES ('Person B', NULL, TRUE, 0, '5d5f9a6e-2b4c-49e9-82ee-083c7d0dd80b');
 INSERT INTO "actor"."member_person" ("member_id", "type", "email", "phone") VALUES ('5d5f9a6e-2b4c-49e9-82ee-083c7d0dd80b', 'person', 'PersonB@tss.com', NULL);
 
-INSERT INTO "actor"."pass" ("key_number", "type", "status", "issue_date", "expiry_date", "member_id", "id", "name", "hint", "is_active") VALUES ('000003C6A799', 'physical', 'active', '0001-01-01 00:00:00.000', NULL, 'db5a6024-eeb8-4c09-9314-86f8e4a04989', 'db5a6024-eeb8-4c09-9314-86f8e4a04989', NULL, NULL, TRUE);
-INSERT INTO "actor"."pass" ("key_number", "type", "status", "issue_date", "expiry_date", "member_id", "id", "name", "hint", "is_active") VALUES ('0000007B1B89', 'physical', 'stolen', '0001-01-01 00:00:00.000', NULL, '5d5f9a6e-2b4c-49e9-82ee-083c7d0dd80b', '5d5f9a6e-2b4c-49e9-82ee-083c7d0dd80b', NULL, NULL, TRUE);
+INSERT INTO "actor"."pass" ("key_number", "type", "status", "issue_date", "expiry_date", "member_id", "name", "hint", "is_active", "order", "id") VALUES ('000003C6A799', 'physical', 'active', '0001-01-01 00:00:00.000', NULL, 'db5a6024-eeb8-4c09-9314-86f8e4a04989', NULL, NULL, TRUE, 0, 'db5a6024-eeb8-4c09-9314-86f8e4a04989');
+INSERT INTO "actor"."pass" ("key_number", "type", "status", "issue_date", "expiry_date", "member_id", "name", "hint", "is_active", "order", "id") VALUES ('0000007B1B89', 'physical', 'stolen', '0001-01-01 00:00:00.000', NULL, '5d5f9a6e-2b4c-49e9-82ee-083c7d0dd80b', NULL, NULL, TRUE, 0, '5d5f9a6e-2b4c-49e9-82ee-083c7d0dd80b');
 
-INSERT INTO "contour"."spot" ("id", "name", "hint", "is_active") VALUES ('d414e607-964f-40a1-8b31-470d3b9d85ca', 'classrom', NULL, TRUE);
+INSERT INTO "contour"."spot" ("name", "hint", "is_active", "order", "id") VALUES ('classrom', NULL, TRUE, 0, 'd414e607-964f-40a1-8b31-470d3b9d85ca');
 INSERT INTO "contour"."spot_ip" ("spot_id", "type", "host", "port") VALUES ('d414e607-964f-40a1-8b31-470d3b9d85ca', 'ip', 'office.sevenseals.ru', 5087);
 INSERT INTO "contour"."spot_address" ("spot_id", "address") VALUES ('d414e607-964f-40a1-8b31-470d3b9d85ca', '77');
-INSERT INTO "contour"."spot" ("id", "name", "hint", "is_active") VALUES ('3037e535-87b3-46a4-8ece-349da4bb7bd4', 'progers', NULL, TRUE);
+INSERT INTO "contour"."spot" ("name", "hint", "is_active", "order", "id") VALUES ('progers', NULL, TRUE, 0, '3037e535-87b3-46a4-8ece-349da4bb7bd4');
 INSERT INTO "contour"."spot_ip" ("spot_id", "type", "host", "port") VALUES ('3037e535-87b3-46a4-8ece-349da4bb7bd4', 'ip', 'office.sevenseals.ru', 5086);
 INSERT INTO "contour"."spot_address" ("spot_id", "address") VALUES ('3037e535-87b3-46a4-8ece-349da4bb7bd4', '171');
-INSERT INTO "contour"."spot" ("id", "name", "hint", "is_active") VALUES ('1d9f31e9-90e3-45ea-a85f-fb07f1b4b334', 'progers-comport', NULL, TRUE);
+INSERT INTO "contour"."spot" ("name", "hint", "is_active", "order", "id") VALUES ('progers-comport', NULL, TRUE, 0, '1d9f31e9-90e3-45ea-a85f-fb07f1b4b334');
 INSERT INTO "contour"."spot_com_port" ("spot_id", "type", "port_name", "baud_rate", "parity", "data_bits", "stop_bits", "read_timeout_ms", "write_timeout_ms") VALUES ('1d9f31e9-90e3-45ea-a85f-fb07f1b4b334', 'com_port', 'COM3', 19200, 'none', 8, 'one', 1000, 1000);
 INSERT INTO "contour"."spot_address" ("spot_id", "address") VALUES ('1d9f31e9-90e3-45ea-a85f-fb07f1b4b334', '7');
 
-INSERT INTO "atlas"."transit" ("from_zone_id", "to_zone_id", "is_bidirectional", "spot_id", "id", "name", "hint", "is_active") VALUES ('7b335e42-2c34-455b-8041-86111c50aac1', 'f9918759-9a99-40e9-9fbb-e06d57e07677', TRUE, NULL, '6102b44c-e253-479d-8dda-2c8bada596e1', 'Вход с улицы', NULL, FALSE);
-INSERT INTO "atlas"."transit" ("from_zone_id", "to_zone_id", "is_bidirectional", "spot_id", "id", "name", "hint", "is_active") VALUES ('4ba26900-7e80-4bb2-b916-38a24dd6a997', '26cf4711-9880-4a57-bcc5-6da0569df512', TRUE, NULL, 'b6ecb955-d757-4b03-8ae8-45c6fcc8efc7', 'Главный вход', NULL, FALSE);
-INSERT INTO "atlas"."transit" ("from_zone_id", "to_zone_id", "is_bidirectional", "spot_id", "id", "name", "hint", "is_active") VALUES ('4ba26900-7e80-4bb2-b916-38a24dd6a997', '4cb69f84-9d1c-4135-9421-e970054048da', TRUE, NULL, 'f1db5bb3-2d2a-47ba-83c2-c0dd6fe1a403', 'Вход в склад', NULL, FALSE);
-INSERT INTO "atlas"."transit" ("from_zone_id", "to_zone_id", "is_bidirectional", "spot_id", "id", "name", "hint", "is_active") VALUES ('26cf4711-9880-4a57-bcc5-6da0569df512', '22bd61c5-967f-4457-82ce-573368774e71', TRUE, NULL, 'bec4e8e7-1711-43f6-aeb9-deac352912ba', 'Дверь', NULL, FALSE);
-INSERT INTO "atlas"."transit" ("from_zone_id", "to_zone_id", "is_bidirectional", "spot_id", "id", "name", "hint", "is_active") VALUES ('26cf4711-9880-4a57-bcc5-6da0569df512', 'cd33e3e1-a977-45d8-bf81-2deacd978c52', TRUE, NULL, '4000fed0-cfdb-41e4-aaa5-5ebe280a0285', 'office.sevenseals.ru:5087', NULL, FALSE);
-INSERT INTO "atlas"."transit" ("from_zone_id", "to_zone_id", "is_bidirectional", "spot_id", "id", "name", "hint", "is_active") VALUES ('26cf4711-9880-4a57-bcc5-6da0569df512', '336bb7c8-379f-44c0-9526-96077f4da03c', TRUE, NULL, 'e58442cd-7d81-4bb4-968f-5e5703815c52', 'office.sevenseals.ru:5086', NULL, FALSE);
-
-INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('building', '7b335e42-2c34-455b-8041-86111c50aac1', 'f9918759-9a99-40e9-9fbb-e06d57e07677', 'Seven Seals HQ', 'Feodosiyskaya, building 1', FALSE);
-INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('floor', 'f9918759-9a99-40e9-9fbb-e06d57e07677', '4ba26900-7e80-4bb2-b916-38a24dd6a997', 'Second floor', NULL, FALSE);
-INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('corridor', '4ba26900-7e80-4bb2-b916-38a24dd6a997', '26cf4711-9880-4a57-bcc5-6da0569df512', 'Corridor', NULL, FALSE);
-INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('room', '4ba26900-7e80-4bb2-b916-38a24dd6a997', '4cb69f84-9d1c-4135-9421-e970054048da', 'Storage', NULL, FALSE);
-INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('room', '4ba26900-7e80-4bb2-b916-38a24dd6a997', '22bd61c5-967f-4457-82ce-573368774e71', 'Chief Accountant', NULL, FALSE);
-INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('room', '4ba26900-7e80-4bb2-b916-38a24dd6a997', 'cd33e3e1-a977-45d8-bf81-2deacd978c52', 'Staff Room', NULL, FALSE);
-INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('room', '4ba26900-7e80-4bb2-b916-38a24dd6a997', '336bb7c8-379f-44c0-9526-96077f4da03c', 'Programmers', NULL, FALSE);
-INSERT INTO "atlas"."zone" ("type", "parent_id", "id", "name", "hint", "is_active") VALUES ('external_area', NULL, '7b335e42-2c34-455b-8041-86111c50aac1', 'Outside World', NULL, FALSE);
+INSERT INTO "atlas"."transit" ("from_zone_id", "to_zone_id", "is_bidirectional", "spot_id", "name", "hint", "is_active", "order", "id") VALUES ('7b335e42-2c34-455b-8041-86111c50aac1', 'f9918759-9a99-40e9-9fbb-e06d57e07677', TRUE, NULL, 'Vhod s ulizi', NULL, TRUE, 1, '6102b44c-e253-479d-8dda-2c8bada596e1');
+INSERT INTO "atlas"."transit" ("from_zone_id", "to_zone_id", "is_bidirectional", "spot_id", "name", "hint", "is_active", "order", "id") VALUES ('f9918759-9a99-40e9-9fbb-e06d57e07677', '4ba26900-7e80-4bb2-b916-38a24dd6a997', TRUE, NULL, 'Vhod na 2 etaj', NULL, TRUE, 2, 'b6ecb955-d757-4b03-8ae8-45c6fcc8efc7');
+INSERT INTO "atlas"."transit" ("from_zone_id", "to_zone_id", "is_bidirectional", "spot_id", "name", "hint", "is_active", "order", "id") VALUES ('26cf4711-9880-4a57-bcc5-6da0569df512', '22bd61c5-967f-4457-82ce-573368774e71', TRUE, NULL, 'Vhod v Chief Accountant', NULL, TRUE, 3, 'd2e3f4a5-6789-0123-bcde-f23456789012');
+INSERT INTO "atlas"."transit" ("from_zone_id", "to_zone_id", "is_bidirectional", "spot_id", "name", "hint", "is_active", "order", "id") VALUES ('26cf4711-9880-4a57-bcc5-6da0569df512', '336bb7c8-379f-44c0-9526-96077f4da03c', TRUE, NULL, 'Vhod v Programmers', 'office.sevenseals.ru:5086', TRUE, 4, 'e3f4a5b6-7890-1234-cdef-345678901234');
+INSERT INTO "atlas"."transit" ("from_zone_id", "to_zone_id", "is_bidirectional", "spot_id", "name", "hint", "is_active", "order", "id") VALUES ('26cf4711-9880-4a57-bcc5-6da0569df512', 'b2c3d4e5-f6a7-8901-bcde-f23456789012', TRUE, NULL, 'Vhod v Class Room', 'office.sevenseals.ru:5087', TRUE, 5, 'f4a5b6c7-8901-2345-defa-456789012345');
 

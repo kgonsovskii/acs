@@ -26,23 +26,11 @@
     <None Update="appsettings.Db.Tool.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Spot.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="appsettings.Db.Tool.base.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Transit.json">
+    <None Include="initdata\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Zone.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Member.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Pass.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +48,20 @@
       SourceFiles="@(JsonFiles)"
       DestinationFolder="$(MSBuildProjectDirectory)\..\..\migrations\">
       <Output TaskParameter="CopiedFiles" ItemName="CopiedJsonFiles" />
+    </Copy>
+  </Target>
+
+  <Target Name="CopyInitDataToMigrations" BeforeTargets="Build">
+    <MakeDir Directories="$(MSBuildProjectDirectory)\..\..\migrations\initdata" />
+
+    <ItemGroup>
+      <InitDataFiles Include="initdata\**\*" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="@(InitDataFiles)"
+      DestinationFolder="$(MSBuildProjectDirectory)\..\..\migrations\initdata\%(RecursiveDir)">
+      <Output TaskParameter="CopiedFiles" ItemName="CopiedInitDataFiles" />
     </Copy>
   </Target>
   

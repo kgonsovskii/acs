@@ -1,0 +1,23 @@
+@startuml
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam roundcorner 10
+skinparam shadowing false
+skinparam ArrowColor #666666
+skinparam NodeBackgroundColor #FFFFFF
+skinparam NodeBorderColor #666666
+component "Outside World" as zone_Outside_World #F5F5F5
+component "Corridor" as zone_Corridor #F5F5DC
+component "Seven Seals HQ" as zone_Seven_Seals_HQ #FFE4E1
+note left of zone_Seven_Seals_HQ : Feodosiyskaya, building 1
+component "Chief Accountant" as zone_Chief_Accountant #F0FFF0
+component "1-st floor" as zone_1-st_floor #E6E6FA
+component "Staff Room" as zone_Staff_Room #F0FFF0
+component "Second floor" as zone_Second_floor #E6E6FA
+component "Programmers" as zone_Programmers #F0FFF0
+zone_Outside_World <--> zone_Seven_Seals_HQ : Vhod s ulizi
+zone_Seven_Seals_HQ <--> zone_1-st_floor : Vhod na 1 etaj
+zone_Seven_Seals_HQ <--> zone_Second_floor : Vhod na 2 etaj
+
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam roundcorner 10
+skinparam shadowing false
+skinparam ArrowColor #666666
+skinparam NodeBackgroundColor #FFFFFF
+skinparam NodeBorderColor #666666
+component "Outside World" as zone_Outside_World #F5F5F5
+component "Seven Seals HQ" as zone_Seven_Seals_HQ #FFE4E1
+component "1-st floor" as zone_1-st_floor #E6E6FA
+component "Second floor" as zone_Second_floor #E6E6FA
+zone_Outside_World <--> zone_Seven_Seals_HQ : Vhod s ulizi
+zone_Seven_Seals_HQ <--> zone_1-st_floor : Vhod na 1 etaj
+zone_Seven_Seals_HQ <--> zone_Second_floor : Vhod na 2 etaj
+@enduml

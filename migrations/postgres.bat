@@ -21,10 +21,10 @@ psql -U postgres -c "CREATE DATABASE acs OWNER tss;" || echo Database acs may al
 
 REM Run generated schema as tss user
 set PGPASSWORD=123
-set SCHEMA_FILE=%~dp0schema.sql
+set SCHEMA_FILE=%~dp0sql/schema.Postgres.sql
 if exist "%SCHEMA_FILE%" (
-    echo Applying schema.sql to acs database...
+    echo Applying sql/schema.Postgres.sql to acs database...
     psql -U tss -d acs -f "%SCHEMA_FILE%"
 ) else (
-    echo schema.sql not found in %~dp0!
+    echo sql/schema.Postgres.sql not found in %~dp0!
 )

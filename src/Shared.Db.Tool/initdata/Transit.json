@@ -1,0 +1,49 @@
+[
+  {
+    "fromZoneId": "7b335e42-2c34-455b-8041-86111c50aac1",
+    "toZoneId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
+    "isBidirectional": true,
+    "id": "6102b44c-e253-479d-8dda-2c8bada596e1",
+    "name": "Vhod s ulizi",
+    "isActive": true,
+    "order": 1
+  },
+  {
+    "fromZoneId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
+    "toZoneId": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+    "isBidirectional": true,
+    "id": "b6ecb955-d757-4b03-8ae8-45c6fcc8efc7",
+    "name": "Vhod na 2 etaj",
+    "isActive": true,
+    "order": 2
+  },
+  {
+    "fromZoneId": "26cf4711-9880-4a57-bcc5-6da0569df512",
+    "toZoneId": "22bd61c5-967f-4457-82ce-573368774e71",
+    "isBidirectional": true,
+    "id": "d2e3f4a5-6789-0123-bcde-f23456789012",
+    "name": "Vhod v Chief Accountant",
+    "isActive": true,
+    "order": 3
+  },
+  {
+    "fromZoneId": "26cf4711-9880-4a57-bcc5-6da0569df512",
+    "toZoneId": "336bb7c8-379f-44c0-9526-96077f4da03c",
+    "isBidirectional": true,
+    "id": "e3f4a5b6-7890-1234-cdef-345678901234",
+    "name": "Vhod v Programmers",
+    "hint": "office.sevenseals.ru:5086",
+    "isActive": true,
+    "order": 4
+  },
+  {
+    "fromZoneId": "26cf4711-9880-4a57-bcc5-6da0569df512",
+    "toZoneId": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+    "isBidirectional": true,
+    "id": "f4a5b6c7-8901-2345-defa-456789012345",
+    "name": "Vhod v Class Room",
+    "hint": "office.sevenseals.ru:5087",
+    "isActive": true,
+    "order": 5
+  }
+]

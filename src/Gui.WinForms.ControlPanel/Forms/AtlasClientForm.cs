@@ -1,3 +1,5 @@
+using System.Drawing;
+using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -14,8 +16,9 @@ public partial class AtlasClientForm : Form
     private List<Zone> _zones = new();
     private List<Transit> _transits = new();
     private readonly HttpClient _httpClient = new();
-    private string? _lastSelectedId;
+    private string _lastSelectedId = string.Empty;
     private IServiceProvider _serviceProvider;
+    private Map? _currentMap;
 
     public AtlasClientForm(IServiceProvider serviceProvider, IAtlasClient atlasClient, IZoneClient zoneClient, ITransitClient transitClient)
     {
@@ -49,8 +52,78 @@ public partial class AtlasClientForm : Form
 
     private async void AtlasClientForm_Load(object sender, EventArgs e)
     {
+        InitializeTreeViewIcons();
         await RefreshMap();
         await RefreshPlot();
+    }
+
+    private void InitializeTreeViewIcons()
+    {
+        // Create ImageList for tree view icons
+        var imageList = new ImageList();
+        imageList.ImageSize = new Size(16, 16);
+        imageList.ColorDepth = ColorDepth.Depth32Bit;
+
+        // Add icons for different zone types
+        imageList.Images.Add("ExternalArea", CreateZoneIcon(Color.Green, "🌍"));
+        imageList.Images.Add("Building", CreateZoneIcon(Color.Blue, "🏢"));
+        imageList.Images.Add("Floor", CreateZoneIcon(Color.Orange, "🏠"));
+        imageList.Images.Add("Corridor", CreateZoneIcon(Color.Gray, "🚶"));
+        imageList.Images.Add("Room", CreateZoneIcon(Color.LightBlue, "🚪"));
+        imageList.Images.Add("Lobby", CreateZoneIcon(Color.Yellow, "🏛️"));
+        imageList.Images.Add("Elevator", CreateZoneIcon(Color.Purple, "🛗"));
+        imageList.Images.Add("Staircase", CreateZoneIcon(Color.Brown, "🪜"));
+        imageList.Images.Add("Parking", CreateZoneIcon(Color.DarkGreen, "🅿️"));
+        
+        // Add icon for transits
+        imageList.Images.Add("Transit", CreateTransitIcon(Color.Red, "➡️"));
+
+        // Configure tree view
+        treeViewZones.ImageList = imageList;
+        treeViewZones.ItemHeight = 24; // Increase item height
+        treeViewZones.ShowLines = true;
+        treeViewZones.ShowPlusMinus = true;
+        treeViewZones.ShowRootLines = true;
+    }
+
+    private Image CreateZoneIcon(Color backgroundColor, string emoji)
+    {
+        var bitmap = new Bitmap(16, 16);
+        using var graphics = Graphics.FromImage(bitmap);
+        
+        // Fill background
+        graphics.Clear(backgroundColor);
+        
+        // Draw border
+        using var pen = new Pen(Color.Black, 1);
+        graphics.DrawRectangle(pen, 0, 0, 15, 15);
+        
+        // Draw emoji (simplified as colored rectangle for now)
+        using var brush = new SolidBrush(Color.White);
+        graphics.FillRectangle(brush, 3, 3, 10, 10);
+        
+        return bitmap;
+    }
+
+    private Image CreateTransitIcon(Color color, string symbol)
+    {
+        var bitmap = new Bitmap(16, 16);
+        using var graphics = Graphics.FromImage(bitmap);
+        
+        // Fill background
+        graphics.Clear(Color.White);
+        
+        // Draw arrow symbol
+        using var brush = new SolidBrush(color);
+        graphics.FillPolygon(brush, new Point[] 
+        {
+            new Point(2, 8),
+            new Point(12, 4),
+            new Point(12, 12),
+            new Point(2, 8)
+        });
+        
+        return bitmap;
     }
 
     private async Task RefreshMap()
@@ -74,37 +147,58 @@ public partial class AtlasClientForm : Form
         treeViewZones.BeginUpdate();
         treeViewZones.Nodes.Clear();
         var zoneDict = _zones.ToDictionary(z => z.Id);
-        var roots = _zones.Where(z => z.ParentId == null).ToList();
-        TreeNode? firstNode = null;
-        foreach (var root in roots)
+        var processedZones = new HashSet<Guid>();
+        
+        var externalArea = _zones.FirstOrDefault(z => z.Type == ZoneType.ExternalArea);
+        if (externalArea != null)
         {
-            var rootNode = CreateZoneNode(root, zoneDict);
+            var rootNode = CreateTransitBasedZoneNode(externalArea, zoneDict, processedZones);
             treeViewZones.Nodes.Add(rootNode);
-            if (firstNode == null)
-                firstNode = rootNode;
+            treeViewZones.SelectedNode = rootNode;
         }
-        if (firstNode != null)
-            treeViewZones.SelectedNode = firstNode;
+        
         treeViewZones.EndUpdate();
+        ExpandAllNodes(treeViewZones.Nodes);
     }
 
-    private TreeNode CreateZoneNode(Zone zone, Dictionary<Guid, Zone> zoneDict)
+    private TreeNode CreateTransitBasedZoneNode(Zone zone, Dictionary<Guid, Zone> zoneDict, HashSet<Guid> processedZones)
     {
         var node = new TreeNode(zone.Name ?? zone.Id.ToString()) { Tag = zone };
-        var children = _zones.Where(z => z.ParentId == zone.Id).ToList();
-        foreach (var child in children)
-        {
-            node.Nodes.Add(CreateZoneNode(child, zoneDict));
-        }
-        // Add outgoing transits as child nodes
-        var outgoingTransits = _transits.Where(t => t.FromZoneId == zone.Id).ToList();
+        
+        // Set icon based on zone type
+        var iconKey = zone.Type.ToString();
+        node.ImageKey = iconKey;
+        node.SelectedImageKey = iconKey;
+        
+        processedZones.Add(zone.Id);
+        
+        var outgoingTransits = _transits.Where(t => t.FromZoneId == zone.Id).OrderBy(t => t.Order).ToList();
         foreach (var transit in outgoingTransits)
         {
             var toZone = zoneDict.TryGetValue(transit.ToZoneId, out var z) ? z : null;
-            var label = $"→ {(toZone?.Name ?? transit.ToZoneId.ToString())} [{(transit.IsBidirectional ? "↔" : "→")}]";
-            var transitNode = new TreeNode(label) { Tag = transit };
-            node.Nodes.Add(transitNode);
+            if (toZone != null && !processedZones.Contains(toZone.Id))
+            {
+                var transitName = !string.IsNullOrEmpty(transit.Name) ? transit.Name : (toZone?.Name ?? transit.ToZoneId.ToString());
+                var transitNode = new TreeNode(transitName) { Tag = transit };
+                
+                // Set transit icon
+                transitNode.ImageKey = "Transit";
+                transitNode.SelectedImageKey = "Transit";
+                
+                node.Nodes.Add(transitNode);
+                
+                var toZoneNode = CreateTransitBasedZoneNode(toZone, zoneDict, processedZones);
+                transitNode.Nodes.Add(toZoneNode);
+            }
         }
+        
+        var childZones = _zones.Where(z => z.ParentId == zone.Id && !processedZones.Contains(z.Id)).OrderBy(z => z.Order).ToList();
+        foreach (var childZone in childZones)
+        {
+            var childNode = CreateTransitBasedZoneNode(childZone, zoneDict, processedZones);
+            node.Nodes.Add(childNode);
+        }
+        
         return node;
     }
 
@@ -127,11 +221,11 @@ public partial class AtlasClientForm : Form
         }
     }
 
-    private IItem SelectedItem
+    private IItem? SelectedItem
     {
         get
         {
-           return propertyGrid.SelectedGridItem.Tag as IItem
+           return propertyGrid.SelectedGridItem?.Tag as IItem;
         }
     }
 
@@ -139,7 +233,7 @@ public partial class AtlasClientForm : Form
     {
         get
         {
-            if (propertyGrid.SelectedObject is Zone zone)
+            if (SelectedItem is Zone zone)
                 return zone;
             if (propertyGrid.SelectedObject is Transit transit)
                 return _zones.FirstOrDefault(z => z.Id == transit.FromZoneId);
@@ -160,34 +254,47 @@ public partial class AtlasClientForm : Form
 
     private async void btnAddZone_Click(object sender, EventArgs e)
     {
-        SaveSelectedZoneId();
+        SaveSelectedId();
         var parentZone = SelectedZone;
-        if (parentZone == null || parentZone.Type == ZoneType.ExternalArea)
+        if (parentZone == null)
         {
-            MessageBox.Show("Cannot add another External Area zone or add under External Area.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Please select a parent zone first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
+        
+        if (parentZone.Type == ZoneType.ExternalArea)
+        {
+            MessageBox.Show("Cannot create zones inside External Area.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+        var existingZones = _zones.Where(z => z.ParentId == parentZone.Id);
+        var maxOrder = existingZones.Any() ? existingZones.Max(z => z.Order) : 0;
         var newZone = new Zone
         {
             Id = Guid.NewGuid(),
             Name = "New Zone",
             IsActive = true,
-            ParentId = parentZone.Id
+            ParentId = parentZone.Id,
+            Order = maxOrder + 1
         };
         using var dlg = new RequestPropertyDialog(newZone, "Create Zone");
         if (dlg.ShowDialog(this) == DialogResult.OK)
         {
+            var (canCreate, createReason) = CanCreateZoneInParent(newZone.Type, parentZone);
+            if (!canCreate)
+            {
+                MessageBox.Show($"Cannot create zone: {createReason}", "Creation Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            
             await _zoneClient.Add(newZone);
-            await RefreshMap();
-            await RefreshPlot();
+            await RefreshAllAsync();
         }
-        RestoreSelectedZoneId();
-        ExpandAllNodes(treeViewZones.Nodes);
     }
 
     private async void btnDeleteZone_Click(object sender, EventArgs e)
     {
-        SaveSelectedZoneId();
+        SaveSelectedId();
         var zone = SelectedZone;
         if (zone == null || zone.Type == ZoneType.ExternalArea)
         {
@@ -197,75 +304,134 @@ public partial class AtlasClientForm : Form
         if (MessageBox.Show($"Delete zone '{zone.Name}'?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
         {
             await _zoneClient.Delete(zone.Id);
-            await RefreshMap();
+            await RefreshAllAsync();
         }
-        RestoreSelectedZoneId();
-        ExpandAllNodes(treeViewZones.Nodes);
     }
 
     private async void btnAddTransit_Click(object sender, EventArgs e)
     {
-        SaveSelectedZoneId();
+        SaveSelectedId();
         var fromZone = SelectedZone;
-        if (fromZone == null || fromZone.Type == ZoneType.ExternalArea)
+        if (fromZone == null)
         {
-            MessageBox.Show("Cannot add a transit from External Area.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Please select a source zone first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
+        
+        if (fromZone.Type == ZoneType.ExternalArea)
+        {
+            MessageBox.Show("Cannot create transits from External Area.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+        var existingTransits = _transits.Where(t => t.FromZoneId == fromZone.Id);
+        var maxOrder = existingTransits.Any() ? existingTransits.Max(t => t.Order) : 0;
         var newTransit = new Transit
         {
             Id = Guid.NewGuid(),
             IsBidirectional = true,
-            FromZoneId = fromZone.Id
+            FromZoneId = fromZone.Id,
+            Order = maxOrder + 1
         };
         using var dlg = new RequestPropertyDialog(newTransit, "Create Transit");
         if (dlg.ShowDialog(this) == DialogResult.OK)
         {
             await _transitClient.Add(newTransit);
-            await RefreshMap();
-            await RefreshPlot();
+            await RefreshAllAsync();
         }
-        RestoreSelectedZoneId();
-        ExpandAllNodes(treeViewZones.Nodes);
     }
 
     private async void btnDeleteTransit_Click(object sender, EventArgs e)
     {
-        SaveSelectedZoneId();
+        SaveSelectedId();
         if (propertyGrid.SelectedObject is Transit transit && propertyGrid.Tag?.ToString()?.StartsWith("transit") == true)
         {
             if (MessageBox.Show($"Delete transit?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 await _transitClient.Delete(transit.Id);
-                await RefreshMap();
+                await RefreshAllAsync();
             }
         }
-        RestoreSelectedZoneId();
-        ExpandAllNodes(treeViewZones.Nodes);
     }
 
     private async Task RefreshPlot()
     {
-        var plot = await _atlasClient.Plot();
-        if (string.IsNullOrEmpty(plot.UrlImage))
+        try
         {
-            pictureBoxPlot.Image = null;
-            return;
+            var plot = await _atlasClient.Plot();
+            if (string.IsNullOrEmpty(plot.UrlImage))
+            {
+                pictureBoxPlot.Image = null;
+                return;
+            }
+            var image = await LoadImageFromUrl(plot.UrlImage);
+            pictureBoxPlot.Image = image;
         }
-        var image = await LoadImageFromUrl(plot.UrlImage);
-        pictureBoxPlot.Image = image;
+        catch (Exception ex)
+        {
+            // Create error image with text instead of showing MessageBox
+            pictureBoxPlot.Image = CreateErrorImage($"Failed to load plot image:\n{ex.Message}");
+        }
+    }
+
+    private Image CreateErrorImage(string errorMessage)
+    {
+        // Create a simple error image with text
+        var width = pictureBoxPlot.Width > 0 ? pictureBoxPlot.Width : 400;
+        var height = pictureBoxPlot.Height > 0 ? pictureBoxPlot.Height : 300;
+        
+        var bitmap = new Bitmap(width, height);
+        using var graphics = Graphics.FromImage(bitmap);
+        
+        // Fill background with light red
+        graphics.Clear(Color.MistyRose);
+        
+        // Draw border
+        using var borderPen = new Pen(Color.Red, 2);
+        graphics.DrawRectangle(borderPen, 1, 1, width - 2, height - 2);
+        
+        // Draw error icon (simple X)
+        using var iconPen = new Pen(Color.Red, 3);
+        var iconSize = 40;
+        var iconX = 20;
+        var iconY = 20;
+        graphics.DrawLine(iconPen, iconX, iconY, iconX + iconSize, iconY + iconSize);
+        graphics.DrawLine(iconPen, iconX + iconSize, iconY, iconX, iconY + iconSize);
+        
+        // Draw error text
+        using var font = new Font("Arial", 10, FontStyle.Regular);
+        using var brush = new SolidBrush(Color.DarkRed);
+        var textRect = new Rectangle(80, 20, width - 100, height - 40);
+        graphics.DrawString(errorMessage, font, brush, textRect);
+        
+        return bitmap;
     }
 
     private async Task<Image?> LoadImageFromUrl(string url)
     {
-        var bytes = await _httpClient.GetByteArrayAsync(url);
-        using var ms = new System.IO.MemoryStream(bytes);
-        return Image.FromStream(ms);
+        try
+        {
+            var bytes = await _httpClient.GetByteArrayAsync(url);
+            using var ms = new System.IO.MemoryStream(bytes);
+            return Image.FromStream(ms);
+        }
+        catch (HttpRequestException ex)
+        {
+            // Handle HTTP errors (like 520 from PlantUML server)
+            throw new Exception($"PlantUML server error: {ex.StatusCode} - {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            // Handle other errors
+            throw new Exception($"Failed to load image from URL: {ex.Message}");
+        }
     }
 
     private async void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
     {
-        // Optionally, auto-apply changes or enable a save button
+        if (e.ChangedItem?.PropertyDescriptor?.Name == "Order")
+        {
+            await RefreshAllAsync();
+        }
     }
 
     protected override async void OnValidated(EventArgs e)
@@ -274,35 +440,33 @@ public partial class AtlasClientForm : Form
         // Optionally, handle validation
     }
 
-    private void btnRefresh_Click(object sender, EventArgs e)
+    private async void btnRefresh_Click(object sender, EventArgs e)
     {
-        _ = RefreshMap();
-        _ = RefreshPlot();
+        await RefreshAllAsync();
     }
 
     private async void btnUpdate_Click(object sender, EventArgs e)
     {
-        SaveSelectedZoneId();
+        SaveSelectedId();
         if (propertyGrid.SelectedObject is Zone zone && propertyGrid.Tag?.ToString()?.StartsWith("zone") == true)
         {
             await _zoneClient.Update(zone.Id, zone);
-            await RefreshMap();
-            await RefreshPlot();
+            await RefreshAllAsync();
             MessageBox.Show("Zone updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        else if (propertyGrid.SelectedObject is Transit transit && propertyGrid.Tag?.ToString()?.StartsWith("transit") == true)
+        else if (propertyGrid.SelectedObject is Transit transit &&
+                 propertyGrid.Tag?.ToString()?.StartsWith("transit") == true)
         {
             await _transitClient.Update(transit.Id, transit);
-            await RefreshMap();
-            await RefreshPlot();
-            MessageBox.Show("Transit updated successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            await RefreshAllAsync();
+            MessageBox.Show("Transit updated successfully.", "Success", MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
         else
         {
             MessageBox.Show("Select a zone or transit to update.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-        RestoreSelectedZoneId();
-        ExpandAllNodes(treeViewZones.Nodes);
+        await RefreshAllAsync();
     }
 
     // Handler for UP button
@@ -315,49 +479,221 @@ public partial class AtlasClientForm : Form
     {
         MoveSelectedZone(1);
     }
-    private void MoveSelectedZone(int direction)
+    private async void MoveSelectedZone(int direction)
     {
-        SaveSelectedZoneId();
-        var zone = SelectedZone;
-        if (zone == null || zone.ParentId == null) return;
-        var siblings = _zones.Where(z => z.ParentId == zone.ParentId).ToList();
-        int idx = siblings.FindIndex(z => z.Id == zone.Id);
-        int newIdx = idx + direction;
-        if (newIdx < 0 || newIdx >= siblings.Count) return;
-        siblings.RemoveAt(idx);
-        siblings.Insert(newIdx, zone);
-        // Reorder in _zones
-        _zones.RemoveAll(z => z.ParentId == zone.ParentId);
-        _zones.AddRange(siblings);
-        BuildZoneTree();
-        RestoreSelectedZoneId();
-        ExpandAllNodes(treeViewZones.Nodes);
+        var selectedNode = treeViewZones.SelectedNode;
+        if (selectedNode == null) return;
+        
+        var parentNode = selectedNode.Parent;
+        if (parentNode == null) return;
+        
+        var siblings = parentNode.Nodes.Cast<TreeNode>().ToList();
+        int currentIndex = siblings.IndexOf(selectedNode);
+        int newIndex = currentIndex + direction;
+        
+        if (newIndex < 0 || newIndex >= siblings.Count) return;
+        
+        var targetNode = siblings[newIndex];
+        
+        if (selectedNode.Tag is Zone selectedZone && targetNode.Tag is Zone targetZone)
+        {
+            if (selectedZone.ParentId == targetZone.ParentId)
+            {
+                var (canSwap, swapReason) = CanSwapZonePositions(selectedZone, targetZone);
+                if (canSwap)
+                {
+                    SwapZoneOrder(selectedZone, targetZone);
+                }
+                else
+                {
+                    MessageBox.Show($"Cannot swap positions: {swapReason}", "Move Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+            }
+            else
+            {
+                var (canMove, moveReason) = CanMoveZoneToParent(selectedZone, targetZone);
+                if (canMove)
+                {
+                    MoveZoneToNewParent(selectedZone, targetZone);
+                }
+                else
+                {
+                    MessageBox.Show($"Cannot move zone: {moveReason}", "Move Restricted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+            }
+        }
+        else if (selectedNode.Tag is Transit selectedTransit && targetNode.Tag is Transit targetTransit)
+        {
+            if (selectedTransit.FromZoneId == targetTransit.FromZoneId)
+            {
+                SwapTransitOrder(selectedTransit, targetTransit);
+            }
+        }
+        
+        await RefreshAllAsync();
+    }
+    
+    private void MoveZoneToNewParent(Zone zone, Zone newParent)
+    {
+        var oldParentId = zone.ParentId;
+        zone.ParentId = newParent.Id;
+        
+        var existingZones = _zones.Where(z => z.ParentId == newParent.Id);
+        var maxOrder = existingZones.Any() ? existingZones.Max(z => z.Order) : 0;
+        zone.Order = maxOrder + 1;
+    }
+    
+    private void SwapZoneOrder(Zone zone1, Zone zone2)
+    {
+        var tempOrder = zone1.Order;
+        zone1.Order = zone2.Order;
+        zone2.Order = tempOrder;
+    }
+    
+    private void SwapTransitOrder(Transit transit1, Transit transit2)
+    {
+        var tempOrder = transit1.Order;
+        transit1.Order = transit2.Order;
+        transit2.Order = tempOrder;
+    }
+    
+    private (bool canMove, string reason) CanMoveZoneToParent(Zone zone, Zone? newParent)
+    {
+        if (zone.Type == ZoneType.ExternalArea)
+            return (false, "External Area zones cannot be moved.");
+            
+        if (newParent == null)
+        {
+            if (zone.Type == ZoneType.Building)
+                return (true, "");
+            return (false, $"Only Building zones can be root zones. Cannot move {zone.Type} to root level.");
+        }
+            
+        if (newParent.Type == ZoneType.ExternalArea)
+            return (false, "Cannot move zones into External Area.");
+            
+        switch (zone.Type)
+        {
+            case ZoneType.Building:
+                if (newParent.Type == ZoneType.ExternalArea)
+                    return (true, "");
+                return (false, $"Building zones can only be moved to External Area, not to {newParent.Type}.");
+            case ZoneType.Floor:
+                if (newParent.Type == ZoneType.Building)
+                    return (true, "");
+                return (false, $"Floor zones can only be moved to Building zones, not to {newParent.Type}.");
+            case ZoneType.Room:
+            case ZoneType.Corridor:
+            case ZoneType.Lobby:
+            case ZoneType.Elevator:
+            case ZoneType.Staircase:
+                if (newParent.Type == ZoneType.Floor)
+                    return (true, "");
+                return (false, $"{zone.Type} zones can only be moved to Floor zones, not to {newParent.Type}.");
+            case ZoneType.Parking:
+                if (newParent.Type == ZoneType.Building || newParent.Type == ZoneType.ExternalArea)
+                    return (true, "");
+                return (false, $"Parking zones can only be moved to Building or External Area zones, not to {newParent.Type}.");
+            default:
+                return (true, "");
+        }
+    }
+    
+    private (bool canSwap, string reason) CanSwapZonePositions(Zone zone1, Zone zone2)
+    {
+        if (zone1.ParentId != zone2.ParentId)
+            return (false, "Cannot swap positions of zones with different parents.");
+            
+        if (zone1.Type == ZoneType.ExternalArea || zone2.Type == ZoneType.ExternalArea)
+            return (false, "External Area zones cannot have their positions swapped.");
+            
+        return (true, "");
+    }
+    
+    private (bool canCreate, string reason) CanCreateZoneInParent(ZoneType zoneType, Zone? parentZone)
+    {
+        if (zoneType == ZoneType.ExternalArea)
+            return (false, "External Area zones cannot be created manually.");
+            
+        if (parentZone == null)
+        {
+            if (zoneType == ZoneType.Building)
+                return (true, "");
+            return (false, $"Only Building zones can be created at root level. Cannot create {zoneType} without a parent.");
+        }
+            
+        if (parentZone.Type == ZoneType.ExternalArea)
+            return (false, "Cannot create zones inside External Area.");
+            
+        switch (zoneType)
+        {
+            case ZoneType.Building:
+                if (parentZone.Type == ZoneType.ExternalArea)
+                    return (true, "");
+                return (false, $"Building zones can only be created under External Area, not under {parentZone.Type}.");
+            case ZoneType.Floor:
+                if (parentZone.Type == ZoneType.Building)
+                    return (true, "");
+                return (false, $"Floor zones can only be created under Building zones, not under {parentZone.Type}.");
+            case ZoneType.Room:
+            case ZoneType.Corridor:
+            case ZoneType.Lobby:
+            case ZoneType.Elevator:
+            case ZoneType.Staircase:
+                if (parentZone.Type == ZoneType.Floor)
+                    return (true, "");
+                return (false, $"{zoneType} zones can only be created under Floor zones, not under {parentZone.Type}.");
+            case ZoneType.Parking:
+                if (parentZone.Type == ZoneType.Building || parentZone.Type == ZoneType.ExternalArea)
+                    return (true, "");
+                return (false, $"Parking zones can only be created under Building or External Area zones, not under {parentZone.Type}.");
+            default:
+                return (true, "");
+        }
     }
     private void SaveSelectedId()
     {
-        if (treeViewZones.SelectedNode?.Tag is Item zone)
-            _lastSelectedId = zone.GetId();
-        else if (treeViewZones.SelectedNode?.Tag is Transit transit)
-            _lastSelectedId = transit.Id;
+        if (propertyGrid.SelectedObject is IItem item)
+        {
+            _lastSelectedId = item.GetId();
+        }
     }
     private void RestoreSelectedId()
     {
-        if (_lastSelectedId == null) return;
-        var node = FindNodeByZoneId(treeViewZones.Nodes, _lastSelectedId.Value);
-        if (node != null)
-            treeViewZones.SelectedNode = node;
-    }
-
-    private TreeNode? FindNodeById(TreeNodeCollection nodes, Guid id)
-    {
-        foreach (TreeNode node in nodes)
+        if (string.IsNullOrEmpty(_lastSelectedId)) return;
+        if (Guid.TryParse(_lastSelectedId, out var id))
         {
-            if (node.Tag is Zone z && z.Id == id)
-                return node;
-            var found = FindNodeById(node.Nodes, id);
-            if (found != null) return found;
+            var node = FindNodeByZoneId(treeViewZones.Nodes, id);
+            if (node != null)
+            {
+                treeViewZones.SelectedNode = node;
+                node.EnsureVisible();
+
+                // Also update the property grid to show the selected item
+                if (node.Tag is Zone zone)
+                {
+                    propertyGrid.SelectedObject = zone;
+                    propertyGrid.Tag = "zone";
+                }
+                else if (node.Tag is Transit transit)
+                {
+                    propertyGrid.SelectedObject = transit;
+                    propertyGrid.Tag = "transit";
+                }
+            }
         }
-        return null;
+    }
+    
+    private async Task RefreshAllAsync()
+    {
+        SaveSelectedId();
+        await RefreshMap();
+        BuildZoneTree();
+        ExpandAllNodes(treeViewZones.Nodes);
+        RestoreSelectedId();
+        await RefreshPlot();
     }
 
     private TreeNode? FindNodeByZoneId(TreeNodeCollection nodes, Guid id)
@@ -365,6 +701,8 @@ public partial class AtlasClientForm : Form
         foreach (TreeNode node in nodes)
         {
             if (node.Tag is Zone z && z.Id == id)
+                return node;
+            if (node.Tag is Transit t && t.Id == id)
                 return node;
             var found = FindNodeByZoneId(node.Nodes, id);
             if (found != null) return found;
@@ -405,14 +743,14 @@ public partial class AtlasClientForm : Form
         }
     }
 
-    private string DbSharedToolFolder
+    private string? DbSharedToolFolder
     {
         get
         {
             var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
             while (dir != null)
             {
-                var candidate = Path.Combine(dir.FullName, "src", "Shared.Db.Tool");
+                var candidate = Path.Combine(dir.FullName, "src", "Shared.Db.Tool", "initdata");
                 if (Directory.Exists(candidate))
                     return candidate;
                 // Also check without "src" in case structure is different

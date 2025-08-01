@@ -66,39 +66,43 @@ CREATE TABLE IF NOT EXISTS "contour"."com_port_stop_bits" (
 
 -- Regular tables
 CREATE TABLE "actor"."member" (
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "atlas"."zone" (
     "type" TEXT NOT NULL,
     "parent_id" UUID NULL,
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "codex"."route_rule" (
     "from_zone_id" UUID NOT NULL,
     "to_zone_id" UUID NOT NULL,
     "is_bidirectional" BOOLEAN NOT NULL,
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "codex"."time_zone_rule" (
     "day_of_week" TEXT NOT NULL,
     "start_time" TEXT NOT NULL,
     "end_time" TEXT NOT NULL,
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "contour"."event_log" (
@@ -111,10 +115,11 @@ CREATE TABLE "contour"."event_log" (
 );
 
 CREATE TABLE "contour"."spot" (
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "actor"."pass" (
@@ -124,10 +129,11 @@ CREATE TABLE "actor"."pass" (
     "issue_date" TIMESTAMP NOT NULL,
     "expiry_date" TIMESTAMP NULL,
     "member_id" UUID NULL REFERENCES "actor"."member"("id"),
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE "atlas"."transit" (
@@ -135,10 +141,11 @@ CREATE TABLE "atlas"."transit" (
     "to_zone_id" UUID NOT NULL REFERENCES "atlas"."zone"("id"),
     "is_bidirectional" BOOLEAN NOT NULL,
     "spot_id" UUID NULL REFERENCES "contour"."spot"("id"),
-    "id" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
-    "is_active" BOOLEAN NOT NULL
+    "is_active" BOOLEAN NOT NULL,
+    "order" INTEGER NULL,
+    "id" UUID PRIMARY KEY NOT NULL
 );
 
 -- Polymorphic tables

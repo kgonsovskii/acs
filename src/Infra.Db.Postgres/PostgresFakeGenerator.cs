@@ -10,7 +10,7 @@ public interface IFakeDbGenerator
     string GenerateFakeDataSqlForTypes(IList<Type> types, Func<Type, bool>? onFilter = null);
 }
 
-public class PostgresFakeGenerator : IFakeDbGenerator
+public class GeneralFakeGenerator : IFakeDbGenerator
 {
     protected readonly TypeCollector TypeCollector = new();
     public string GenerateFakeDataSql(string outputDir, Func<Type, bool>? onFilter = null)

@@ -1,3 +1,4 @@
+using System.Drawing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -35,8 +36,16 @@ public abstract class GuiHost<TMainFrom> : IHostedService where TMainFrom : Form
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
+                // Set global font for the entire application
+                var globalFont = new Font("Segoe UI", 12, FontStyle.Bold);
+                Application.SetDefaultFont(globalFont);
+
                 using var scope = _services.CreateScope();
                 var mainForm = scope.ServiceProvider.GetRequiredService<TMainFrom>();
+
+                // Apply font to main form and ensure it propagates to all controls
+                mainForm.Font = globalFont;
+                ApplyFontToAllControls(mainForm, globalFont);
 
                 mainForm.FormClosed += (s, e) =>
                 {
@@ -70,6 +79,18 @@ public abstract class GuiHost<TMainFrom> : IHostedService where TMainFrom : Form
         if (Application.MessageLoop)
         {
             Application.Exit();
+        }
+    }
+
+    private void ApplyFontToAllControls(Control control, Font font)
+    {
+        // Apply font to current control
+        control.Font = font;
+
+        // Recursively apply to all child controls
+        foreach (Control child in control.Controls)
+        {
+            ApplyFontToAllControls(child, font);
         }
     }
 }

@@ -2,20 +2,27 @@
 
 namespace SevenSeals.Tss.Shared;
 
+
 public interface IItem
 {
     string GetId();
 }
+
+public interface IStructuralItem : IItem
+{
+    [DbNull] public string? Name { get; set; }
+    [DbNull] public string? Hint { get; set; }
+    public bool IsActive { get; set; }
+    [DbNull] int Order { get; set; }
+}
+
 public interface IItem<TId>: IItem
 {
     [DbPrimaryKey] public TId Id {get; set; }
 }
 
-public interface IStructuralItem<TId>: IItem<TId>
+public interface IStructuralItem<TId>: IItem<TId>, IStructuralItem
 {
-    [DbNull] public string? Name { get; set; }
-    [DbNull] public string? Hint { get; set; }
-    public bool IsActive { get; set; }
 }
 
 
@@ -34,4 +41,7 @@ public class StructuralItem<TId>: Item<TId>, IStructuralItem<TId>
     [DbNull] public string? Name { get; set; }
     [DbNull] public string? Hint { get; set; }
     public bool IsActive { get; set; }
+
+    [DbNull]
+    public int Order { get; set; }
 }
