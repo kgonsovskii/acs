@@ -135,6 +135,8 @@ public partial class AtlasClientForm : Form
             _zones = map.Zones ?? new List<Zone>();
             _transits = map.Transits ?? new List<Transit>();
             BuildZoneTree();
+            ExpandAllNodes(treeViewZones.Nodes);
+            RestoreSelectedId();
         }
         catch (Exception ex)
         {
@@ -154,7 +156,7 @@ public partial class AtlasClientForm : Form
         {
             var rootNode = CreateTransitBasedZoneNode(externalArea, zoneDict, processedZones);
             treeViewZones.Nodes.Add(rootNode);
-            treeViewZones.SelectedNode = rootNode;
+            // Don't automatically select the root node - allow null selection
         }
         
         treeViewZones.EndUpdate();
@@ -229,7 +231,7 @@ public partial class AtlasClientForm : Form
         }
     }
 
-    private Zone SelectedZone
+    private Zone? SelectedZone
     {
         get
         {
@@ -237,8 +239,8 @@ public partial class AtlasClientForm : Form
                 return zone;
             if (propertyGrid.SelectedObject is Transit transit)
                 return _zones.FirstOrDefault(z => z.Id == transit.FromZoneId);
-            // Fallback: select ExternalArea
-            return _zones.FirstOrDefault(z => z.Type == ZoneType.ExternalArea);
+            // No fallback - allow null selection
+            return null;
         }
     }
 
@@ -255,18 +257,15 @@ public partial class AtlasClientForm : Form
     private async void btnAddZone_Click(object sender, EventArgs e)
     {
         SaveSelectedId();
-        var parentZone = SelectedZone;
-        if (parentZone == null)
+        
+        // Check if a zone is actually selected in the property grid
+        if (propertyGrid.SelectedObject is not Zone parentZone || propertyGrid.Tag?.ToString() != "zone")
         {
             MessageBox.Show("Please select a parent zone first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
         
-        if (parentZone.Type == ZoneType.ExternalArea)
-        {
-            MessageBox.Show("Cannot create zones inside External Area.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            return;
-        }
+        // Allow creating zones in External Area - the validation will handle type restrictions
         var existingZones = _zones.Where(z => z.ParentId == parentZone.Id);
         var maxOrder = existingZones.Any() ? existingZones.Max(z => z.Order) : 0;
         var newZone = new Zone
@@ -295,14 +294,38 @@ public partial class AtlasClientForm : Form
     private async void btnDeleteZone_Click(object sender, EventArgs e)
     {
         SaveSelectedId();
-        var zone = SelectedZone;
-        if (zone == null || zone.Type == ZoneType.ExternalArea)
+        
+        // Check if a zone is actually selected in the property grid
+        if (propertyGrid.SelectedObject is not Zone zone || propertyGrid.Tag?.ToString() != "zone")
+        {
+            MessageBox.Show("Please select a zone to delete.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+        
+        if (zone.Type == ZoneType.ExternalArea)
         {
             MessageBox.Show("Cannot delete the External Area zone.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
+        
+        // Check if zone has children (recursive check)
+        var childZones = GetChildZonesRecursive(zone.Id);
+        if (childZones.Any())
+        {
+            var childNames = string.Join(", ", childZones.Take(3).Select(z => z.Name));
+            if (childZones.Count > 3)
+                childNames += $" and {childZones.Count - 3} more";
+            
+            MessageBox.Show($"Cannot delete zone '{zone.Name}' because it has child zones: {childNames}. Please delete child zones first.", "Cannot Delete", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+        
         if (MessageBox.Show($"Delete zone '{zone.Name}'?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
         {
+            // Find the best item to select after deletion
+            var nextItemToSelect = FindNextItemToSelectAfterZoneDeletion(zone);
+            _lastSelectedId = nextItemToSelect?.GetId();
+            
             await _zoneClient.Delete(zone.Id);
             await RefreshAllAsync();
         }
@@ -311,18 +334,15 @@ public partial class AtlasClientForm : Form
     private async void btnAddTransit_Click(object sender, EventArgs e)
     {
         SaveSelectedId();
-        var fromZone = SelectedZone;
-        if (fromZone == null)
+        
+        // Check if a zone is actually selected in the property grid
+        if (propertyGrid.SelectedObject is not Zone fromZone || propertyGrid.Tag?.ToString() != "zone")
         {
             MessageBox.Show("Please select a source zone first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
         
-        if (fromZone.Type == ZoneType.ExternalArea)
-        {
-            MessageBox.Show("Cannot create transits from External Area.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            return;
-        }
+        // Allow creating transits from External Area - this makes sense for external connections
         var existingTransits = _transits.Where(t => t.FromZoneId == fromZone.Id);
         var maxOrder = existingTransits.Any() ? existingTransits.Max(t => t.Order) : 0;
         var newTransit = new Transit
@@ -345,8 +365,25 @@ public partial class AtlasClientForm : Form
         SaveSelectedId();
         if (propertyGrid.SelectedObject is Transit transit && propertyGrid.Tag?.ToString()?.StartsWith("transit") == true)
         {
+            // Check if deleting this transit will orphan any zones
+            var orphanedZones = GetOrphanedZonesAfterTransitDeletion(transit);
+            if (orphanedZones.Any())
+            {
+                var zoneNames = string.Join(", ", orphanedZones.Take(3).Select(z => z.Name));
+                if (orphanedZones.Count > 3)
+                    zoneNames += $" and {orphanedZones.Count - 3} more";
+                
+                var result = MessageBox.Show($"Deleting this transit will orphan the following zones: {zoneNames}. Do you want to continue?", "Orphaned Zones Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result != DialogResult.Yes)
+                    return;
+            }
+            
             if (MessageBox.Show($"Delete transit?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
+                // Find the best item to select after deletion
+                var nextItemToSelect = FindNextItemToSelectAfterTransitDeletion(transit);
+                _lastSelectedId = nextItemToSelect?.GetId();
+                
                 await _transitClient.Delete(transit.Id);
                 await RefreshAllAsync();
             }
@@ -624,8 +661,13 @@ public partial class AtlasClientForm : Form
             return (false, $"Only Building zones can be created at root level. Cannot create {zoneType} without a parent.");
         }
             
+        // External Area can contain Building and Parking zones
         if (parentZone.Type == ZoneType.ExternalArea)
-            return (false, "Cannot create zones inside External Area.");
+        {
+            if (zoneType == ZoneType.Building || zoneType == ZoneType.Parking)
+                return (true, "");
+            return (false, $"Only Building and Parking zones can be created under External Area. Cannot create {zoneType}.");
+        }
             
         switch (zoneType)
         {
@@ -662,12 +704,32 @@ public partial class AtlasClientForm : Form
     }
     private void RestoreSelectedId()
     {
-        if (string.IsNullOrEmpty(_lastSelectedId)) return;
+        if (string.IsNullOrEmpty(_lastSelectedId))
+        {
+            // If no previous selection, select the root (External Area)
+            var externalAreaNode = FindExternalAreaNode(treeViewZones.Nodes);
+            if (externalAreaNode != null)
+            {
+                // Set the selected node directly (like in the Stack Overflow solution)
+                treeViewZones.SelectedNode = externalAreaNode;
+                externalAreaNode.EnsureVisible();
+                
+                if (externalAreaNode.Tag is Zone zone)
+                {
+                    propertyGrid.SelectedObject = zone;
+                    propertyGrid.Tag = "zone";
+                    _lastSelectedId = zone.GetId(); // Save the selection
+                }
+            }
+            return;
+        }
+        
         if (Guid.TryParse(_lastSelectedId, out var id))
         {
             var node = FindNodeByZoneId(treeViewZones.Nodes, id);
             if (node != null)
             {
+                // Set the selected node directly (like in the Stack Overflow solution)
                 treeViewZones.SelectedNode = node;
                 node.EnsureVisible();
 
@@ -681,6 +743,32 @@ public partial class AtlasClientForm : Form
                 {
                     propertyGrid.SelectedObject = transit;
                     propertyGrid.Tag = "transit";
+                }
+            }
+            else
+            {
+                // If the previously selected item no longer exists, select the root
+                var externalAreaNode = FindExternalAreaNode(treeViewZones.Nodes);
+                if (externalAreaNode != null)
+                {
+                    // Set the selected node directly (like in the Stack Overflow solution)
+                    treeViewZones.SelectedNode = externalAreaNode;
+                    externalAreaNode.EnsureVisible();
+                    
+                    if (externalAreaNode.Tag is Zone zone)
+                    {
+                        propertyGrid.SelectedObject = zone;
+                        propertyGrid.Tag = "zone";
+                        _lastSelectedId = zone.GetId();
+                    }
+                }
+                else
+                {
+                    // Clear selection if even root is not found
+                    treeViewZones.SelectedNode = null;
+                    propertyGrid.SelectedObject = null;
+                    propertyGrid.Tag = null;
+                    _lastSelectedId = null;
                 }
             }
         }
@@ -709,6 +797,18 @@ public partial class AtlasClientForm : Form
         }
         return null;
     }
+
+    private TreeNode? FindExternalAreaNode(TreeNodeCollection nodes)
+    {
+        foreach (TreeNode node in nodes)
+        {
+            if (node.Tag is Zone zone && zone.Type == ZoneType.ExternalArea)
+                return node;
+            var found = FindExternalAreaNode(node.Nodes);
+            if (found != null) return found;
+        }
+        return null;
+    }
     private void ExpandAllNodes(TreeNodeCollection nodes)
     {
         foreach (TreeNode node in nodes)
@@ -716,6 +816,155 @@ public partial class AtlasClientForm : Form
             node.Expand();
             ExpandAllNodes(node.Nodes);
         }
+    }
+
+    private IItem? FindNextItemToSelectAfterZoneDeletion(Zone deletedZone)
+    {
+        // Priority order for selection after zone deletion:
+        // 1. Next sibling zone (same parent, higher order)
+        // 2. Previous sibling zone (same parent, lower order)
+        // 3. Parent zone
+        // 4. First child zone (if any)
+        // 5. Any sibling zone (only if parent exists)
+        // 6. External Area (fallback)
+
+        if (deletedZone.ParentId.HasValue)
+        {
+            var parentZone = _zones.FirstOrDefault(z => z.Id == deletedZone.ParentId.Value);
+            if (parentZone != null)
+            {
+                // 1. Try to find next sibling
+                var nextSibling = _zones
+                    .Where(z => z.ParentId == deletedZone.ParentId && z.Order > deletedZone.Order)
+                    .OrderBy(z => z.Order)
+                    .FirstOrDefault();
+                if (nextSibling != null)
+                    return nextSibling;
+
+                // 2. Try to find previous sibling
+                var prevSibling = _zones
+                    .Where(z => z.ParentId == deletedZone.ParentId && z.Order < deletedZone.Order)
+                    .OrderByDescending(z => z.Order)
+                    .FirstOrDefault();
+                if (prevSibling != null)
+                    return prevSibling;
+
+                // 3. Select parent zone
+                return parentZone;
+            }
+        }
+
+        // 4. Try to find first child of the deleted zone (if any)
+        var firstChild = _zones
+            .Where(z => z.ParentId == deletedZone.Id)
+            .OrderBy(z => z.Order)
+            .FirstOrDefault();
+        if (firstChild != null)
+            return firstChild;
+
+        // 5. Try to find any sibling zone (only if parent exists)
+        if (deletedZone.ParentId.HasValue)
+        {
+            var anySibling = _zones
+                .Where(z => z.ParentId == deletedZone.ParentId && z.Id != deletedZone.Id)
+                .OrderBy(z => z.Order)
+                .FirstOrDefault();
+            if (anySibling != null)
+                return anySibling;
+        }
+
+        // 6. Fallback to External Area (Outside world)
+        return _zones.FirstOrDefault(z => z.Type == ZoneType.ExternalArea);
+    }
+
+    private IItem? FindNextItemToSelectAfterTransitDeletion(Transit deletedTransit)
+    {
+        // Priority order for selection after transit deletion:
+        // 1. Next transit from the same source zone
+        // 2. Previous transit from the same source zone
+        // 3. Source zone
+        // 4. Target zone
+        // 5. Any transit from the same source zone
+        // 6. External Area (fallback)
+
+        // 1. Try to find next transit from same source
+        var nextTransit = _transits
+            .Where(t => t.FromZoneId == deletedTransit.FromZoneId && t.Order > deletedTransit.Order)
+            .OrderBy(t => t.Order)
+            .FirstOrDefault();
+        if (nextTransit != null)
+            return nextTransit;
+
+        // 2. Try to find previous transit from same source
+        var prevTransit = _transits
+            .Where(t => t.FromZoneId == deletedTransit.FromZoneId && t.Order < deletedTransit.Order)
+            .OrderByDescending(t => t.Order)
+            .FirstOrDefault();
+        if (prevTransit != null)
+            return prevTransit;
+
+        // 3. Select source zone
+        var sourceZone = _zones.FirstOrDefault(z => z.Id == deletedTransit.FromZoneId);
+        if (sourceZone != null)
+            return sourceZone;
+
+        // 4. Select target zone
+        var targetZone = _zones.FirstOrDefault(z => z.Id == deletedTransit.ToZoneId);
+        if (targetZone != null)
+            return targetZone;
+
+        // 5. Try to find any transit from the same source zone
+        var anyTransit = _transits
+            .Where(t => t.FromZoneId == deletedTransit.FromZoneId && t.Id != deletedTransit.Id)
+            .OrderBy(t => t.Order)
+            .FirstOrDefault();
+        if (anyTransit != null)
+            return anyTransit;
+
+        // 6. Fallback to External Area
+        return _zones.FirstOrDefault(z => z.Type == ZoneType.ExternalArea);
+    }
+
+    private List<Zone> GetOrphanedZonesAfterTransitDeletion(Transit transit)
+    {
+        var orphanedZones = new List<Zone>();
+        
+        // Check if the target zone would become orphaned
+        var targetZone = _zones.FirstOrDefault(z => z.Id == transit.ToZoneId);
+        if (targetZone != null)
+        {
+            // Check if this transit is the only connection to the target zone
+            var otherTransitsToTarget = _transits
+                .Where(t => t.Id != transit.Id && 
+                           (t.FromZoneId == targetZone.Id || t.ToZoneId == targetZone.Id))
+                .ToList();
+            
+            // Also check if target zone has a parent (implicit connection)
+            var hasParent = targetZone.ParentId.HasValue;
+            
+            // If no other transits and no parent, the zone would be orphaned
+            if (!otherTransitsToTarget.Any() && !hasParent)
+            {
+                orphanedZones.Add(targetZone);
+            }
+        }
+        
+        return orphanedZones;
+    }
+
+    private List<Zone> GetChildZonesRecursive(Guid parentZoneId)
+    {
+        var result = new List<Zone>();
+        var directChildren = _zones.Where(z => z.ParentId == parentZoneId).ToList();
+        
+        foreach (var child in directChildren)
+        {
+            result.Add(child);
+            // Recursively get children of children
+            result.AddRange(GetChildZonesRecursive(child.Id));
+        }
+        
+        return result;
     }
 
     private async void btnSaveAll_Click(object sender, EventArgs e)

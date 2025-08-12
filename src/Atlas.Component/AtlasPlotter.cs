@@ -34,7 +34,6 @@ namespace Atlas.Component
             sb.AppendLine("skinparam defaultFontStyle bold");
             sb.AppendLine("skinparam roundcorner 10");
             sb.AppendLine("skinparam shadowing false");
-            sb.AppendLine("skinparam ArrowColor #666666");
             sb.AppendLine("skinparam NodeBackgroundColor #FFFFFF");
             sb.AppendLine("skinparam NodeBorderColor #666666");
 
@@ -61,7 +60,7 @@ namespace Atlas.Component
                 }
             }
 
-            // Add explicit transits
+            // Add explicit transits with bold styling
             foreach (var transit in _map.Transits.OrderBy(t => t.Order))
             {
                 var fromZone = _map.Zones.FirstOrDefault(z => z.Id == transit.FromZoneId);
@@ -72,11 +71,11 @@ namespace Atlas.Component
                     var transitLabel = GetTransitLabel(transit);
                     if (transit.IsBidirectional)
                     {
-                        sb.AppendLine($"{GetZoneId(fromZone)} <--> {GetZoneId(toZone)} : {transitLabel}");
+                        sb.AppendLine($"{GetZoneId(fromZone)} <--> {GetZoneId(toZone)} : {transitLabel} #2E86AB");
                     }
                     else
                     {
-                        sb.AppendLine($"{GetZoneId(fromZone)} --> {GetZoneId(toZone)} : {transitLabel}");
+                        sb.AppendLine($"{GetZoneId(fromZone)} --> {GetZoneId(toZone)} : {transitLabel} #2E86AB");
                     }
                 }
             }
