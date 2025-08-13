@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Text.Json.Nodes;
+using SevenSeals.Tss.Atlas;
 
 namespace SevenSeals.Tss.Web.Api.Controllers
 {
@@ -8,188 +7,138 @@ namespace SevenSeals.Tss.Web.Api.Controllers
     [Route("api/[controller]")]
     public class PlotController : ControllerBase
     {
-        private readonly string _dataDir = Path.Combine("data");
-        private readonly string _atlasPath;
-        public PlotController()
+        private readonly IAtlasClient _atlasClient;
+
+        public PlotController(IAtlasClient atlasClient)
         {
-            _atlasPath = Path.Combine(_dataDir, "atlas.json");
+            _atlasClient = atlasClient;
         }
 
-        [HttpGet("{name}")]
-        public async Task<IActionResult> Get(string name)
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
-            var fileName = name + ".json";
-            var filePath = Path.Combine(_dataDir, fileName);
-            if (!System.IO.File.Exists(filePath))
-                return NotFound();
-            var json = await System.IO.File.ReadAllTextAsync(filePath);
-            return Content(json, "application/json");
+            var map = await _atlasClient.Schema();
+            return new JsonResult(map);
         }
 
         [HttpGet("tree")]
-        public IActionResult GetTree()
+        public async Task<IActionResult> GetTree()
         {
-            if (!System.IO.File.Exists(_atlasPath))
-                return NotFound();
-            var json = System.IO.File.ReadAllText(_atlasPath);
-            var doc = JsonNode.Parse(json);
-            var zones = doc["zones"].AsArray();
-            // Find the single external area (root)
-            var external = zones.FirstOrDefault(z => z["type"].ToString() == "externalArea");
+            var map = await _atlasClient.Schema();
+            var zones = map.Zones;
+            var transits = map.Transits;
+
+            var external = zones.FirstOrDefault(z => z.Type == ZoneType.ExternalArea);
             if (external == null) return NotFound();
-            // Find buildings under external area
-            var buildings = zones.Where(z => z["type"].ToString() == "building" && z["parentId"] != null && z["parentId"].ToString() == external["id"].ToString()).ToList();
-            // For each building, find floors
+
+            var buildings = zones.Where(z => z.Type == ZoneType.Building && z.ParentId == external.Id).ToList();
+
             var buildingNodes = buildings.Select(b => {
-                var floors = zones.Where(z => (z["type"].ToString() == "floor" || z["type"].ToString().Contains("floor")) && z["parentId"] != null && z["parentId"].ToString() == b["id"].ToString())
-                    .OrderBy(z => z["order"]?.GetValue<int>() ?? 0)
+                var floors = zones.Where(z => (z.Type == ZoneType.Floor) && z.ParentId == b.Id)
+                    .OrderBy(z => z.Order)
                     .ToList();
-                // For each floor, find all other zones (rooms, corridors, etc.)
+
                 var floorNodes = floors.Select(f => new {
-                    id = f["id"].ToString(),
-                    name = f["name"].ToString(),
-                    type = f["type"].ToString(),
-                    children = zones.Where(z => z["parentId"] != null && z["parentId"].ToString() == f["id"].ToString() && z["type"].ToString() != "floor" && !z["type"].ToString().Contains("floor"))
-                        .OrderBy(z => z["order"]?.GetValue<int>() ?? 0)
+                    id = f.Id.ToString(),
+                    name = f.Name,
+                    type = f.Type.ToString().ToLower(),
+                    children = zones.Where(z => z.ParentId == f.Id && z.Type != ZoneType.Floor)
+                        .OrderBy(z => z.Order)
                         .Select(z => new {
-                            id = z["id"].ToString(),
-                            name = z["name"].ToString(),
-                            type = z["type"].ToString()
+                            id = z.Id.ToString(),
+                            name = z.Name,
+                            type = z.Type.ToString().ToLower()
                         }).ToList()
                 }).ToList();
+
                 return new {
-                    id = b["id"].ToString(),
-                    name = b["name"].ToString(),
-                    type = b["type"].ToString(),
+                    id = b.Id.ToString(),
+                    name = b.Name,
+                    type = b.Type.ToString().ToLower(),
                     children = floorNodes
                 };
             }).ToList();
+
             var tree = new List<object> {
                 new {
-                    id = external["id"].ToString(),
-                    name = external["name"].ToString(),
-                    type = external["type"].ToString(),
+                    id = external.Id.ToString(),
+                    name = external.Name,
+                    type = external.Type.ToString().ToLower(),
                     children = buildingNodes
                 }
             };
+
             return new JsonResult(tree);
         }
 
         [HttpGet("addressbar/{planFile}")]
         public async Task<IActionResult> GetAddressBar(string planFile)
         {
-            var atlasPath = Path.Combine(_dataDir, "atlas.json");
-            if (!System.IO.File.Exists(atlasPath))
-                return NotFound();
-            var json = await System.IO.File.ReadAllTextAsync(atlasPath);
-            var atlas = System.Text.Json.JsonDocument.Parse(json).RootElement;
-            var path = FindPathToPlanFile(atlas.GetProperty("nodes"), planFile);
+            var map = await _atlasClient.Schema();
+            var zones = map.Zones;
+
+            var path = FindPathToPlanFile(zones, planFile);
             if (path == null)
                 return NotFound();
+
             return new JsonResult(path);
         }
 
-        private List<object> FindPathToPlanFile(System.Text.Json.JsonElement nodes, string planFile)
+        private List<object> FindPathToPlanFile(List<Zone> zones, string planFile)
         {
-            foreach (var node in nodes.EnumerateArray())
+            var targetZone = zones.FirstOrDefault(z => z.Design == planFile);
+            if (targetZone == null)
+                return null;
+
+            var path = new List<object>();
+            var currentZone = targetZone;
+
+            while (currentZone != null)
             {
-                if (node.TryGetProperty("planFile", out var pf) && pf.GetString() == planFile)
-                {
-                    return new List<object> { new { id = node.GetProperty("id").GetString(), name = node.GetProperty("name").GetString(), planFile = pf.GetString() } };
-                }
-                if (node.TryGetProperty("children", out var children))
-                {
-                    var childPath = FindPathToPlanFile(children, planFile);
-                    if (childPath != null)
-                    {
-                        var thisNode = new { id = node.GetProperty("id").GetString(), name = node.GetProperty("name").GetString(), planFile = node.TryGetProperty("planFile", out var npf) ? npf.GetString() : null };
-                        var result = new List<object> { thisNode };
-                        result.AddRange(childPath);
-                        return result;
-                    }
-                }
+                path.Insert(0, new {
+                    id = currentZone.Id.ToString(),
+                    name = currentZone.Name,
+                    planFile = currentZone.Design
+                });
+
+                currentZone = currentZone.ParentId.HasValue
+                    ? zones.FirstOrDefault(z => z.Id == currentZone.ParentId.Value)
+                    : null;
             }
-            return null;
+
+            return path;
         }
 
         [HttpGet("plan/{zoneId}")]
-        public IActionResult GetPlan(string zoneId)
+        public async Task<IActionResult> GetPlan(string zoneId)
         {
-            if (!System.IO.File.Exists(_atlasPath))
-                return NotFound();
-            var json = System.IO.File.ReadAllText(_atlasPath);
-            var doc = JsonNode.Parse(json);
-            var zones = doc["zones"].AsArray();
-            var transits = doc["transits"].AsArray();
-            // Find selected zone
-            var selected = zones.FirstOrDefault(z => z["id"].ToString() == zoneId);
+            if (!Guid.TryParse(zoneId, out var zoneGuid))
+                return BadRequest("Invalid zone ID format");
+
+            var map = await _atlasClient.Schema();
+            var zones = map.Zones;
+            var transits = map.Transits;
+
+            var selected = zones.FirstOrDefault(z => z.Id == zoneGuid);
             if (selected == null) return NotFound();
-            var designNode = selected["design"];
-            if (designNode is JsonValue v && v.TryGetValue<string>(out var designFile))
+
+            if (!string.IsNullOrEmpty(selected.Design))
             {
-                var designPath = Path.Combine(_dataDir, designFile);
-                if (!System.IO.File.Exists(designPath))
-                    return NotFound();
-                var designJson = System.IO.File.ReadAllText(designPath);
-                var designDoc = JsonNode.Parse(designJson);
-                // Add relevant transits to designDoc.shapes
-                var shapesNode = designDoc["shapes"] as JsonArray;
-                if (shapesNode == null)
-                {
-                    shapesNode = new JsonArray();
-                    designDoc["shapes"] = shapesNode;
-                }
-                // Find all zone IDs in the design shapes
-                var zoneIds = new HashSet<string>();
-                foreach (var shape in shapesNode)
-                {
-                    if (shape?["zoneId"] != null)
-                        zoneIds.Add(shape["zoneId"].ToString());
-                }
-                foreach (var transit in transits)
-                {
-                    var fromId = transit["fromZoneId"].ToString();
-                    var toId = transit["toZoneId"].ToString();
-                    if (zoneIds.Contains(fromId) && zoneIds.Contains(toId))
-                    {
-                        // Find centers of from and to zones
-                        var fromShape = shapesNode.FirstOrDefault(s => s?["zoneId"]?.ToString() == fromId);
-                        var toShape = shapesNode.FirstOrDefault(s => s?["zoneId"]?.ToString() == toId);
-                        if (fromShape != null && toShape != null)
-                        {
-                            double fx = fromShape["x"]?.GetValue<double>() ?? 0;
-                            double fy = fromShape["y"]?.GetValue<double>() ?? 0;
-                            double fw = fromShape["w"]?.GetValue<double>() ?? 1;
-                            double fh = fromShape["h"]?.GetValue<double>() ?? 1;
-                            double tx = toShape["x"]?.GetValue<double>() ?? 0;
-                            double ty = toShape["y"]?.GetValue<double>() ?? 0;
-                            double tw = toShape["w"]?.GetValue<double>() ?? 1;
-                            double th = toShape["h"]?.GetValue<double>() ?? 1;
-                            double cx = (fx + fw / 2 + tx + tw / 2) / 2;
-                            double cy = (fy + fh / 2 + ty + th / 2) / 2;
-                            var transitShape = new JsonObject {
-                                ["type"] = "transit",
-                                ["x"] = cx,
-                                ["y"] = cy,
-                                ["r"] = 8,
-                                ["fill"] = "blue",
-                                ["stroke"] = "navy",
-                                ["text"] = transit["name"].ToString(),
-                                ["fromZoneId"] = fromId,
-                                ["toZoneId"] = toId
-                            };
-                            shapesNode.Add(transitShape);
-                        }
-                    }
-                }
-                return new JsonResult(designDoc);
+                return await GeneratePlanForZone(selected, zones, transits);
             }
-            // Fallback: auto-generate plan as before
-            double x = 0, y = 0, w = 3, h = 2, gap = 0.5;
+
+            return await GeneratePlanForZone(selected, zones, transits);
+        }
+
+        private Task<IActionResult> GeneratePlanForZone(Zone selectedZone, List<Zone> zones, List<Transit> transits)
+        {
+            double w = 3, h = 2, gap = 0.5;
             var shapes = new List<object>();
-            var children = zones.Where(z => z["parentId"] != null && z["parentId"].ToString() == zoneId).ToList();
+
+            var children = zones.Where(z => z.ParentId == selectedZone.Id).ToList();
             double curX = 0;
-            var zoneCenters = new Dictionary<string, (double x, double y)>();
+            var zoneCenters = new Dictionary<Guid, (double x, double y)>();
+
             foreach (var child in children)
             {
                 shapes.Add(new {
@@ -200,15 +149,15 @@ namespace SevenSeals.Tss.Web.Api.Controllers
                     h = h,
                     fill = "#e0e7ef",
                     stroke = "#555",
-                    text = child["name"].ToString(),
-                    zoneId = child["id"].ToString()
+                    text = child.Name,
+                    zoneId = child.Id.ToString()
                 });
-                // Store center for transit plotting
-                zoneCenters[child["id"].ToString()] = (curX + w / 2, h / 2);
+
+                zoneCenters[child.Id] = (curX + w / 2, h / 2);
                 curX += w + gap;
             }
-            // Add corridor/other zones below (if any)
-            var corridor = children.FirstOrDefault(z => z["type"].ToString() == "corridor");
+
+            var corridor = children.FirstOrDefault(z => z.Type == ZoneType.Corridor);
             if (corridor != null)
             {
                 shapes.Add(new {
@@ -219,25 +168,24 @@ namespace SevenSeals.Tss.Web.Api.Controllers
                     h = h,
                     fill = "#e6ebf1",
                     stroke = "#888",
-                    text = corridor["name"].ToString(),
-                    zoneId = corridor["id"].ToString()
+                    text = corridor.Name,
+                    zoneId = corridor.Id.ToString()
                 });
-                zoneCenters[corridor["id"].ToString()] = (Math.Max(curX - gap, 6) / 2, h + h / 2);
+                zoneCenters[corridor.Id] = (Math.Max(curX - gap, 6) / 2, h + h / 2);
             }
-            // Add transits as shapes
+
             foreach (var transit in transits)
             {
-                var fromId = transit["fromZoneId"].ToString();
-                var toId = transit["toZoneId"].ToString();
-                System.Diagnostics.Debug.WriteLine($"Processing transit: fromId={fromId}, toId={toId}, zoneId={zoneId}");
-                System.Diagnostics.Debug.WriteLine($"zoneCenters keys: {string.Join(",", zoneCenters.Keys)}");
+                var fromId = transit.FromZoneId;
+                var toId = transit.ToZoneId;
+
                 if (zoneCenters.ContainsKey(fromId) && zoneCenters.ContainsKey(toId))
                 {
                     var from = zoneCenters[fromId];
                     var to = zoneCenters[toId];
-                    if (fromId == zoneId || toId == zoneId)
+
+                    if (children.Any(z => z.Id == fromId) && children.Any(z => z.Id == toId))
                     {
-                        System.Diagnostics.Debug.WriteLine($"Adding transit shape for zoneId={zoneId}");
                         shapes.Add(new {
                             type = "transit",
                             x = (from.x + to.x) / 2,
@@ -245,18 +193,19 @@ namespace SevenSeals.Tss.Web.Api.Controllers
                             r = 8,
                             fill = "blue",
                             stroke = "navy",
-                            text = transit["name"].ToString(),
-                            fromZoneId = fromId,
-                            toZoneId = toId
+                            text = transit.Name,
+                            fromZoneId = fromId.ToString(),
+                            toZoneId = toId.ToString()
                         });
                     }
                 }
             }
-            return new JsonResult(new {
+
+            return Task.FromResult<IActionResult>(new JsonResult(new {
                 planWidth = Math.Max(curX, 6),
                 planHeight = 4,
                 shapes
-            });
+            }));
         }
     }
 }

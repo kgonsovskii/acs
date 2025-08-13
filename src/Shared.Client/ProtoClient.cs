@@ -15,17 +15,21 @@ public interface IProtoClient : IDisposable
 
 public abstract class ProtoClient : ProtoClient<ClientOptions>, IProtoClient
 {
+    protected Settings Settings { get; }
     [SuppressMessage("ReSharper", "PublicConstructorInAbstractClass")]
     public ProtoClient(HttpClient httpClient, Settings settings, IOptions<ClientOptions> options, ILogger<ProtoClient<ClientOptions>> logger) : base(httpClient, settings, options, logger)
     {
+        Settings = settings;
     }
 
-    protected ProtoClient(HttpClient httpClient, string agent, ILogger logger) : base(httpClient, agent, logger)
+    protected ProtoClient(HttpClient httpClient, Settings settings, string agent, ILogger logger) : base(httpClient, agent, logger)
     {
+        Settings = settings;
     }
 
-    protected ProtoClient(string baseUri, string agent, Action<string> logAction) : base(baseUri, agent, logAction)
+    protected ProtoClient(string baseUri, Settings settings, string agent, Action<string> logAction) : base(baseUri, agent, logAction)
     {
+        Settings = settings;
     }
 }
 

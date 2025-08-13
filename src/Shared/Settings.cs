@@ -8,6 +8,8 @@ public class Settings
 {
     public StorageType StorageType { get; set; }
 
+    public DataAccessType DataAccessType { get; set; }
+
     public SqlDialect SqlDialect { get; set; }
 
     private readonly CommandLineArgs _commandLineArgs;
@@ -25,6 +27,7 @@ public class Settings
     {
         StorageType = configuration.GetSection("storageType").Get<StorageType>();
         SqlDialect = configuration.GetSection("sqlDialect").Get<SqlDialect>();
+        DataAccessType = configuration.GetSection("dataAccessType").Get<DataAccessType>();
         ConnectionString = configuration.GetConnectionString(SqlDialect.ToString())!;
         var agent = configuration.GetValue<string>("Agent");
         Agent = MachineCode.GetMachineCode();

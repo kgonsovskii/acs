@@ -76,6 +76,7 @@ CREATE TABLE "actor"."member" (
 CREATE TABLE "atlas"."zone" (
     "type" TEXT NOT NULL,
     "parent_id" UUID NULL,
+    "design" TEXT NOT NULL,
     "name" TEXT NULL,
     "hint" TEXT NULL,
     "is_active" BOOLEAN NOT NULL,

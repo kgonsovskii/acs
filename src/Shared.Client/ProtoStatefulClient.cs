@@ -16,11 +16,11 @@ public class ProtoStatefulClient: ProtoClient, IProtoStatefulClient
     {
     }
 
-    public ProtoStatefulClient(HttpClient httpClient, string agent, ILogger logger) : base(httpClient, agent, logger)
+    public ProtoStatefulClient(HttpClient httpClient, Settings settings, string agent, ILogger logger) : base(httpClient, settings, agent, logger)
     {
     }
 
-    public ProtoStatefulClient(string baseUri, string agent, Action<string> logAction) : base(baseUri, agent, logAction)
+    public ProtoStatefulClient(string baseUri, Settings settings, string agent, Action<string> logAction) : base(baseUri, settings, agent, logAction)
     {
     }
 

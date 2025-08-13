@@ -9,4 +9,6 @@ public class Zone:AtlasBase
     public ZoneType Type { get; set; }
 
     public Guid? ParentId { get; set; }
+    
+    public string? Design { get; set; }
 }

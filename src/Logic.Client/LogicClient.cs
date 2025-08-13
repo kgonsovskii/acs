@@ -17,11 +17,11 @@ public class LogicClient: ProtoClient, ILogicClient
     {
     }
 
-    public LogicClient(HttpClient httpClient, string agent, ILogger logger) : base(httpClient, agent, logger)
+    public LogicClient(HttpClient httpClient, Settings settings, string agent, ILogger logger) : base(httpClient, settings, agent, logger)
     {
     }
 
-    public LogicClient(string baseUri, string agent, Action<string> logAction) : base(baseUri, agent, logAction)
+    public LogicClient(string baseUri, Settings settings, string agent, Action<string> logAction) : base(baseUri, settings, agent, logAction)
     {
     }
 

@@ -34,11 +34,11 @@ public abstract class ProtoStorageClient<TRequest, TResponse, TId>: ProtoClient,
     {
     }
 
-    protected ProtoStorageClient(HttpClient httpClient, string agent, ILogger logger) : base(httpClient, agent, logger)
+    protected ProtoStorageClient(HttpClient httpClient, Settings settings, string agent, ILogger logger) : base(httpClient, settings, agent, logger)
     {
     }
 
-    protected ProtoStorageClient(string baseUri, string agent, Action<string> logAction) : base(baseUri, agent, logAction)
+    protected ProtoStorageClient(string baseUri, Settings settings, string agent, Action<string> logAction) : base(baseUri, settings, agent, logAction)
     {
     }
 

@@ -16,11 +16,11 @@ public class LogicCallbackClient: ProtoClient, ILogicCallbackClient
     {
     }
 
-    public LogicCallbackClient(HttpClient httpClient, string agent, ILogger logger) : base(httpClient, agent, logger)
+    public LogicCallbackClient(HttpClient httpClient, Settings settings, string agent, ILogger logger) : base(httpClient, settings, agent, logger)
     {
     }
 
-    public LogicCallbackClient(string baseUri, string agent, Action<string> logAction) : base(baseUri, agent, logAction)
+    public LogicCallbackClient(string baseUri, Settings settings, string agent, Action<string> logAction) : base(baseUri, settings, agent, logAction)
     {
     }
 
