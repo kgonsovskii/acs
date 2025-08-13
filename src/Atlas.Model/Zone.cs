@@ -9,6 +9,7 @@ public class Zone:AtlasBase
     public ZoneType Type { get; set; }
 
     public Guid? ParentId { get; set; }
-    
+
+    [DbNull]
     public string? Design { get; set; }
 }

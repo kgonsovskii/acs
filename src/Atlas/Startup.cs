@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
+using Atlas.Component;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SevenSeals.Tss.Atlas.Services;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SevenSeals.Tss.Atlas;

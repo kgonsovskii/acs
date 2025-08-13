@@ -1,5 +1,8 @@
+using Atlas.Component;
 using Microsoft.AspNetCore.Mvc;
 using SevenSeals.Tss.Atlas;
+using SevenSeals.Tss.Web.Api.Models;
+using SevenSeals.Tss.Web.Api.Services;
 
 namespace SevenSeals.Tss.Web.Api.Controllers
 {
@@ -7,24 +10,44 @@ namespace SevenSeals.Tss.Web.Api.Controllers
     [Route("api/[controller]")]
     public class PlotController : ControllerBase
     {
-        private readonly IAtlasClient _atlasClient;
+        private readonly IAtlasService _atlasService;
+        private readonly IPlanGenerationService _planGenerationService;
 
-        public PlotController(IAtlasClient atlasClient)
+        public PlotController(IAtlasService atlasService, IPlanGenerationService planGenerationService)
         {
-            _atlasClient = atlasClient;
+            _atlasService = atlasService;
+            _planGenerationService = planGenerationService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("api")]
+        public async Task<IActionResult> ApiInfo()
         {
-            var map = await _atlasClient.Schema();
-            return new JsonResult(map);
+            try
+            {
+                var map = _atlasService.Schema();
+                return new JsonResult(new
+                {
+                    message = "SevenSeals TSS Atlas Plot API",
+                    timestamp = DateTime.UtcNow,
+                    data = map,
+                    endpoints = new
+                    {
+                        api = "/api/Plot/api",
+                        tree = "/api/Plot/tree",
+                        plan = "/api/Plot/plan/{zoneId}"
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to load atlas data", message = ex.Message });
+            }
         }
 
         [HttpGet("tree")]
         public async Task<IActionResult> GetTree()
         {
-            var map = await _atlasClient.Schema();
+            var map = _atlasService.Schema();
             var zones = map.Zones;
             var transits = map.Transits;
 
@@ -71,141 +94,21 @@ namespace SevenSeals.Tss.Web.Api.Controllers
             return new JsonResult(tree);
         }
 
-        [HttpGet("addressbar/{planFile}")]
-        public async Task<IActionResult> GetAddressBar(string planFile)
-        {
-            var map = await _atlasClient.Schema();
-            var zones = map.Zones;
-
-            var path = FindPathToPlanFile(zones, planFile);
-            if (path == null)
-                return NotFound();
-
-            return new JsonResult(path);
-        }
-
-        private List<object> FindPathToPlanFile(List<Zone> zones, string planFile)
-        {
-            var targetZone = zones.FirstOrDefault(z => z.Design == planFile);
-            if (targetZone == null)
-                return null;
-
-            var path = new List<object>();
-            var currentZone = targetZone;
-
-            while (currentZone != null)
-            {
-                path.Insert(0, new {
-                    id = currentZone.Id.ToString(),
-                    name = currentZone.Name,
-                    planFile = currentZone.Design
-                });
-
-                currentZone = currentZone.ParentId.HasValue
-                    ? zones.FirstOrDefault(z => z.Id == currentZone.ParentId.Value)
-                    : null;
-            }
-
-            return path;
-        }
-
         [HttpGet("plan/{zoneId}")]
         public async Task<IActionResult> GetPlan(string zoneId)
         {
             if (!Guid.TryParse(zoneId, out var zoneGuid))
                 return BadRequest("Invalid zone ID format");
 
-            var map = await _atlasClient.Schema();
+            var map = _atlasService.Schema();
             var zones = map.Zones;
             var transits = map.Transits;
 
             var selected = zones.FirstOrDefault(z => z.Id == zoneGuid);
             if (selected == null) return NotFound();
 
-            if (!string.IsNullOrEmpty(selected.Design))
-            {
-                return await GeneratePlanForZone(selected, zones, transits);
-            }
-
-            return await GeneratePlanForZone(selected, zones, transits);
-        }
-
-        private Task<IActionResult> GeneratePlanForZone(Zone selectedZone, List<Zone> zones, List<Transit> transits)
-        {
-            double w = 3, h = 2, gap = 0.5;
-            var shapes = new List<object>();
-
-            var children = zones.Where(z => z.ParentId == selectedZone.Id).ToList();
-            double curX = 0;
-            var zoneCenters = new Dictionary<Guid, (double x, double y)>();
-
-            foreach (var child in children)
-            {
-                shapes.Add(new {
-                    type = "rect",
-                    x = curX,
-                    y = 0,
-                    w = w,
-                    h = h,
-                    fill = "#e0e7ef",
-                    stroke = "#555",
-                    text = child.Name,
-                    zoneId = child.Id.ToString()
-                });
-
-                zoneCenters[child.Id] = (curX + w / 2, h / 2);
-                curX += w + gap;
-            }
-
-            var corridor = children.FirstOrDefault(z => z.Type == ZoneType.Corridor);
-            if (corridor != null)
-            {
-                shapes.Add(new {
-                    type = "rect",
-                    x = 0,
-                    y = h,
-                    w = Math.Max(curX - gap, 6),
-                    h = h,
-                    fill = "#e6ebf1",
-                    stroke = "#888",
-                    text = corridor.Name,
-                    zoneId = corridor.Id.ToString()
-                });
-                zoneCenters[corridor.Id] = (Math.Max(curX - gap, 6) / 2, h + h / 2);
-            }
-
-            foreach (var transit in transits)
-            {
-                var fromId = transit.FromZoneId;
-                var toId = transit.ToZoneId;
-
-                if (zoneCenters.ContainsKey(fromId) && zoneCenters.ContainsKey(toId))
-                {
-                    var from = zoneCenters[fromId];
-                    var to = zoneCenters[toId];
-
-                    if (children.Any(z => z.Id == fromId) && children.Any(z => z.Id == toId))
-                    {
-                        shapes.Add(new {
-                            type = "transit",
-                            x = (from.x + to.x) / 2,
-                            y = (from.y + to.y) / 2,
-                            r = 8,
-                            fill = "blue",
-                            stroke = "navy",
-                            text = transit.Name,
-                            fromZoneId = fromId.ToString(),
-                            toZoneId = toId.ToString()
-                        });
-                    }
-                }
-            }
-
-            return Task.FromResult<IActionResult>(new JsonResult(new {
-                planWidth = Math.Max(curX, 6),
-                planHeight = 4,
-                shapes
-            }));
+            var plan = _planGenerationService.GeneratePlanForZone(selected, map);
+            return new JsonResult(plan);
         }
     }
 }

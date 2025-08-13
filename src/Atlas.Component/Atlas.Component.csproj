@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Atlas.Model\Atlas.Model.csproj" />
+    <ProjectReference Include="..\Atlas.Storage\Atlas.Storage.csproj" />
   </ItemGroup>
 
 </Project>

@@ -17,18 +17,18 @@
   },
   {
     "type": "floor",
-    "id": "74ea2417-a157-4852-b91a-4646aa35e779",
+    "id": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
     "parentId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
-    "name": "1-st floor",
-    "order": 3,
+    "name": "Second floor",
+    "order": 1,
     "isActive": true
   },
   {
     "type": "floor",
-    "id": "4ba26900-7e80-4bb2-b916-38a24dd6a997",
+    "id": "74ea2417-a157-4852-b91a-4646aa35e779",
     "parentId": "f9918759-9a99-40e9-9fbb-e06d57e07677",
-    "name": "Second floor",
-    "order": 4,
+    "name": "1-st floor",
+    "order": 2,
     "isActive": true
   },
   {

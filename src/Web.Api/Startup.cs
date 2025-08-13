@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Atlas.Component;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -6,6 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using SevenSeals.Tss.Atlas;
+using SevenSeals.Tss.Web.Api.Services;
+using SevenSeals.Tss.Web.Api.JsonConverters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SevenSeals.Tss.Web.Api;
@@ -30,6 +34,9 @@ public class Startup: Shared.StartupBase<Startup>
                        .AllowAnyMethod();
             });
         });
+        services.AddAtlasStorage();
+        services.AddSingleton<IAtlasService, AtlasService>();
+        services.AddScoped<IPlanGenerationService, PlanGenerationService>();
         return services;
     }
 
@@ -40,18 +47,27 @@ public class Startup: Shared.StartupBase<Startup>
 
     protected override void ConfigureJsonInternal(JsonSerializerOptions opts)
     {
-        //
+        opts.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        opts.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never;
+        opts.WriteIndented = true;
+        opts.IncludeFields = true;
+        opts.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+        opts.Converters.Add(new ShapeJsonConverter());
     }
 
     protected override void UseInternal(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
     {
-        // Serve static files from src/Web (one level up from Web.Api)
+        app.UseCors();
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(
                 Path.Combine(Directory.GetCurrentDirectory(), "web")),
             RequestPath = ""
         });
-        app.UseCors();
     }
 }

@@ -1,7 +1,7 @@
-﻿using SevenSeals.Tss.Atlas.Api;
-using Atlas.Component;
+﻿using SevenSeals.Tss.Atlas;
+using SevenSeals.Tss.Atlas.Api;
 
-namespace SevenSeals.Tss.Atlas.Services;
+namespace Atlas.Component;
 
 public interface IAtlasService
 {
